@@ -1,4 +1,3 @@
-import Logo from '../components/Logo';
 import {
   Image,
   Linking,
@@ -9,30 +8,17 @@ import {
   View,
 } from 'react-native';
 import React from 'react';
-import { backgroundColor, bodyFont } from 'frontend/constants';
-
-interface Shelter {
-  id: number;
-  name: string;
-  address: {
-    street: string;
-    city: string;
-    state: string;
-    zipCode: string;
-  };
-  latitude: number;
-  longitude: number;
-  description: string;
-  overall_rating: number;
-  inclusivity_rating: number;
-  safety_rating: number;
-  availability: string;
-  phone_number: string;
-  email_address: string;
-  opening_time: string;
-  closing_time: string;
-  picture: string[];
-}
+import {
+  backgroundColor,
+  headerFont,
+  darkMainColor,
+  bodyFont,
+  mainColor,
+  buttonBackgroundColor,
+  descriptionFontColor,
+} from 'frontend/constants';
+import { useFonts } from 'expo-font';
+import { Shelter } from '../types';
 
 interface Props {
   shelter: Shelter;
@@ -45,6 +31,11 @@ export const DetailedShelterView: React.FC<Props> = ({ shelter }) => {
     const url = `https://www.google.com/maps/dir/?api=1&destination=${shelter.latitude},${shelter.longitude}`;
     Linking.openURL(url);
   };
+
+  const [fonts] = useFonts({
+    IstokWebRegular: require('../../assets/fonts/IstokWebRegular.ttf'),
+    JomhuriaRegular: require('../../assets/fonts/JomhuriaRegular.ttf'),
+  });
 
   // to do: change contact button func
   // for now, this gives the option to confirm if you want to call the shelter number
@@ -62,25 +53,28 @@ export const DetailedShelterView: React.FC<Props> = ({ shelter }) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.logoContainer}>
-        <Logo />
-      </View>
       <View style={styles.shelterNameContainer}>
-      <Text style={styles.shelterNameText}>{shelter.name}</Text>
+        <Text style={styles.shelterNameText}>{shelter.name}</Text>
       </View>
       <View style={styles.quickInfoContainer}>
         <Text style={styles.quickInfoText}>
           {/* added availability here instead of minutes away based on shelter.entity.ts */}
-          {shelter.overall_rating.toFixed(1)} stars rating | {shelter.availability}
+          {shelter.overall_rating.toFixed(1)} STARS {/*{shelter.availability}*/}
         </Text>
         <Text style={styles.quickInfoText}>
-          {shelter.address.street}, {shelter.address.city} | {formatTime(shelter.opening_time)} - {formatTime(shelter.closing_time)}
+          {shelter.address.street}, {shelter.address.city},{' '}
+          {shelter.address.state}{' '}
+          {/*{formatTime(shelter.opening_time)} -{' '}*/}
+          {/*{formatTime(shelter.closing_time)}*/}
         </Text>
         {/* added availability here instead of short description on shelter.entity.ts */}
         <Text style={styles.quickInfoText}>{shelter.availability}</Text>
       </View>
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={styles.directionsButton} onPress={handleDirections}>
+        <TouchableOpacity
+          style={styles.directionsButton}
+          onPress={handleDirections}
+        >
           <Text style={styles.buttonText}>Directions</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.websiteButton}>
@@ -92,7 +86,7 @@ export const DetailedShelterView: React.FC<Props> = ({ shelter }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.images}>
-        {shelter.picture.slice(0, 3).map((url, index) => (
+        {shelter.picture.slice(0, 2).map((url, index) => (
           <Image
             key={index}
             source={{ uri: url }}
@@ -100,17 +94,19 @@ export const DetailedShelterView: React.FC<Props> = ({ shelter }) => {
           />
         ))}
       </View>
-      <Text style={styles.shelterDescription}>
-        {shelter.description}
-      </Text>
+      <Text style={styles.shelterDescription}>{shelter.description}</Text>
       <View style={styles.fullReview}>
         <View style={styles.fullReviewTitleContainer}>
-        <Text style={styles.fullReviewTitle}>BAGLY FULL REVIEW</Text>
+          <Text style={styles.fullReviewTitle}>BAGLY REVIEW</Text>
         </View>
         <View style={styles.reviews}>
           <View style={styles.traits}>
-            <Text style={styles.traitText}>Safety: {shelter.safety_rating}/5</Text>
-            <Text style={styles.traitText}>Inclusivity: {shelter.inclusivity_rating}/5</Text>
+            <Text style={styles.traitText}>
+              Safety: {shelter.safety_rating}/5
+            </Text>
+            <Text style={styles.traitText}>
+              Inclusivity: {shelter.inclusivity_rating}/5
+            </Text>
             {/* add other traits here */}
             {/*<Text style={styles.traitText}>Trait 3</Text>*/}
             {/*<Text style={styles.traitText}>Trait 4</Text>*/}
@@ -121,7 +117,9 @@ export const DetailedShelterView: React.FC<Props> = ({ shelter }) => {
             source={require('frontend/assets/AllOfThisIcon.png')}
           />
           <View style={styles.sumRating}>
-            <Text style={styles.sumRatingText}>{shelter.overall_rating.toFixed(1)}</Text>
+            <Text style={styles.sumRatingText}>
+              {shelter.overall_rating.toFixed(1)}
+            </Text>
             <Image
               style={styles.sumStarIcon}
               source={require('frontend/assets/teenyicons_star-solid.png')}
@@ -146,30 +144,32 @@ const styles = StyleSheet.create({
   shelterNameContainer: {
     height: 44,
     width: '100%',
-    marginLeft: 12,
-    marginTop: 10,
+    marginLeft: 14,
+    marginTop: 23,
   },
   shelterNameText: {
-    fontFamily: bodyFont,
-    fontSize: 32,
+    fontFamily: headerFont,
+    fontSize: 64,
     fontWeight: '400',
-    lineHeight: 38.73,
-    color: '#000000',
+    lineHeight: 64,
+    color: darkMainColor,
   },
   quickInfoContainer: {
     width: '100%',
-    height: 75.14,
+    height: 116,
     marginLeft: 12,
+    marginTop: 6,
   },
   quickInfoText: {
     fontFamily: bodyFont,
+    color: descriptionFontColor,
     fontSize: 15,
     fontWeight: '400',
     paddingBottom: 4,
-    lineHeight: 18.15,
+    lineHeight: 21.59,
   },
   buttonsContainer: {
-    marginTop: 8.86,
+    marginTop: 19,
     marginLeft: 15,
     flexDirection: 'row',
     width: '100%',
@@ -180,7 +180,9 @@ const styles = StyleSheet.create({
     height: 32,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: '#000000',
+    borderColor: mainColor,
+    backgroundColor: buttonBackgroundColor,
+    fontFamily: bodyFont,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -189,7 +191,8 @@ const styles = StyleSheet.create({
     height: 32,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: '#000000',
+    borderColor: darkMainColor,
+    backgroundColor: buttonBackgroundColor,
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: 12,
@@ -199,7 +202,8 @@ const styles = StyleSheet.create({
     height: 32,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: '#000000',
+    borderColor: darkMainColor,
+    backgroundColor: buttonBackgroundColor,
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: 12,
@@ -209,33 +213,35 @@ const styles = StyleSheet.create({
     fontFamily: bodyFont,
     fontWeight: '400',
     lineHeight: 15.73,
-    color: '#1E1E1E',
+    color: darkMainColor,
   },
   images: {
-    width: 322,
+    width: '90%',
     height: 150,
     marginTop: 30.39,
-    marginLeft: 12,
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
   },
   shelterImage: {
     width: 150,
     height: 150,
     borderRadius: 10,
-    borderWidth: 1,
+    borderWidth: 3,
     marginRight: 22,
-    borderColor: '#000000',
+    borderColor: darkMainColor,
     backgroundColor: '#D9D9D9',
   },
   shelterDescription: {
     width: 340,
     marginLeft: 13,
     marginTop: 19,
-    fontSize: 13,
+    fontSize: 15,
     fontFamily: bodyFont,
     fontWeight: '400',
-    lineHeight: 18.15,
-    color: '#1E1E1E',
+    lineHeight: 21.59,
+    color: descriptionFontColor,
   },
   fullReview: {
     marginTop: 40,
@@ -244,20 +250,21 @@ const styles = StyleSheet.create({
     height: 176,
   },
   fullReviewTitleContainer: {
-    width: 247,
+    width: '100%',
     height: 40,
   },
   fullReviewTitle: {
-    fontSize: 24,
-    fontFamily: bodyFont,
+    fontSize: 64,
+    fontFamily: headerFont,
     fontWeight: '400',
-    lineHeight: 29.05,
-    color: '#1E1E1E',
+    lineHeight: 64,
+    color: darkMainColor,
   },
   traits: {
     width: 142,
   },
   reviews: {
+    marginTop: 15,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -266,9 +273,9 @@ const styles = StyleSheet.create({
     height: 28,
     fontSize: 15,
     fontFamily: bodyFont,
-    fontWeight: '400',
-    lineHeight: 18.15,
-    color: '#1E1E1E',
+    fontWeight: '700',
+    lineHeight: 21.59,
+    color: descriptionFontColor,
     width: '100%',
   },
   allOfThisIcon: {

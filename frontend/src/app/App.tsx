@@ -1,14 +1,24 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { CompleteMap } from '../components/CompleteMap';
+import { DetailedShelterView } from '../components/DetailedShelterView';
+import { ExampleShelters } from '../sheltersTest';
 
 export const App = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <CompleteMap />
-      </GestureHandlerRootView>
+      {/*<View style={styles.logoContainer}>*/}
+      {/*  <Logo />*/}
+      {/*</View>*/}
+      {/*<View style={styles.centeredView}>*/}
+      {/*  <SignUpModal />*/}
+      {/*</View>*/}
+      {/*<GestureHandlerRootView style={{ flex: 1 }}>*/}
+      {/*  <CompleteMap />*/}
+      {/*</GestureHandlerRootView>*/}
+
+      <DetailedShelterView shelter={ExampleShelters[0]} />
     </SafeAreaView>
   );
 };

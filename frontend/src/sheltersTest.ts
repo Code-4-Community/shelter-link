@@ -1,9 +1,9 @@
-import { Shelter } from "./types";
+import { Shelter } from './types';
 
 export const ExampleShelters: Shelter[] = [
   {
     id: 1,
-    name: 'Shelter One',
+    name: 'BAGLY',
     description: 'Description.',
     latitude: 42.3611,
     longitude: -71.0579,
@@ -107,4 +107,3 @@ export const ExampleShelters: Shelter[] = [
   },
 ];
 export { Shelter };
-
