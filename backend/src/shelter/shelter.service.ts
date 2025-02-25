@@ -20,24 +20,71 @@ export class ShelterService {
       ((await this.dynamoDbService.getHighestShelterId(this.tableName)) ?? 0) +
       1;
     shelterModel.shelterId.S = newId.toString();
-    console.log('Using new ID:' + shelterModel.shelterId.S);
-    console.log(shelterModel);
-    try {
-      // If there is a rating, check that it's a number in the range (0, 5]
-      if (shelterData.rating !== undefined) {
-        const rating = shelterData.rating;
-        if (rating <= 0 || rating > 5) {
-          throw new Error('Rating must be a number in the range (0, 5]');
+
+    // If there is a rating, check that it's a number in the range (0, 5]
+    if (shelterData.rating !== undefined) {
+      const rating = shelterData.rating;
+      if (rating <= 0 || rating > 5) {
+        throw new Error('Rating must be a number in the range (0, 5]');
+      }
+    }
+
+    // Make sure opening time is not after closing
+    for (const day in shelterData.hours) {
+      if (shelterData.hours.hasOwnProperty(day)) {
+        const hours = shelterData.hours[day];
+        if (hours) {
+          const { opening_time, closing_time } = hours;
+
+          const [openingHour, openingMinute] = opening_time
+            .split(':')
+            .map(Number);
+          const [closingHour, closingMinute] = closing_time
+            .split(':')
+            .map(Number);
+
+          // Make sure opening time is not after closing
+          if (
+            openingHour > closingHour ||
+            (openingHour === closingHour && openingMinute >= closingMinute)
+          ) {
+            throw new Error(
+              `Opening time must be before closing time on ${day}`
+            );
+          }
+
+          // Make sure hours are between 00:00 and 24:00
+          if (
+            openingHour < 0 ||
+            openingHour > 23 ||
+            closingHour < 0 ||
+            closingHour > 23 ||
+            openingMinute < 0 ||
+            openingMinute > 59 ||
+            closingMinute < 0 ||
+            closingMinute > 59
+          ) {
+            throw new Error(`Hours must be between 00:00 and 24:00 on ${day}`);
+          }
+
+          // Make sure hours string follows HH:MM format
+          if (
+            opening_time.length !== 5 ||
+            closing_time.length !== 5 ||
+            opening_time[2] !== ':' ||
+            closing_time[2] !== ':'
+          ) {
+            throw new Error(`Hours must follow HH:MM format on ${day}`);
+          }
         }
       }
-      const result = await this.dynamoDbService.postItem(
-        this.tableName,
-        shelterModel
-      );
-      return { ...result, id: newId };
-    } catch (e) {
-      throw new Error('Unable to post new shelter: ' + e);
     }
+
+    const result = await this.dynamoDbService.postItem(
+      this.tableName,
+      shelterModel
+    );
+    return { ...result, id: newId };
   }
 
   /**
@@ -48,7 +95,7 @@ export class ShelterService {
   public async getShelters(): Promise<ShelterModel[]> {
     try {
       const data = await this.dynamoDbService.scanTable(this.tableName);
-      console.log(data);
+      // console.log(data);
       return data.map((item) => this.shelterModelToOutput(item));
     } catch (e) {
       throw new Error('Unable to get shelters: ' + e);
@@ -62,15 +109,16 @@ export class ShelterService {
    */
   public async getShelter(shelterId: string) {
     try {
-      const data = await this.dynamoDbService.scanTable(this.tableName, 'shelterId = :id');
+      const data = await this.dynamoDbService.scanTable(
+        this.tableName,
+        'shelterId = :id'
+      );
       const shelter = data.find((item) => item.shelterId.S === shelterId);
       return this.shelterModelToOutput(data[0]);
     } catch (e) {
       throw new Error('Unable to get shelter: ' + e);
     }
   }
-
-
 
   /**
    * Converts the input data to a shelter model suitable for DynamoDB.
@@ -265,4 +313,3 @@ export class ShelterService {
     }
   }
 }
-
