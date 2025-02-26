@@ -1,36 +1,35 @@
-import { bodyFont } from '../../constants';
+import { backgroundColor, bodyFont, darkMainColor } from '../../constants';
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Image, TouchableOpacity } from 'react-native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../app/App';
 
-const Logo = () => {
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+const Logo: React.FC = () => {
+  const navigation = useNavigation<NavigationProp>();
+
   return (
     <View style={styles.container}>
-      <View style={styles.logoImage} />
-      <Text style={styles.text}>BAGLY</Text>
+      <TouchableOpacity onPress={() => navigation.navigate('Map View')}>
+        <Image
+          style={{
+            marginTop: 25,
+            marginLeft: 15,
+          }}
+          source={require('frontend/assets/Logo.png')}
+        />
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: 85,
-    height: 30,
-    flexDirection: 'row', // align logo image + text
+    flexDirection: 'row',
     alignItems: 'center',
-  },
-  logoImage: {
-    width: 24,
-    height: 24,
-    backgroundColor: '#E2E2E2',
-    borderRadius: 12,
-  },
-  text: {
-    marginLeft: 8,
-    fontFamily: bodyFont,
-    fontSize: 16,
-    fontWeight: '500',
-    lineHeight: 30,
-    color: '#000000',
+    backgroundColor: backgroundColor,
   },
 });
 

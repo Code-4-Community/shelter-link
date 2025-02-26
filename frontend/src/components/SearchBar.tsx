@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TextInput, StyleSheet, View } from 'react-native';
-import { bodyFont, mainColor } from '../../constants'
+import { bodyFont, mainColor } from '../../constants';
 
 const SearchBar = () => {
   const [isTyping, setIsTyping] = useState(false);
@@ -13,13 +13,12 @@ const SearchBar = () => {
           {
             opacity: isTyping ? 1 : 0.6,
             color: mainColor,
-          }
+          },
         ]}
         placeholder="SEARCH"
         placeholderTextColor={mainColor} // Use mainColor for placeholder text
         onChangeText={(text) => setIsTyping(text.length > 0)}
       />
-
     </View>
   );
 };

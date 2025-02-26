@@ -114,8 +114,7 @@ const styles = StyleSheet.create({
   searchBarContainer: {
     alignItems: 'center',
     paddingHorizontal: 13,
-    paddingBottom: 22,
-    paddingTop: 45, //ToRecoverIcon: Remove this line if you want the icon back
+    paddingBottom: 22, //ToRecoverIcon: Remove this line if you want the icon back
   },
   headerContainer: {
     alignItems: 'center',
