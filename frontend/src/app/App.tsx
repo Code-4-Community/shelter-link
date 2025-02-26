@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   searchBarContainer: {
-    marginVertical: 10,
+    marginVertical: '10%',
   },
   headerContainer: {
     marginTop: 20,

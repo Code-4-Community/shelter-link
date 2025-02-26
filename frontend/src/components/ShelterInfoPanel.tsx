@@ -1,7 +1,8 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
-import { bodyFont, darkMainColor } from '../../constants';
-import { Shelter } from '../types';
+import { StyleSheet, View, Text, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { Shelter } from '../sheltersTest';
+import { bodyFont, darkMainColor } from 'frontend/constants';
+import { NewShelterInput } from '../../../backend/src/dtos/newShelterDTO';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
@@ -44,7 +45,7 @@ const ShelterInfoPanel = ({ shelter, style }: ShelterInfoPanelProps) => {
       </View>
       <View style={styles.bookmarkContainer}>
         <Image
-          style={{ tintColor: darkMainColor }}
+          style={styles.bookmarkImage}
           source={require('frontend/assets/bookmark.png')}
         />
       </View>
@@ -92,12 +93,36 @@ const ShelterInfoPanel = ({ shelter, style }: ShelterInfoPanelProps) => {
   );
 };
 
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+
+const panelWidth = screenWidth*0.85;
+const panelHeight = (218/332)*panelWidth;
+
+let panelBorderWidth = 2;
+let shelterNameFontSize = 20;
+let descriptionFontSize = 15;
+let buttonFontSize = 13;
+let shelterNameLineHeight = 24.2;
+let shelterAddressDistanceLineHeight = 18.15;
+let buttonTextLineHeight = 15.73;
+let buttonBorderWidth = 1;
+if (screenWidth > 500) {
+  panelBorderWidth = panelBorderWidth*(screenWidth/500);
+  shelterNameFontSize = shelterNameFontSize*(screenHeight/500);
+  descriptionFontSize = descriptionFontSize*(screenHeight/500);
+  buttonFontSize = buttonFontSize*(screenHeight/500);
+  shelterNameLineHeight = shelterNameLineHeight*(screenHeight/500);
+  shelterAddressDistanceLineHeight = shelterAddressDistanceLineHeight*(screenWidth/500);
+  buttonTextLineHeight = buttonTextLineHeight*(screenHeight/500);
+  buttonBorderWidth = buttonBorderWidth*(screenWidth/500);
+}
+
 const styles = StyleSheet.create({
   panel: {
-    width: 332,
-    height: 214,
+    width: panelWidth,
+    height: panelHeight,
     borderRadius: 10,
-    borderWidth: 2,
+    borderWidth: panelBorderWidth,
     borderColor: darkMainColor,
     backgroundColor: 'white',
   },
@@ -105,78 +130,83 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   images: {
-    paddingTop: 8,
-    paddingLeft: 15,
+    paddingVertical: panelHeight*0.037,
+    paddingLeft: panelWidth*0.045,
     flexDirection: 'row',
   },
   shelterImage: {
-    width: 84,
-    height: 84,
+    width: panelWidth*0.253,
+    height: panelWidth*0.253,
     borderRadius: 10,
-    borderWidth: 1,
-    marginRight: 9,
+    borderWidth: panelBorderWidth,
+    marginRight: panelWidth*0.027,
     borderColor: darkMainColor,
     backgroundColor: '#D9D9D9',
   },
   bookmarkContainer: {
     position: 'absolute',
-    top: 8,
-    right: 11,
+    top: panelHeight*0.037,
+    right: panelWidth*0.033,
+  },
+  bookmarkImage: {
+    tintColor: darkMainColor,
+    width: panelWidth*0.06,
+    height: panelWidth*0.06*(27/20),
   },
   shelterName: {
-    paddingLeft: 15,
-    paddingTop: 4,
-    fontSize: 20,
+    paddingLeft: panelWidth*0.045,
+    paddingTop: panelHeight*0.018,
+    fontSize: shelterNameFontSize,
     fontFamily: bodyFont,
     fontWeight: '400',
-    lineHeight: 24.2,
-    color: darkMainColor,
+    lineHeight: shelterNameLineHeight,
+    color: darkMainColor
   },
   shelterAddressDistance: {
-    paddingLeft: 15,
-    fontSize: 15,
+    paddingLeft: panelWidth*0.045,
+    fontSize: descriptionFontSize,
     fontFamily: bodyFont,
     fontWeight: '400',
-    lineHeight: 18.15,
+    lineHeight: shelterAddressDistanceLineHeight,
     color: darkMainColor,
   },
   shelterRatingDescription: {
-    paddingLeft: 15,
-    fontSize: 15,
+    paddingLeft: panelWidth*0.045,
+    fontSize: descriptionFontSize,
     fontFamily: bodyFont,
     fontWeight: '400',
-    lineHeight: 18.15,
+    lineHeight: shelterAddressDistanceLineHeight,
     color: darkMainColor,
   },
   buttonsContainer: {
-    paddingTop: 10, // might need to change
-    paddingLeft: 15,
+    paddingTop: panelHeight*0.047, // might need to change
+    paddingLeft: panelWidth*0.045,
     flexDirection: 'row',
   },
   directionsButton: {
-    width: 93,
-    height: 28,
+    width: panelWidth*0.28,
+    height: panelHeight*0.13,
     borderRadius: 4,
-    borderWidth: 1,
+    borderWidth: buttonBorderWidth,
     borderColor: darkMainColor,
     alignItems: 'center',
     justifyContent: 'center',
   },
   learnMoreButton: {
-    width: 100,
-    height: 28,
+    width: panelWidth*0.301,
+    height: panelHeight*0.131,
     borderRadius: 4,
-    borderWidth: 1,
+    borderWidth: buttonBorderWidth,
     borderColor: darkMainColor,
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: 12,
   },
   buttonText: {
-    fontSize: 13,
+    fontSize: buttonFontSize,
     fontFamily: bodyFont,
     fontWeight: '400',
-    lineHeight: 15.73,
+    lineHeight: buttonTextLineHeight,
     color: darkMainColor,
   },
 });

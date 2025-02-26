@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextInput, StyleSheet, View } from 'react-native';
+import { TextInput, StyleSheet, View, Dimensions } from 'react-native';
 import { bodyFont, mainColor } from '../../constants'
 
 const SearchBar = () => {
@@ -24,25 +24,42 @@ const SearchBar = () => {
   );
 };
 
+const { width: screenWidth } = Dimensions.get('window');
+let searchBarHeight = 36;
+let searchBarBorderWidth = 1;
+let searchBarPaddingTop = 1;
+let searchInputFontSize = 14; 
+let searchInputLineHeight = 19.36;
+let searchInputPaddingTop = 2;
+if (screenWidth > 500) {
+  searchBarHeight = searchBarHeight*(screenWidth/500);
+  searchBarBorderWidth = searchBarBorderWidth*(screenWidth/500);
+  searchBarPaddingTop = searchBarBorderWidth*(screenWidth/500);
+  searchInputFontSize = searchInputFontSize*(screenWidth/500);
+  searchInputLineHeight = searchInputLineHeight*(screenWidth/500);
+  searchInputPaddingTop = searchInputPaddingTop*(screenWidth/500);
+}
+
 const styles = StyleSheet.create({
   searchBar: {
-    width: 360,
-    height: 36,
+    width: '90%',
+    height: searchBarHeight,
     borderRadius: 11,
-    borderWidth: 1,
+    borderWidth: searchBarBorderWidth,
+    paddingTop: searchBarPaddingTop,
     borderColor: mainColor,
     backgroundColor: '#FFFFFF',
   },
   searchInput: {
     flex: 1,
     fontFamily: bodyFont,
-    fontSize: 14,
+    fontSize: searchInputFontSize,
     fontWeight: '500',
     color: mainColor,
     paddingLeft: 17,
     paddingRight: 17,
     paddingTop: 2,
-    lineHeight: 19.36,
+    lineHeight: searchInputLineHeight,
     opacity: 0.6,
   },
 });

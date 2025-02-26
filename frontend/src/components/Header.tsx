@@ -1,6 +1,6 @@
 import { bodyFont, darkMainColor, headerFont } from '../../constants';
 import React from 'react';
-import { Text, StyleSheet, View } from 'react-native';
+import { Text, StyleSheet, View, Dimensions } from 'react-native';
 
 const Header = () => {
   return (
@@ -13,6 +13,18 @@ const Header = () => {
   );
 };
 
+const { width: screenWidth } = Dimensions.get('window');
+let headerTextSize = 84;
+let headerLineHeight = 43.57;
+let headerDescriptionSize = 17;
+let headerDescriptionHeight = 18.15;
+if (screenWidth > 500) {
+  headerTextSize = headerTextSize*(screenWidth/500);
+  headerLineHeight = headerLineHeight*(screenWidth/500);
+  headerDescriptionSize = headerDescriptionSize*(screenWidth/500);
+  headerDescriptionHeight = headerDescriptionHeight*(screenWidth/500);
+}
+
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
@@ -20,18 +32,18 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontFamily: headerFont,
-    fontSize: 84,
+    fontSize: headerTextSize,
     fontWeight: '400',
-    lineHeight: 43.57,
+    lineHeight: headerLineHeight,
     textAlign: 'center',
     color: darkMainColor,
     marginBottom: 9,
   },
   headerDescription: {
     fontFamily: bodyFont,
-    fontSize: 17,
+    fontSize: headerDescriptionSize,
     fontWeight: '400',
-    lineHeight: 18.15,
+    lineHeight: headerDescriptionHeight,
     textAlign: 'center',
     color: '#1E1E1E',
   },
