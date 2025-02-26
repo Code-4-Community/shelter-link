@@ -8,8 +8,10 @@ import {
   Get,
   Delete,
   NotFoundException,
+  Patch,
 } from '@nestjs/common';
 import { NewShelterInput } from '../dtos/newShelterDTO';
+import { UpdateShelterInput } from '../dtos/updateShelterDTO';
 import { ShelterService } from './shelter.service';
 
 @Controller('shelter')
@@ -25,6 +27,13 @@ export class ShelterController {
   public async getShelters() {
     return this.shelterService.getShelters();
   }
+
+  @Patch('/update')
+  public async updateShelter(@Body() updateData: UpdateShelterInput) {
+    console.log(`updateShelter input: ${JSON.stringify(updateData)}`);
+    return this.shelterService.updateShelter(updateData.shelterId, updateData);
+  }
+
 
   @Get('/:shelterId')
   public async getShelter(@Param('shelterId') shelterId: string) {
