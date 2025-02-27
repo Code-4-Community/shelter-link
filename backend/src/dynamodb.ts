@@ -5,7 +5,7 @@ import {
   DeleteItemCommand,
   GetItemCommand,
 } from '@aws-sdk/client-dynamodb';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class DynamoDbService {
@@ -31,6 +31,17 @@ export class DynamoDbService {
     const params: any = {
       TableName: tableName,
     };
+
+    // Add FilterExpression and ExpressionAttributeValues if given
+    if (filterExpression) {
+      params.FilterExpression = filterExpression;
+    }
+    if (expressionAttributeValues) {
+      params.ExpressionAttributeValues = expressionAttributeValues;
+    }
+    if (expressionAttributeNames) {
+      params.ExpressionAttributeNames = expressionAttributeNames;
+    }
 
     try {
       const data = await this.dynamoDbClient.send(new ScanCommand(params));
@@ -78,8 +89,6 @@ export class DynamoDbService {
       Item: item,
     });
 
-    console.log(item.name);
-
     try {
       const result = await this.dynamoDbClient.send(command);
       return result;
@@ -114,8 +123,11 @@ export class DynamoDbService {
     try {
       // First, check if the item exists
       const existingItem = await this.getItem(tableName, key);
+
       if (!existingItem) {
-        return false; // Item does not exist
+        throw new NotFoundException(
+          `Shelter with ID ${key.shelterId.S} not found.`
+        ); // Item does not exist
       }
 
       // Delete the existing item
@@ -131,6 +143,3 @@ export class DynamoDbService {
     }
   }
 }
-
-
-

@@ -21,7 +21,6 @@ export class ShelterService {
       1;
     shelterModel.shelterId.S = newId.toString();
     console.log('Using new ID:' + shelterModel.shelterId.S);
-    console.log(shelterModel);
     try {
       // If there is a rating, check that it's a number in the range (0, 5]
       if (shelterData.rating !== undefined) {
@@ -62,15 +61,16 @@ export class ShelterService {
    */
   public async getShelter(shelterId: string) {
     try {
-      const data = await this.dynamoDbService.scanTable(this.tableName, 'shelterId = :id');
-      const shelter = data.find((item) => item.shelterId.S === shelterId);
+      const data = await this.dynamoDbService.scanTable(
+        this.tableName,
+        'shelterId = :shelterId',
+        { ':shelterId': { S: shelterId } }
+      );
       return this.shelterModelToOutput(data[0]);
     } catch (e) {
       throw new Error('Unable to get shelter: ' + e);
     }
   }
-
-
 
   /**
    * Converts the input data to a shelter model suitable for DynamoDB.
@@ -253,11 +253,11 @@ export class ShelterService {
   /**
    * Delete a shelter by its ID.
    * @param shelterId The ID of the shelter to delete.
-   * @returns True if deleted, false if shelter does not exist.
+   * @returns nothign if successful, throws if there is an error.
    */
-  public async deleteShelter(shelterId: string): Promise<boolean> {
+  public async deleteShelter(shelterId: string): Promise<void> {
     try {
-      return await this.dynamoDbService.deleteItem(this.tableName, {
+      await this.dynamoDbService.deleteItem(this.tableName, {
         shelterId: { S: shelterId },
       });
     } catch (error) {
@@ -265,4 +265,3 @@ export class ShelterService {
     }
   }
 }
-
