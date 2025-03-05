@@ -1,4 +1,3 @@
-import { Rating } from '../app/utils/rating';
 import { DayOfWeek } from '../types';
 
 export type NewShelterInput = {
