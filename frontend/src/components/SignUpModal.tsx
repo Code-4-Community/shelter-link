@@ -1,3 +1,4 @@
+import { useFonts } from 'expo-font';
 import React, { useState } from 'react';
 import {
   Modal,
@@ -13,6 +14,10 @@ import {
 } from 'react-native';
 
 const SignUpWizard = () => {
+  useFonts({
+    'AvenirNext': require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
+  });
+
   const [formData, setFormData] = useState<{
     firstName: string;
     lastName: string;

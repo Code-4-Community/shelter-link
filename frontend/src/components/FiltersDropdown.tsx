@@ -1,3 +1,4 @@
+import { useFonts } from 'expo-font';
 import { bodyFont, darkMainColor } from '../../constants';
 import React, { useState } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
@@ -13,6 +14,10 @@ const data = [
 // created a multi-select component for filters
 // need to add some sort of indication of what is currently selected in dropdown list
 const DropdownComponent = () => {
+  useFonts({
+    'AvenirNext': require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
+  });
+
   const [selected, setSelected] = useState([]);
 
   return (
@@ -46,12 +51,12 @@ let dropdownFontSize = 13;
 let customIconWidth = 10;
 let iconWidth = 20;
 if (screenWidth > 500) {
-  dropdownWidth = dropdownWidth*(screenWidth/500);
-  dropdownHeight = dropdownHeight*(screenWidth/500);
-  dropdownBorderWidth = dropdownBorderWidth*(screenWidth/500);
-  dropdownFontSize = dropdownFontSize*(screenWidth/500);
-  customIconWidth = customIconWidth*(screenWidth/500);
-  iconWidth = iconWidth*(screenWidth/500);
+  dropdownWidth = dropdownWidth * (screenWidth / 500);
+  dropdownHeight = dropdownHeight * (screenWidth / 500);
+  dropdownBorderWidth = dropdownBorderWidth * (screenWidth / 500);
+  dropdownFontSize = dropdownFontSize * (screenWidth / 500);
+  customIconWidth = customIconWidth * (screenWidth / 500);
+  iconWidth = iconWidth * (screenWidth / 500);
 }
 
 const styles = StyleSheet.create({
@@ -64,9 +69,8 @@ const styles = StyleSheet.create({
     height: dropdownHeight,
     paddingRight: 9,
     backgroundColor: '#FFFFFF',
-    borderRadius: 4,
+    borderRadius: 6,
     borderWidth: dropdownBorderWidth,
-    borderColor: darkMainColor,
   },
   placeholderStyle: {
     fontFamily: bodyFont,
@@ -86,7 +90,7 @@ const styles = StyleSheet.create({
   },
   customIcon: {
     width: customIconWidth,
-    height: customIconWidth/2,
+    height: customIconWidth / 2,
   },
   iconStyle: {
     width: iconWidth,

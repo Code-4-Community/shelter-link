@@ -20,6 +20,7 @@ import { Shelter, DayOfWeek } from '../types';
 import { ImageGallery } from './ImageGallery';
 import { HoursDropdown } from './HoursDropdown';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useFonts } from 'expo-font';
 
 type RootStackParamList = {
   'Map View': undefined;
@@ -36,6 +37,10 @@ type Props = NativeStackScreenProps<
 export const DetailedShelterView: React.FC<Props> = ({ route }) => {
   const { shelter } = route.params; // get shelter from route params
 
+  useFonts({
+    'AvenirNext': require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
+  });
+  
   // for now, this redirects to google maps based on lat and long
   const handleDirections = () => {
     const url = `https://www.google.com/maps/dir/?api=1&destination=${shelter.latitude},${shelter.longitude}`;
