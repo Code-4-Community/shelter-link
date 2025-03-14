@@ -1,0 +1,17 @@
+name: Postman CI
+on:
+  push:
+    branches: [ "main", "GithubActionsCICD" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  call_postman_api:
+    runs-on: ubuntu-latest
+    env:
+      POSTMAN_API_KEY: "YOUR_POSTMAN_API_KEY"
+    steps:
+      - name: Call Postman API
+        run: |
+          curl --request GET "https://api.getpostman.com/collections" \
+               --header "X-Api-Key: $POSTMAN_API_KEY"
