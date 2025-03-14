@@ -17,6 +17,8 @@ import ShelterInfoPanel from '../components/ShelterInfoPanel';
 import { Shelter } from '../types';
 import { darkMainColor } from '../../constants';
 import getShelters from '../services/mapService';
+import { useFonts } from 'expo-font';
+
 
 /*If you desire to put the icon back search "ToRecoverIcon" in this document and follow the instructions*/
 export const CompleteMap = () => {
@@ -24,6 +26,10 @@ export const CompleteMap = () => {
   const snapPoints = useMemo(() => ['15%', '60%', '90%'], []);
   const [selectedShelter, setSelectedShelter] = useState<Shelter | null>(null);
   const [shelters, setShelters] = useState<Shelter[]>([]);
+  const [fonts] = useFonts({
+    'IstokWebRegular': require('../../assets/fonts/IstokWebRegular.ttf'),
+    'JomhuriaRegular': require('../../assets/fonts/JomhuriaRegular.ttf')
+  });
 
   const fetchShelters = async () => {
     try {

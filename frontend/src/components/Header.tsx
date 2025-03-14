@@ -14,15 +14,17 @@ const Header = () => {
 };
 
 const { width: screenWidth } = Dimensions.get('window');
-let headerTextSize = 84;
-let headerLineHeight = 43.57;
-let headerDescriptionSize = 17;
-let headerDescriptionHeight = 18.15;
+let dynamicTabletSizes: Record<string, number> = {};
+dynamicTabletSizes["headerTextSize"] = 84;
+dynamicTabletSizes["headerLineHeight"] = 43.57;
+dynamicTabletSizes["headerDescriptionSize"] = 17;
+dynamicTabletSizes["headerDescriptionHeight"] = 18.15;
+
 if (screenWidth > 500) {
-  headerTextSize = headerTextSize*(screenWidth/500);
-  headerLineHeight = headerLineHeight*(screenWidth/500);
-  headerDescriptionSize = headerDescriptionSize*(screenWidth/500);
-  headerDescriptionHeight = headerDescriptionHeight*(screenWidth/500);
+  let widthRatio = screenWidth/500;
+  for (const key in dynamicTabletSizes) {
+    dynamicTabletSizes[key] = (dynamicTabletSizes[key]*widthRatio)
+  }
 }
 
 const styles = StyleSheet.create({
@@ -32,18 +34,18 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontFamily: headerFont,
-    fontSize: headerTextSize,
+    fontSize: dynamicTabletSizes.headerTextSize,
     fontWeight: '400',
-    lineHeight: headerLineHeight,
+    lineHeight: dynamicTabletSizes.headerLineHeight,
     textAlign: 'center',
     color: darkMainColor,
     marginBottom: 9,
   },
   headerDescription: {
     fontFamily: bodyFont,
-    fontSize: headerDescriptionSize,
+    fontSize: dynamicTabletSizes.headerDescriptionSize,
     fontWeight: '400',
-    lineHeight: headerDescriptionHeight,
+    lineHeight: dynamicTabletSizes.headerDescriptionHeight,
     textAlign: 'center',
     color: '#1E1E1E',
   },
