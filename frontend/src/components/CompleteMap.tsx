@@ -1,4 +1,3 @@
-
 import React, {
   useCallback,
   useEffect,
@@ -6,7 +5,8 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Dimensions, SafeAreaView, StyleSheet, View } from 'react-native';
+import { Dimensions, SafeAreaView, StyleSheet, View, Text } from 'react-native';
+import Fuse from 'fuse.js';
 import SearchBar from '../components/SearchBar';
 import Header from '../components/Header';
 //import Logo from '../components/Logo'; ToRecoverIcon: uncomment this line
@@ -19,16 +19,16 @@ import { darkMainColor } from '../../constants';
 import getShelters from '../services/mapService';
 import { useFonts } from 'expo-font';
 
-
-/*If you desire to put the icon back search "ToRecoverIcon" in this document and follow the instructions*/
 export const CompleteMap = () => {
   const sheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['15%', '60%', '90%'], []);
   const [selectedShelter, setSelectedShelter] = useState<Shelter | null>(null);
   const [shelters, setShelters] = useState<Shelter[]>([]);
-  const [fonts] = useFonts({
-    'IstokWebRegular': require('../../assets/fonts/IstokWebRegular.ttf'),
-    'JomhuriaRegular': require('../../assets/fonts/JomhuriaRegular.ttf')
+  const [query, setQuery] = useState('');
+
+  useFonts({
+    IstokWebRegular: require('../../assets/fonts/IstokWebRegular.ttf'),
+    JomhuriaRegular: require('../../assets/fonts/JomhuriaRegular.ttf'),
   });
 
   const fetchShelters = async () => {
@@ -38,13 +38,12 @@ export const CompleteMap = () => {
     } catch (error) {
       console.error('Error fetching shelters:', error);
     } finally {
-      // setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchShelters();
-  }, []);
+  }, [query]);
 
   const handleMarkerPress = useCallback((shelter: Shelter) => {
     setSelectedShelter(shelter);
@@ -58,16 +57,32 @@ export const CompleteMap = () => {
     []
   );
 
-  /*Note: The logo may be brought back later replaced with c4c or something, 
-  but I (sam) am removing it for now since it's not in the figma 
-  ToRecoverIcon: as the first child of SafeAreaView component, add:
-  <View style={styles.logoContainer}>
-    <Logo />
-  <View> */
+  const filteredShelters = useMemo(() => {
+    if (query === '') {
+      return shelters;
+    } else {
+      const fuseOptions = {
+        findAllMatches: true,
+        keys: [
+          'name',
+          'address.street',
+          'address.city',
+          'address.state',
+          'address.zip',
+        ],
+      };
+
+      const fuse = new Fuse(shelters, fuseOptions);
+      const searchResults = fuse.search(query);
+
+      return searchResults.map((result) => result.item);
+    }
+  }, [query, shelters]);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.searchBarContainer}>
-        <SearchBar />
+        <SearchBar onSearch={setQuery} />
       </View>
       <View style={styles.headerContainer}>
         <Header />
@@ -86,14 +101,18 @@ export const CompleteMap = () => {
             shelter={selectedShelter}
             style={styles.itemContainer}
           />
-        ) : (
+        ) : filteredShelters.length > 0 ? (
           <BottomSheetFlatList
-            data={shelters}
+            data={filteredShelters}
             keyExtractor={(item) =>
               `${item.name}-${item.address.street}`.replace(/\s+/g, '')
             } // creating a unique id
             renderItem={renderItem}
           />
+        ) : (
+          <View style={styles.noResultsContainer}>
+            <Text style={styles.noResultsText}>No results found</Text>
+          </View>
         )}
       </BottomSheet>
     </SafeAreaView>
@@ -108,20 +127,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  
+
   itemContainer: {
     marginTop: 29,
   },
-  /* logoContainer: {
-    alignItems: 'flex-start',
-    paddingHorizontal: 20,
-    paddingTop: 11,
-    paddingBottom: 18,
-  },*/
   searchBarContainer: {
     alignItems: 'center',
     paddingBottom: '6%',
-    paddingTop: '10%', //ToRecoverIcon: Remove this line if you want the icon back
+    paddingTop: '10%',
   },
   headerContainer: {
     alignItems: 'center',
@@ -147,6 +160,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFFFF',
     paddingBottom: 500,
+  },
+  noResultsContainer: {
+    flex: 1,
+    paddingTop: '20%',
+    alignItems: 'center',
+  },
+  noResultsText: {
+    fontSize: 20,
+    color: darkMainColor,
   },
 });
 
