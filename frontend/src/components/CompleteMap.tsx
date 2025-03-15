@@ -19,7 +19,6 @@ import { darkMainColor } from '../../constants';
 import getShelters from '../services/mapService';
 import { useFonts } from 'expo-font';
 
-
 export const CompleteMap = () => {
   const sheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['15%', '60%', '90%'], []);
@@ -27,11 +26,10 @@ export const CompleteMap = () => {
   const [shelters, setShelters] = useState<Shelter[]>([]);
   const [query, setQuery] = useState('');
 
-  const [fonts] = useFonts({
-    'IstokWebRegular': require('../../assets/fonts/IstokWebRegular.ttf'),
-    'JomhuriaRegular': require('../../assets/fonts/JomhuriaRegular.ttf')
+  useFonts({
+    IstokWebRegular: require('../../assets/fonts/IstokWebRegular.ttf'),
+    JomhuriaRegular: require('../../assets/fonts/JomhuriaRegular.ttf'),
   });
-
 
   const fetchShelters = async () => {
     try {

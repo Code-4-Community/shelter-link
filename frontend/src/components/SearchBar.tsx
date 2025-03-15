@@ -50,21 +50,20 @@ if (screenWidth > 500) {
   searchInputFontSize = searchInputFontSize * (screenWidth / 500);
   searchInputLineHeight = searchInputLineHeight * (screenWidth / 500);
   searchInputPaddingTop = searchInputPaddingTop * (screenWidth / 500);
-
+}
 let dynamicTabletSizes: Record<string, number> = {};
-dynamicTabletSizes["searchBarHeight"] = 36;
-dynamicTabletSizes["searchBarBorderWidth"] = 1;
-dynamicTabletSizes["searchBarPaddingTop"] = 1;
-dynamicTabletSizes["searchInputFontSize"] = 14;
-dynamicTabletSizes["searchInputLineHeight"] = 19.36;
-dynamicTabletSizes["searchInputPaddingTop"] = 2;
+dynamicTabletSizes['searchBarHeight'] = 36;
+dynamicTabletSizes['searchBarBorderWidth'] = 1;
+dynamicTabletSizes['searchBarPaddingTop'] = 1;
+dynamicTabletSizes['searchInputFontSize'] = 14;
+dynamicTabletSizes['searchInputLineHeight'] = 19.36;
+dynamicTabletSizes['searchInputPaddingTop'] = 2;
 
 if (screenWidth > 500) {
-  let widthRatio = screenWidth/500;
+  let widthRatio = screenWidth / 500;
   for (const key in dynamicTabletSizes) {
-    dynamicTabletSizes[key] = (dynamicTabletSizes[key]*widthRatio)
+    dynamicTabletSizes[key] = dynamicTabletSizes[key] * widthRatio;
   }
-
 }
 
 const styles = StyleSheet.create({
