@@ -17,6 +17,8 @@ import ShelterInfoPanel from '../components/ShelterInfoPanel';
 import { Shelter } from '../types';
 import { darkMainColor } from '../../constants';
 import getShelters from '../services/mapService';
+import { useFonts } from 'expo-font';
+
 
 export const CompleteMap = () => {
   const sheetRef = useRef<BottomSheet>(null);
@@ -24,6 +26,12 @@ export const CompleteMap = () => {
   const [selectedShelter, setSelectedShelter] = useState<Shelter | null>(null);
   const [shelters, setShelters] = useState<Shelter[]>([]);
   const [query, setQuery] = useState('');
+
+  const [fonts] = useFonts({
+    'IstokWebRegular': require('../../assets/fonts/IstokWebRegular.ttf'),
+    'JomhuriaRegular': require('../../assets/fonts/JomhuriaRegular.ttf')
+  });
+
 
   const fetchShelters = async () => {
     try {
