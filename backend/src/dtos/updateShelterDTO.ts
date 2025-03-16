@@ -1,7 +1,6 @@
 import { DayOfWeek } from '../types';
 
 export type UpdateShelterInput = {
-  shelterId: string;
   name?: string;
   expanded_name?: string;
   address?: {
