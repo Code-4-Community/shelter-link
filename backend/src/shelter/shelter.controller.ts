@@ -28,11 +28,13 @@ export class ShelterController {
     return this.shelterService.getShelters();
   }
 
-  @Patch('/update')
-  public async updateShelter(@Body() updateData: UpdateShelterInput) {
-    return this.shelterService.updateShelter(updateData.shelterId, updateData);
+  @Patch('/:shelterId')
+  public async updateShelter(
+    @Param('shelterId') shelterId: string,
+    @Body() updateData: UpdateShelterInput
+  ) {
+    return this.shelterService.updateShelter(shelterId, updateData);
   }
-
 
   @Get('/:shelterId')
   public async getShelter(@Param('shelterId') shelterId: string) {
