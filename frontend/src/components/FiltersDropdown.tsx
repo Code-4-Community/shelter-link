@@ -1,6 +1,6 @@
 import { bodyFont, darkMainColor } from '../../constants';
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import { MultiSelect } from 'react-native-element-dropdown';
 
 const data = [
@@ -38,6 +38,21 @@ const DropdownComponent = () => {
     </View>
   );
 };
+const { width: screenWidth } = Dimensions.get('window');
+let dynamicTabletSizes: Record<string, number> = {};
+dynamicTabletSizes["dropdownWidth"] = 87;
+dynamicTabletSizes["dropdownHeight"] = 28;
+dynamicTabletSizes["dropdownBorderWidth"] = 1;
+dynamicTabletSizes["dropdownFontSize"] = 13;
+dynamicTabletSizes["customIconWidth"] = 10;
+dynamicTabletSizes["iconWidth"] = 20;
+
+if (screenWidth > 500) {
+  let widthRatio = screenWidth/500;
+  for (const key in dynamicTabletSizes) {
+    dynamicTabletSizes[key] = (dynamicTabletSizes[key]*widthRatio)
+  }
+}
 
 const styles = StyleSheet.create({
   body: {
@@ -45,38 +60,38 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   dropdown: {
-    width: 87,
-    height: 28,
+    width: dynamicTabletSizes.dropdownWidth,
+    height: dynamicTabletSizes.dropdownHeight,
     paddingRight: 9,
     backgroundColor: '#FFFFFF',
     borderRadius: 4,
-    borderWidth: 1,
+    borderWidth: dynamicTabletSizes.dropdownBorderWidth,
     borderColor: darkMainColor,
   },
   placeholderStyle: {
     fontFamily: bodyFont,
-    fontSize: 13,
+    fontSize: dynamicTabletSizes.dropdownFontSize,
     color: darkMainColor,
     marginLeft: 16,
   },
   selectedTextStyle: {
     fontFamily: bodyFont,
-    fontSize: 13,
+    fontSize: dynamicTabletSizes.dropdownFontSize,
     color: darkMainColor,
   },
   inputSearchStyle: {
     fontFamily: bodyFont,
-    fontSize: 13,
+    fontSize: dynamicTabletSizes.dropdownFontSize,
     color: darkMainColor,
   },
   customIcon: {
-    width: 10,
-    height: 5,
+    width: dynamicTabletSizes.customIconWidth,
+    height: dynamicTabletSizes.customIconWidth/2,
   },
   iconStyle: {
-    width: 20,
-    height: 20,
-    tintColor: darkMainColor,
+    width: dynamicTabletSizes.iconWidth,
+    height: dynamicTabletSizes.iconWidth,
+    tintColor: darkMainColor
   },
 });
 

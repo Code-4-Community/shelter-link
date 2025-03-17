@@ -5,6 +5,7 @@ import { DayOfWeek } from '../types';
  *
  * @property shelterId The unique identifier of the shelter.
  * @property name The name of the shelter.
+ * @property expanded_name The expanded name of the shelter.
  * @property address The address of the shelter.
  * @property latitude The latitude of the shelter.
  * @property longitude The longitude of the shelter.
@@ -22,6 +23,7 @@ import { DayOfWeek } from '../types';
 export type ShelterModel = {
   shelterId: string;
   name: string;
+  expanded_name?: string;
   address: {
     street: string;
     city: string;
@@ -48,6 +50,7 @@ export type ShelterModel = {
 export type ShelterInputModel = {
   shelterId: { S: string };
   name: { S: string };
+  expanded_name?: { S: string };
   address: {
     M: {
       street: { S: string };
@@ -75,4 +78,37 @@ export type ShelterInputModel = {
     };
   };
   picture: { L: { S: string }[] };
+};
+
+export type ShelterUpdateModel = {
+  name?: string;
+  expanded_name?: string;
+  address?: {
+    street?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+    country?: string;
+  };
+  latitude?: number;
+  longitude?: number;
+  description?: string;
+  rating?: number;
+  phone_number?: string;
+  email_address?: string;
+  website?: string;
+  hours?: {
+    [day in DayOfWeek]: {
+      opening_time?: string;
+      closing_time?: string;
+    };
+  };
+  picture?: string[];
+};
+
+export type HoursUpdateModel = {
+  [day in DayOfWeek]?: {
+    opening_time?: string;
+    closing_time?: string;
+  };
 };

@@ -1,5 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { ShelterInputModel, ShelterModel } from './shelter.model';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HoursUpdateModel,
+  ShelterInputModel,
+  ShelterModel,
+  ShelterUpdateModel,
+} from './shelter.model';
 import { DynamoDbService } from '../dynamodb';
 import { NewShelterInput } from '../dtos/newShelterDTO';
 
@@ -7,6 +12,90 @@ import { NewShelterInput } from '../dtos/newShelterDTO';
 export class ShelterService {
   private readonly tableName = 'shelterlinkShelters';
   constructor(private readonly dynamoDbService: DynamoDbService) {}
+
+  /**
+   * Handles what values to push given the key within updateShelter is of type 'address'
+   * @param buildAttributeNamesList Reference type
+   * @param buildAttributeValuesList Reference type
+   */
+  private updateShelterHandleAddress(
+    buildAttributeNamesList: string[],
+    buildAttributeValuesList: (string | number)[],
+    desiredUpdates: ShelterUpdateModel
+  ) {
+    const addressFields = ['city', 'country', 'state', 'street', 'zipCode'];
+    //within the address key, adding each field specified
+    for (const field of addressFields) {
+      if (desiredUpdates.address[field]) {
+        buildAttributeNamesList.push(`address.${field}`);
+        buildAttributeValuesList.push(desiredUpdates.address[field]);
+      }
+    }
+  }
+
+  /**
+   * Handle behavior given something (e) was caught
+   * @param e the object that was caught
+   */
+  private async updateShelterHandleCatch(e: any) {
+    // NotFoundException gets passed up from dynamodb.ts
+    if (e instanceof NotFoundException) {
+      throw e;
+    }
+    throw new Error('Unable to update new shelter: ' + e);
+  }
+
+  /**
+   * Update desired fields in the shelter of the id in the database
+   * @param shelterId The id of the shelter to update
+   * @param desiredUpdates Object containing the desired fields and values to update
+   */
+  public async updateShelter(
+    shelterId: string,
+    desiredUpdates: ShelterUpdateModel
+  ) {
+    let buildAttributeNamesList: string[] = []; //names of the fields
+    let buildAttributeValuesList: (string | number)[] = []; //desired values to update
+    let hoursMap: false | HoursUpdateModel = false;
+
+    for (let key in desiredUpdates) {
+      if (key === 'shelterId') {
+        continue;
+      } else if (key === 'address') {
+        //checking the top level key
+        this.updateShelterHandleAddress(
+          buildAttributeNamesList,
+          buildAttributeValuesList,
+          desiredUpdates
+        );
+      } else if (key === 'hours') {
+        //checking the top level key
+        hoursMap = desiredUpdates.hours;
+      } else {
+        // top level keys with no nesting
+        buildAttributeNamesList.push(key);
+
+        if (key === 'picture') {
+          //entire list is updated as one item
+          buildAttributeValuesList.push(JSON.stringify(desiredUpdates[key]));
+        } else {
+          buildAttributeValuesList.push(desiredUpdates[key]);
+        }
+      }
+    }
+    try {
+      const result = await this.dynamoDbService.updateAttributes(
+        this.tableName,
+        shelterId,
+        buildAttributeNamesList,
+        buildAttributeValuesList,
+        hoursMap
+      );
+      return { result };
+    } catch (e) {
+      this.updateShelterHandleCatch(e);
+    }
+  }
 
   /**
    * Add a new shelter to the database.
@@ -20,7 +109,6 @@ export class ShelterService {
       ((await this.dynamoDbService.getHighestShelterId(this.tableName)) ?? 0) +
       1;
     shelterModel.shelterId.S = newId.toString();
-
     // If there is a rating, check that it's a number in the range (0, 5]
     if (shelterData.rating !== undefined) {
       const rating = shelterData.rating;
@@ -95,7 +183,6 @@ export class ShelterService {
   public async getShelters(): Promise<ShelterModel[]> {
     try {
       const data = await this.dynamoDbService.scanTable(this.tableName);
-      // console.log(data);
       return data.map((item) => this.shelterModelToOutput(item));
     } catch (e) {
       throw new Error('Unable to get shelters: ' + e);
@@ -216,6 +303,10 @@ export class ShelterService {
       newShelterModel.website = { S: input.website };
     }
 
+    if (input.expanded_name !== undefined) {
+      newShelterModel.expanded_name = { S: input.expanded_name };
+    }
+
     return newShelterModel;
   };
 
@@ -295,17 +386,21 @@ export class ShelterService {
       newShelterModel.website = input.website.S;
     }
 
+    if (input.expanded_name !== undefined) {
+      newShelterModel.expanded_name = input.expanded_name.S;
+    }
+
     return newShelterModel;
   };
 
   /**
    * Delete a shelter by its ID.
    * @param shelterId The ID of the shelter to delete.
-   * @returns True if deleted, false if shelter does not exist.
+   * @returns nothign if successful, throws if there is an error.
    */
-  public async deleteShelter(shelterId: string): Promise<boolean> {
+  public async deleteShelter(shelterId: string): Promise<void> {
     try {
-      return await this.dynamoDbService.deleteItem(this.tableName, {
+      await this.dynamoDbService.deleteItem(this.tableName, {
         shelterId: { S: shelterId },
       });
     } catch (error) {

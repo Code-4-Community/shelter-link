@@ -1,14 +1,16 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import CompleteMap from '../components/CompleteMap';
 import { DetailedShelterView } from '../components/DetailedShelterView';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Shelter } from '../types';
+import Logo from '../components/Logo';
+
 
 // defines type for nav stack
-type RootStackParamList = {
+export type RootStackParamList = {
   'Map View': undefined;
   'Detailed Shelter View': {
     shelter: Shelter;
@@ -28,6 +30,11 @@ export const App = () => {
     <NavigationContainer>
       <SafeAreaView style={styles.safeArea}>
         <GestureHandlerRootView style={{ flex: 1 }}>
+          {/* logo is rendered as a sibling */}
+          <View>
+            <Logo />
+          </View>
+          {/* add other pages here in this similar way */}
           <Stack.Navigator>
             <Stack.Screen
               name="Map View"
@@ -56,11 +63,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  logoContainer: {
-    marginBottom: 20,
-  },
   searchBarContainer: {
-    marginVertical: 10,
+    marginVertical: '10%',
   },
   headerContainer: {
     marginTop: 20,

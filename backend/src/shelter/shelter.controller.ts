@@ -8,8 +8,10 @@ import {
   NotFoundException,
   HttpException,
   HttpStatus,
+  Patch,
 } from '@nestjs/common';
 import { NewShelterInput } from '../dtos/newShelterDTO';
+import { UpdateShelterInput } from '../dtos/updateShelterDTO';
 import { ShelterService } from './shelter.service';
 
 @Controller('shelter')
@@ -33,17 +35,22 @@ export class ShelterController {
     return this.shelterService.getShelters();
   }
 
-  @Get(':shelterId')
+  @Patch('/:shelterId')
+  public async updateShelter(
+    @Param('shelterId') shelterId: string,
+    @Body() updateData: UpdateShelterInput
+  ) {
+    return this.shelterService.updateShelter(shelterId, updateData);
+  }
+
+  @Get('/:shelterId')
   public async getShelter(@Param('shelterId') shelterId: string) {
     return this.shelterService.getShelter(shelterId);
   }
 
-  @Delete(':shelterId')
+  @Delete('/:shelterId')
   public async deleteShelter(@Param('shelterId') shelterId: string) {
-    const deleted = await this.shelterService.deleteShelter(shelterId);
-    if (!deleted) {
-      throw new NotFoundException(`Shelter with ID ${shelterId} not found.`);
-    }
+    await this.shelterService.deleteShelter(shelterId);
     return { message: `Shelter with ID ${shelterId} deleted successfully.` };
   }
 }
