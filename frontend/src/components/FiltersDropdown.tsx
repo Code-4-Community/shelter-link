@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { MultiSelect } from 'react-native-element-dropdown';
 import {Modal, Text, Pressable} from 'react-native';
 import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
+import { TouchableOpacity } from 'react-native';
 
 const data = [
   { label: 'Item 1', value: '1' },
@@ -11,11 +12,15 @@ const data = [
   { label: 'Item 4', value: '4' },
 ];
 
+
 // created a multi-select component for filters
 // need to add some sort of indication of what is currently selected in dropdown list
 const DropdownComponent = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selected, setSelected] = useState([]);
+
+  
+
 
   return (
     <SafeAreaProvider>
@@ -30,7 +35,22 @@ const DropdownComponent = () => {
           }}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              <Text style={styles.modalText}>Hello World!</Text>
+              <View style={styles.headerContainer}>
+                    <Text style={styles.headerText}>Filters</Text>
+                    <Text style={styles.headerDescription}>Rating</Text>
+              </View>
+              <View style={styles.buttonsContainer}>
+                      <TouchableOpacity style={styles.directionsButton}>
+                        <Text style={styles.buttonText}>Any</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.websiteButton}>
+                        {/* no website field in shelter.entity.ts so no behavior yet */}
+                        <Text style={styles.buttonText}>3.5+</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.contactButton}>
+                        <Text style={styles.buttonText}>4.0+</Text>
+                      </TouchableOpacity>
+                    </View>
               <Pressable
                 style={[styles.button, styles.buttonClose]}
                 onPress={() => setModalVisible(!modalVisible)}>
@@ -57,8 +77,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  mainHeading: {
+
+  },
   modalView: {
-    width: '90%',
+    width: '60%',
     margin: 20,
     backgroundColor: 'white',
     borderRadius: 20,
@@ -103,7 +126,71 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter',
     fontSize: 13,
     color: '#000000',
-  }
+  },
+  headerContainer: {
+    alignItems: 'center',
+    width: '100%',
+  },
+  headerText: {
+    fontFamily: 'Inter',
+    fontSize: 36,
+    fontWeight: '400',
+    lineHeight: 43.57,
+    textAlign: 'center',
+    color: '#1E1E1E',
+    marginBottom: 9,
+  },
+  headerDescription: {
+    fontFamily: 'Inter',
+    fontSize: 15,
+    fontWeight: '400',
+    lineHeight: 18.15,
+    textAlign: 'center',
+    color: '#1E1E1E',
+  },
+  buttonsContainer: {
+    marginTop: 4,
+    alignContent: 'center',
+    flexDirection: 'row',
+    width: '100%',
+    height: 35.61,
+  },
+  directionsButton: {
+    width: 156,
+    height: 42,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#000000',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  websiteButton: {
+    width: 156,
+    height: 42,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#000000',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 12,
+  },
+  contactButton: {
+    width: 156,
+    height: 42,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#000000',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 12,
+  },
+  buttonText: {
+    fontSize: 13,
+    fontFamily: 'Inter',
+    fontWeight: '400',
+    lineHeight: 15.73,
+    color: '#1E1E1E',
+  },
 });
 
 export default DropdownComponent;
