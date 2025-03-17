@@ -198,9 +198,9 @@ export class ShelterService {
     try {
       const data = await this.dynamoDbService.scanTable(
         this.tableName,
-        'shelterId = :id'
+        'shelterId = :shelterId',
+        { ':shelterId': { S: shelterId } }
       );
-      const shelter = data.find((item) => item.shelterId.S === shelterId);
       return this.shelterModelToOutput(data[0]);
     } catch (e) {
       throw new Error('Unable to get shelter: ' + e);
