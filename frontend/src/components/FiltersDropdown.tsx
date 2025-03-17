@@ -1,5 +1,6 @@
+import { bodyFont, darkMainColor } from '../../constants';
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import { MultiSelect } from 'react-native-element-dropdown';
 import {Modal, Text, Pressable} from 'react-native';
 import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
@@ -23,6 +24,26 @@ const DropdownComponent = () => {
 
 
   return (
+    <View>
+      <MultiSelect
+        style={styles.dropdown}
+        placeholderStyle={styles.placeholderStyle}
+        selectedTextStyle={styles.selectedTextStyle}
+        inputSearchStyle={styles.inputSearchStyle}
+        iconStyle={styles.iconStyle}
+        search
+        data={data}
+        labelField="label"
+        valueField="value"
+        placeholder="Filters"
+        searchPlaceholder="SEARCH"
+        value={selected}
+        onChange={(item) => {
+          // @ts-expect-error
+          setSelected(item);
+        }}
+      />
+    </View>
     <SafeAreaProvider>
       <SafeAreaView style={styles.centeredView}>
         <Modal
@@ -70,8 +91,35 @@ const DropdownComponent = () => {
 };
 
 
+const { width: screenWidth } = Dimensions.get('window');
+let dynamicTabletSizes: Record<string, number> = {};
+dynamicTabletSizes["dropdownWidth"] = 87;
+dynamicTabletSizes["dropdownHeight"] = 28;
+dynamicTabletSizes["dropdownBorderWidth"] = 1;
+dynamicTabletSizes["dropdownFontSize"] = 13;
+dynamicTabletSizes["customIconWidth"] = 10;
+dynamicTabletSizes["iconWidth"] = 20;
+
+if (screenWidth > 500) {
+  let widthRatio = screenWidth/500;
+  for (const key in dynamicTabletSizes) {
+    dynamicTabletSizes[key] = (dynamicTabletSizes[key]*widthRatio)
+  }
+}
 
 const styles = StyleSheet.create({
+  body: {
+    fontFamily: bodyFont,
+    fontWeight: '400',
+  },
+  dropdown: {
+    width: dynamicTabletSizes.dropdownWidth,
+    height: dynamicTabletSizes.dropdownHeight,
+    paddingRight: 9,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 4,
+    borderWidth: dynamicTabletSizes.dropdownBorderWidth,
+    borderColor: darkMainColor,
   centeredView: {
     flex: 1,
     justifyContent: 'center',
@@ -104,6 +152,11 @@ const styles = StyleSheet.create({
   buttonOpen: {
     backgroundColor: '#F194FF',
   },
+  placeholderStyle: {
+    fontFamily: bodyFont,
+    fontSize: dynamicTabletSizes.dropdownFontSize,
+    color: darkMainColor,
+    marginLeft: 16,
   buttonClose: {
     backgroundColor: '#2196F3',
   },
@@ -123,10 +176,23 @@ const styles = StyleSheet.create({
     color: '#BD2B34',
   },
   selectedTextStyle: {
-    fontFamily: 'Inter',
-    fontSize: 13,
-    color: '#000000',
+    fontFamily: bodyFont,
+    fontSize: dynamicTabletSizes.dropdownFontSize,
+    color: darkMainColor,
   },
+  inputSearchStyle: {
+    fontFamily: bodyFont,
+    fontSize: dynamicTabletSizes.dropdownFontSize,
+    color: darkMainColor,
+  },
+  customIcon: {
+    width: dynamicTabletSizes.customIconWidth,
+    height: dynamicTabletSizes.customIconWidth/2,
+  },
+  iconStyle: {
+    width: dynamicTabletSizes.iconWidth,
+    height: dynamicTabletSizes.iconWidth,
+    tintColor: darkMainColor
   headerContainer: {
     alignItems: 'center',
     width: '100%',

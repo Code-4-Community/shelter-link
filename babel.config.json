@@ -1,12 +1,5 @@
 {
-  "babelrcRoots": [
-    "*"
-  ],
-  "presets": [
-    "babel-preset-expo"
-  ],
-  "plugins": [
-    "expo-router/babel",
-    "react-native-reanimated/plugin"
-  ]
+  "babelrcRoots": ["*"],
+  "presets": ["babel-preset-expo"],
+  "plugins": ["react-native-reanimated/plugin"]
 }

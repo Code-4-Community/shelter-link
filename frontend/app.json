@@ -5,6 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -27,6 +28,19 @@
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
-    "plugins": []
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/IstokWebBold.ttf",
+            "./assets/fonts/IstokWebBoldItalic.ttf",
+            "./assets/fonts/IstokWebItalic.ttf",
+            "./assets/fonts/IstokWebRegular.ttf",
+            "./assets/fonts/JomhuriaRegular.ttf"
+          ]
+        }
+      ]
+    ]
   }
 }
