@@ -1,13 +1,13 @@
 import {
   Controller,
   Post,
-  Put,
   Body,
   Param,
-  Query,
   Get,
   Delete,
   NotFoundException,
+  HttpException,
+  HttpStatus,
   Patch,
 } from '@nestjs/common';
 import { NewShelterInput } from '../dtos/newShelterDTO';
@@ -20,7 +20,14 @@ export class ShelterController {
 
   @Post()
   public async postShelter(@Body() shelterData: NewShelterInput) {
-    return this.shelterService.postShelter(shelterData);
+    try {
+      return await this.shelterService.postShelter(shelterData);
+    } catch (error) {
+      throw new HttpException(
+        `Unable to create shelter: ${error.message}`,
+        HttpStatus.BAD_REQUEST
+      );
+    }
   }
 
   @Get()
