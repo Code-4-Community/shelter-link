@@ -14,7 +14,7 @@ import { NewShelterInput } from '../dtos/newShelterDTO';
 import { UpdateShelterInput } from '../dtos/updateShelterDTO';
 import { ShelterService } from './shelter.service';
 
-@Controller('shelter')
+@Controller('shelters')
 export class ShelterController {
   constructor(private readonly shelterService: ShelterService) {}
 
