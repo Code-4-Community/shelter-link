@@ -30,3 +30,24 @@ export type EventModel = {
   phone_number?: string;
   picture?: string[];
 };
+
+export type EventInputModel = {
+  eventId: { S: string };
+  event_name: { S: string };
+  description: { S: string };
+  date: { S: string };
+  host_name?: { S: string };
+  location?: {
+    M: {
+      street: { S: string };
+      city: { S: string };
+      state: { S: string };
+      zipCode: { S: string };
+      country?: { S: string };
+    };
+  };
+  website?: { S: string };
+  registration_link?: { S: string };
+  phone_number?: { S: string };
+  picture?: { SS: string[] };
+};
