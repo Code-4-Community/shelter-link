@@ -3,13 +3,19 @@ import { Injectable } from '@nestjs/common';
 import { DynamoDbService } from '../dynamodb';
 import { NewUserInput } from '../dtos/newUserDTO';
 import { UserInputModel } from './user.model';
-import * as AWS from 'aws-sdk';
-
-const cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider();
+import {
+  CognitoIdentityProviderClient,
+  AdminCreateUserCommand,
+  SignUpCommand,
+  AdminConfirmSignUpCommand,
+} from '@aws-sdk/client-cognito-identity-provider';
 
 @Injectable()
 export class UserService {
   private readonly tableName = 'shelterlinkUsers';
+  private cognitoClient = new CognitoIdentityProviderClient({
+    region: process.env.AWS_REGION,
+  });
   constructor(private readonly dynamoDbService: DynamoDbService) {}
 
   public async postUser(userData) {
@@ -31,7 +37,12 @@ export class UserService {
     userModel.userId.S = newId.toString();
 
     // Create Cognito User
-    await this.createCognitoUser(userData.email, userData.password);
+    await this.createCognitoUser(
+      userData.email,
+      userData.password,
+      userData.first_name,
+      userData.last_name
+    );
 
     // Save to DynamoDB
     await this.dynamoDbService.postItem(this.tableName, userModel);
@@ -56,7 +67,9 @@ export class UserService {
 
   private createCognitoUser = async (
     email: string,
-    password: string
+    password: string,
+    givenName: string,
+    familyName: string
   ): Promise<{ email: string }> => {
     const signUpParams = {
       ClientId: process.env.COGNITO_CLIENT_ID,
@@ -67,16 +80,25 @@ export class UserService {
           Name: 'email',
           Value: email,
         },
+        {
+          Name: 'given_name',
+          Value: givenName,
+        },
+        {
+          Name: 'family_name',
+          Value: familyName,
+        },
       ],
     };
-    await cognitoidentityserviceprovider.signUp(signUpParams).promise();
+    const signUpCommand = new SignUpCommand(signUpParams);
+    await this.cognitoClient.send(signUpCommand);
+
     const confirmParams = {
       UserPoolId: process.env.USER_POOL_ID,
       Username: email,
     };
-    await cognitoidentityserviceprovider
-      .adminConfirmSignUp(confirmParams)
-      .promise();
+    const confirmCommand = new AdminConfirmSignUpCommand(confirmParams);
+    await this.cognitoClient.send(confirmCommand);
     return {
       email,
     };
