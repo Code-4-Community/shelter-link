@@ -6,8 +6,9 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Image,
 } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   backgroundColor,
   headerFont,
@@ -38,11 +39,18 @@ type Props = NativeStackScreenProps<
 
 export const DetailedShelterView: React.FC<Props> = ({ route }) => {
   const { shelter } = route.params; // get shelter from route params
+  const [showHoursDropdown, setShowHoursDropdown] = useState(false);
 
   const [fonts] = useFonts({
     'IstokWebRegular': require('../../assets/fonts/IstokWebRegular.ttf'),
     'JomhuriaRegular': require('../../assets/fonts/JomhuriaRegular.ttf')
   });
+
+  // handle hours so drop down shows when button is clicked
+  const handleHours = () => {
+    setShowHoursDropdown(!showHoursDropdown);
+  };
+
 
   // for now, this redirects to google maps based on lat and long
   const handleDirections = () => {
@@ -119,55 +127,62 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
       <View style={styles.shelterNameContainer}>
         <Text style={styles.shelterNameText}>{shelter.name}</Text>
       </View>
+      <View style={styles.shelterDescriptionContainer}>
+        <Text style={styles.shelterDescriptionText}>{shelter.description}</Text>
+      </View>
       <View style={styles.quickInfoContainer}>
         {shelter.rating !== undefined && (
-          <Text style={styles.quickInfoText}>
-            {shelter.rating.toFixed(1)} ★ ★ ★ ★ ★
-          </Text>
-        )}
-        <Text style={styles.quickInfoText}>
-          {shelter.address.street}, {shelter.address.city},{' '}
-          {shelter.address.state}{' '}
-        </Text>
-
-        <View style={styles.hoursRow}>
-          <Text style={styles.dayText}>{getCurrentDay()}:</Text>
-          <View style={styles.hoursStatusContainer}>
-            <HoursDropdown
-              currentDay={getCurrentDay()}
-              currentHours={getCurrentDayHours()}
-              hoursData={hoursData}
-            />
+          <View style={styles.ratingContainer}>
+            <Text style={styles.quickInfoText}>
+              {shelter.rating.toFixed(1)} 
+            </Text>
+            <Image source={require('frontend/assets/teenyicons_star-solid.png')} />
+            <Text style={styles.quickInfoText}>
+              | {shelter.address.street}, {shelter.address.city}, {shelter.address.state}
+            </Text>
           </View>
-        </View>
+        )}
       </View>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
-          style={styles.button}
-          onPress={handleDirections}
+          style={[styles.button, shelter.website && styles.smallButton]}
+          onPress={handleHours}
         >
-          <Text style={styles.buttonText}>Directions</Text>
+          <Text style={styles.buttonText}>Hours</Text>
         </TouchableOpacity>
-        {shelter.website && (
+
+
           <TouchableOpacity
-            style={styles.button}
-            onPress={handleWebsite}
+          style={[styles.button, shelter.website && styles.smallButton]}
+          onPress={handleDirections}
           >
-            <Text style={styles.buttonText}>Website</Text>
+            <Text style={styles.buttonText}>Directions</Text>
           </TouchableOpacity>
-        )}
-        <TouchableOpacity style={styles.button} onPress={handleContact}>
-          <Text style={styles.buttonText}>Contact</Text>
-        </TouchableOpacity>
+
+          {shelter.website && (
+            <TouchableOpacity
+              style={styles.websiteButton}
+              onPress={handleWebsite}
+            >
+              <Text style={styles.buttonText}>Website</Text>
+            </TouchableOpacity>
+          )}
+
+          <TouchableOpacity           
+              style={[styles.button, shelter.website && styles.smallButton]}
+              onPress={handleContact}>
+             <Text style={styles.buttonText}>Contact</Text>
+          </TouchableOpacity>
       </View>
+
+      {showHoursDropdown && (
+        <View style={styles.allHoursContainer}>
+          <HoursDropdown currentDay={DayOfWeek.MONDAY} currentHours={getHoursForDay(DayOfWeek.MONDAY)} hoursData={hoursData} />
+        </View>
+      )}
+
       <View style={styles.imagesContainer}>
         <ImageGallery images={shelter.picture}/>
-      </View>
-      <Text style={styles.shelterDescription}>{shelter.description}</Text>
-      <View style={styles.fullReview}>
-        <View style={styles.fullReviewTitleContainer}>
-          <Text style={styles.fullReviewTitle}>BAGLY REVIEW</Text>
-        </View>
       </View>
     </SafeAreaView>
   );
@@ -209,8 +224,8 @@ const styles = StyleSheet.create({
   },
   shelterNameContainer: {
     width: '100%',
-    marginLeft: 14,
-    marginTop: 23,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   shelterNameText: {
     fontFamily: headerFont,
@@ -219,11 +234,29 @@ const styles = StyleSheet.create({
     lineHeight: dynamicTabletSizes.shelterNameTextHeight,
     color: darkMainColor,
   },
+  shelterDescriptionContainer: {
+    minHeight: 44,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  shelterDescriptionText: {
+    width: 340,
+    fontSize: 18,
+    fontFamily: bodyFont,
+    fontWeight: '600',
+    color: descriptionFontColor,
+    textAlign: 'left',
+  },
   quickInfoContainer: {
     width: '100%',
     height: 116,
     marginLeft: 12,
     marginTop: 6,
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   quickInfoText: {
     fontFamily: bodyFont,
@@ -232,6 +265,9 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     paddingBottom: dynamicTabletSizes.paddingBottom,
     lineHeight: dynamicTabletSizes.quickInfoLineHeight,
+  },
+  smallButton: {
+    width:  screenWidth/6, 
   },
   buttonsContainer: {
     flexDirection: 'row',
@@ -248,7 +284,21 @@ const styles = StyleSheet.create({
     marginLeft: screenWidth/32,
     marginRight: screenWidth/32,
     marginTop: 10,
-    borderColor: mainColor,
+    borderColor: descriptionFontColor,
+    backgroundColor: buttonBackgroundColor,
+    fontFamily: bodyFont,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  websiteButton: {
+    width: screenWidth/6,
+    height: screenHeight*0.04,
+    borderRadius: 4,
+    borderWidth: 1,
+    marginLeft: screenWidth/32,
+    marginRight: screenWidth/32,
+    marginTop: 10,
+    borderColor: descriptionFontColor,
     backgroundColor: buttonBackgroundColor,
     fontFamily: bodyFont,
     alignItems: 'center',
