@@ -129,24 +129,30 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
         )}
       </View>
       <View style={styles.buttonsContainer}>
-      <TouchableOpacity style={styles.hoursButton} onPress={handleHours}>
-            <Text style={styles.buttonText}>Hours</Text>
-        </TouchableOpacity>
         <TouchableOpacity
-          style={styles.directionsButton}
+          style={[styles.hoursButton, shelter.website && styles.smallButton]}
+          onPress={handleHours}
+        >
+          <Text style={styles.buttonText}>Hours</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.directionsButton, shelter.website && styles.smallButton]}
           onPress={handleDirections}
         >
           <Text style={styles.buttonText}>Directions</Text>
         </TouchableOpacity>
+
         {shelter.website && (
-          <TouchableOpacity
-            style={styles.websiteButton}
-            onPress={handleWebsite}
-          >
+          <TouchableOpacity style={styles.websiteButton} onPress={handleWebsite}>
             <Text style={styles.buttonText}>Website</Text>
           </TouchableOpacity>
         )}
-        <TouchableOpacity style={styles.contactButton} onPress={handleContact}>
+
+        <TouchableOpacity
+          style={[styles.contactButton, shelter.website && styles.smallButton]}
+          onPress={handleContact}
+        >
           <Text style={styles.buttonText}>Contact</Text>
         </TouchableOpacity>
       </View>
@@ -212,10 +218,14 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   buttonsContainer: {
-    marginLeft: 15,
     flexDirection: 'row',
     width: '100%',
     height: 35.61,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  smallButton: {
+    width: 80,
   },
   hoursButton: {
     width: 106,
@@ -241,7 +251,7 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   websiteButton: {
-    width: 115,
+    width: 80,
     height: 32,
     borderRadius: 4,
     borderWidth: 1,
