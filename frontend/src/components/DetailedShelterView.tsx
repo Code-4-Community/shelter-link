@@ -149,18 +149,18 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
           <Text style={styles.buttonText}>Directions</Text>
         </TouchableOpacity>
 
-        {shelter.website && (
-          <TouchableOpacity style={styles.websiteButton} onPress={handleWebsite}>
-            <Text style={styles.buttonText}>Website</Text>
-          </TouchableOpacity>
-        )}
-
         <TouchableOpacity
           style={[styles.contactButton, shelter.website && styles.smallButton]}
           onPress={handleContact}
         >
           <Text style={styles.buttonText}>Contact</Text>
         </TouchableOpacity>
+
+        {shelter.website && (
+          <TouchableOpacity style={styles.websiteButton} onPress={handleWebsite}>
+            <Text style={styles.buttonText}>Website</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {showHoursDropdown && (
