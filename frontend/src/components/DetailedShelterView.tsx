@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Image,
 } from 'react-native';
 import React, { useState } from 'react';
 import {
@@ -122,10 +123,15 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
       </View>
       <View style={styles.quickInfoContainer}>
         {shelter.rating !== undefined && (
-          <Text style={styles.quickInfoText}>
-            {shelter.rating.toFixed(1)} ★ | {shelter.address.street}, {shelter.address.city},{' '}
-            {shelter.address.state}{' '}
-          </Text>
+          <View style={styles.ratingContainer}>
+            <Text style={styles.quickInfoText}>
+              {shelter.rating.toFixed(1)} 
+            </Text>
+            <Image style={styles.starImage} source={require('frontend/assets/teenyicons_star-solid.png')} />
+            <Text style={styles.quickInfoText}>
+              | {shelter.address.street}, {shelter.address.city}, {shelter.address.state}
+            </Text>
+          </View>
         )}
       </View>
       <View style={styles.buttonsContainer}>
@@ -204,10 +210,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 24,
   },
+  starImage: {
+    marginTop: 15,
+  },
   quickInfoContainer: {
     width: '100%',
     minHeight: 44,
     marginLeft: 24,
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   quickInfoText: {
     fontFamily: bodyFont,
@@ -225,7 +238,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   smallButton: {
-    width: 80,
+    width: 80, 
   },
   hoursButton: {
     width: 106,
