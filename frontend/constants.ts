@@ -5,4 +5,4 @@ export const bodyFont = 'IstokWebRegular'; //Font family of body
 export const headerFont = 'JomhuriaRegular'; //Font family of header
 export const backgroundColor = '#E2E2F0'; //Background color of application
 export const buttonBackgroundColor = "#FFFFFF" //Background color for buttons (for now)
-export const descriptionFontColor = "1E1E1E" //Font color that is used for descriptions
+export const descriptionFontColor = "#000" //Font color that is used for descriptions
