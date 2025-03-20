@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     height: 32,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: mainColor,
+    borderColor: darkMainColor,
     backgroundColor: buttonBackgroundColor,
     fontFamily: bodyFont,
     alignItems: 'center',

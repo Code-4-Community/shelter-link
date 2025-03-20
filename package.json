@@ -67,9 +67,10 @@
     "class-validator": "^0.14.1",
     "cors": "^2.8.5",
     "expo": "52.0",
+    "expo-router": "~4.0.17",
     "expo-status-bar": "~1.12.1",
     "leaflet": "^1.9.4",
-    "react": "18.3.1",
+    "react": "^18.2.0",
     "react-dom": "18.3.1",
     "react-leaflet": "^4.2.1",
     "react-native": "0.76.2",
@@ -89,7 +90,6 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0",
     "tslib": "^2.3.0",
-    "typeorm": "^0.3.20",
-    "expo-router": "~4.0.17"
+    "typeorm": "^0.3.20"
   }
 }
