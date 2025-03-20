@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   backgroundColor,
   headerFont,
@@ -35,6 +35,12 @@ type Props = NativeStackScreenProps<
 
 export const DetailedShelterView: React.FC<Props> = ({ route }) => {
   const { shelter } = route.params; // get shelter from route params
+  const [showHoursDropdown, setShowHoursDropdown] = useState(false);
+
+  // handle hours so drop down shows when button is clicked
+  const handleHours = () => {
+    setShowHoursDropdown(!showHoursDropdown);
+  };
 
   // for now, this redirects to google maps based on lat and long
   const handleDirections = () => {
@@ -114,26 +120,15 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
       <View style={styles.quickInfoContainer}>
         {shelter.rating !== undefined && (
           <Text style={styles.quickInfoText}>
-            {shelter.rating.toFixed(1)} ★ ★ ★ ★ ★
+            {shelter.rating.toFixed(1)} ★ | {shelter.address.street}, {shelter.address.city},{' '}
+            {shelter.address.state}{' '}
           </Text>
         )}
-        <Text style={styles.quickInfoText}>
-          {shelter.address.street}, {shelter.address.city},{' '}
-          {shelter.address.state}{' '}
-        </Text>
-
-        <View style={styles.hoursRow}>
-          <Text style={styles.dayText}>{getCurrentDay()}:</Text>
-          <View style={styles.hoursStatusContainer}>
-            <HoursDropdown
-              currentDay={getCurrentDay()}
-              currentHours={getCurrentDayHours()}
-              hoursData={hoursData}
-            />
-          </View>
-        </View>
       </View>
       <View style={styles.buttonsContainer}>
+      <TouchableOpacity style={styles.hoursButton} onPress={handleHours}>
+            <Text style={styles.buttonText}>Hours</Text>
+        </TouchableOpacity>
         <TouchableOpacity
           style={styles.directionsButton}
           onPress={handleDirections}
@@ -152,14 +147,18 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
           <Text style={styles.buttonText}>Contact</Text>
         </TouchableOpacity>
       </View>
+
+      {showHoursDropdown && (
+        <View style={styles.allHoursContainer}>
+          <HoursDropdown currentDay={DayOfWeek.MONDAY} currentHours={getHoursForDay(DayOfWeek.MONDAY)} hoursData={hoursData} />
+        </View>
+      )}
+
       <View style={styles.images}>
         <ImageGallery images={shelter.picture} />
       </View>
       <Text style={styles.shelterDescription}>{shelter.description}</Text>
       <View style={styles.fullReview}>
-        <View style={styles.fullReviewTitleContainer}>
-          <Text style={styles.fullReviewTitle}>BAGLY REVIEW</Text>
-        </View>
       </View>
     </SafeAreaView>
   );
@@ -175,13 +174,16 @@ const styles = StyleSheet.create({
     width: '100%',
     marginLeft: 14,
     marginTop: 23,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   shelterNameText: {
     fontFamily: headerFont,
-    fontSize: 64,
+    fontSize: 36,
     fontWeight: '400',
     lineHeight: 64,
     color: darkMainColor,
+    textAlign: 'center',
   },
   quickInfoContainer: {
     width: '100%',
@@ -203,6 +205,17 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 35.61,
   },
+  hoursButton: {
+    width: 106,
+    height: 32,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: darkMainColor,
+    backgroundColor: buttonBackgroundColor,
+    fontFamily: bodyFont,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   directionsButton: {
     width: 106,
     height: 32,
@@ -213,6 +226,7 @@ const styles = StyleSheet.create({
     fontFamily: bodyFont,
     alignItems: 'center',
     justifyContent: 'center',
+    marginLeft: 12,
   },
   websiteButton: {
     width: 115,
