@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     fontFamily: bodyFont,
     fontWeight: '600',
     color: descriptionFontColor,
-    textAlign: 'center',
+    textAlign: 'left',
     marginTop: 24,
   },
   starImage: {
