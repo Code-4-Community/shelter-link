@@ -237,8 +237,9 @@ const styles = StyleSheet.create({
   shelterDescriptionContainer: {
     minHeight: 44,
     width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    paddingLeft: 24,
   },
   shelterDescriptionText: {
     width: 340,
@@ -250,9 +251,9 @@ const styles = StyleSheet.create({
   },
   quickInfoContainer: {
     width: '100%',
-    height: 116,
-    marginLeft: 12,
-    marginTop: 6,
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    paddingLeft: 24,
   },
   ratingContainer: {
     flexDirection: 'row',
@@ -274,7 +275,8 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     justifyContent: 'center',
     width: '100%',
-    height: screenHeight*0.06,
+    height: screenHeight*0.09,
+    marginTop: 24,
   },
   button: {
     width: screenWidth/4,
@@ -283,7 +285,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginLeft: screenWidth/32,
     marginRight: screenWidth/32,
-    marginTop: 10,
     borderColor: descriptionFontColor,
     backgroundColor: buttonBackgroundColor,
     fontFamily: bodyFont,
@@ -297,7 +298,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginLeft: screenWidth/32,
     marginRight: screenWidth/32,
-    marginTop: 10,
     borderColor: descriptionFontColor,
     backgroundColor: buttonBackgroundColor,
     fontFamily: bodyFont,
@@ -310,6 +310,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     lineHeight: dynamicTabletSizes.buttonLineHeight,
     color: darkMainColor,
+    textAlign: 'center',
   },
   imagesContainer: {
     paddingTop: screenHeight/28,
