@@ -117,6 +117,9 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
       <View style={styles.shelterNameContainer}>
         <Text style={styles.shelterNameText}>{shelter.name}</Text>
       </View>
+      <View style={styles.shelterDescriptionContainer}>
+        <Text style={styles.shelterDescriptionText}>{shelter.description}</Text>
+      </View>
       <View style={styles.quickInfoContainer}>
         {shelter.rating !== undefined && (
           <Text style={styles.quickInfoText}>
@@ -157,7 +160,6 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
       <View style={styles.images}>
         <ImageGallery images={shelter.picture} />
       </View>
-      <Text style={styles.shelterDescription}>{shelter.description}</Text>
       <View style={styles.fullReview}>
       </View>
     </SafeAreaView>
@@ -170,34 +172,44 @@ const styles = StyleSheet.create({
     backgroundColor: backgroundColor,
   },
   shelterNameContainer: {
-    height: 44,
+    minHeight: 44,
     width: '100%',
-    marginLeft: 14,
-    marginTop: 23,
     alignItems: 'center',
     justifyContent: 'center',
   },
   shelterNameText: {
     fontFamily: headerFont,
     fontSize: 36,
-    fontWeight: '400',
-    lineHeight: 64,
     color: darkMainColor,
+    fontWeight: 700,
+  },
+  shelterDescriptionContainer: {
+    minHeight: 44,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  shelterDescriptionText: {
+    width: 340,
+    fontSize: 18,
+    fontFamily: bodyFont,
+    fontWeight: '600',
+    color: descriptionFontColor,
     textAlign: 'center',
+    marginTop: 24,
   },
   quickInfoContainer: {
     width: '100%',
-    height: 116,
-    marginLeft: 12,
-    marginTop: 6,
+    minHeight: 44,
+    marginLeft: 24,
   },
   quickInfoText: {
     fontFamily: bodyFont,
     color: descriptionFontColor,
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '400',
-    paddingBottom: 4,
-    lineHeight: 21.59,
+    marginTop: 48,
+    marginBottom: 32,
   },
   buttonsContainer: {
     marginLeft: 15,
@@ -274,16 +286,6 @@ const styles = StyleSheet.create({
     marginRight: 22,
     borderColor: darkMainColor,
     backgroundColor: '#D9D9D9',
-  },
-  shelterDescription: {
-    width: 340,
-    marginLeft: 13,
-    marginTop: 19,
-    fontSize: 15,
-    fontFamily: bodyFont,
-    fontWeight: '400',
-    lineHeight: 21.59,
-    color: descriptionFontColor,
   },
   fullReview: {
     marginTop: 40,
