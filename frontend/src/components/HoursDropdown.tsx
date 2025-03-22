@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, Dimensions } from 'react-native';
 import { DayOfWeek } from '../types';
 import {
   bodyFont,
@@ -78,15 +78,34 @@ export const HoursDropdown = ({
   );
 };
 
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+let dynamicTabletSizes: Record<string, number> = {};
+dynamicTabletSizes["dropdownHeaderMinWidth"] = 120;
+dynamicTabletSizes["dropdownHeaderPaddingHorizontal"] = 12;
+dynamicTabletSizes["dropdownHeaderPaddingRight"] = 50;
+dynamicTabletSizes["currentHoursFontSize"] = 15;
+dynamicTabletSizes["currentHoursMarginRight"] = 8;
+dynamicTabletSizes["redArrowFontSize"] = 17;
+dynamicTabletSizes["dropdownContainerMinWidth"] = 200;
+dynamicTabletSizes["dropdownItemPadding"] = 12;
+dynamicTabletSizes["dropdownItemFontSize"] = 15;
+
+if (screenWidth > 500) {
+  let widthRatio = screenWidth/500;
+  for (const key in dynamicTabletSizes) {
+    dynamicTabletSizes[key] = (dynamicTabletSizes[key]*widthRatio)
+  }
+}
+
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
   },
   dropdownHeader: {
-    height: 36,
-    minWidth: 120,
-    paddingHorizontal: 12,
-    paddingRight: 50,
+    height: screenHeight*0.053,
+    minWidth: dynamicTabletSizes.dropdownHeaderMinWidth,
+    paddingHorizontal: dynamicTabletSizes.dropdownHeaderPaddingHorizontal,
+    paddingRight: dynamicTabletSizes.dropdownHeaderPaddingRight,
     justifyContent: 'center',
   },
   hoursStatusContainer: {
@@ -95,9 +114,9 @@ const styles = StyleSheet.create({
   },
   currentHours: {
     fontFamily: bodyFont,
-    fontSize: 15,
+    fontSize: dynamicTabletSizes.currentHoursFontSize,
     color: mainColor,
-    marginRight: 8,
+    marginRight: dynamicTabletSizes.currentHoursMarginRight,
   },
   closedText: {
     fontFamily: bodyFont,
@@ -106,7 +125,7 @@ const styles = StyleSheet.create({
   },
   redArrow: {
     color: darkMainColor,
-    fontSize: 17,
+    fontSize: dynamicTabletSizes.redArrowFontSize,
   },
   modalOverlay: {
     flex: 1,
@@ -117,8 +136,8 @@ const styles = StyleSheet.create({
     borderColor: mainColor,
     borderWidth: 1,
     borderRadius: 4,
-    marginTop: 4,
-    minWidth: 200,
+    marginTop: 5,
+    minWidth: dynamicTabletSizes.dropdownContainerMinWidth,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -129,13 +148,13 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   dropdownItem: {
-    padding: 12,
+    padding: dynamicTabletSizes.dropdownItemPadding,
     borderBottomWidth: 1,
     borderBottomColor: '#EEEEEE',
   },
   dropdownItemText: {
     fontFamily: bodyFont,
-    fontSize: 15,
+    fontSize: dynamicTabletSizes.dropdownItemFontSize,
     color: descriptionFontColor,
   },
 });

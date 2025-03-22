@@ -1,0 +1,249 @@
+{
+	"info": {
+		"_postman_id": "760c4d6b-a5ba-45d3-a96f-ecc9392aecfa",
+		"name": "Shelter Success Smoke",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41801404"
+	},
+	"item": [
+		{
+			"name": "postShelter",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"DynamoDB Metadata Status code is 200\", function () {\r",
+							"    pm.expect(pm.response.json().$metadata.httpStatusCode).to.equal(200);\r",
+							"});\r",
+							"// Store the id from the response in an environment variable\r",
+							"let responseData = pm.response.json();\r",
+							"pm.globals.set(\"postedItemId\", responseData.id);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n            \"name\": \"Curry Student Center\",\r\n            \"address\": {\r\n                \"street\": \"360 Huntington Ave\",\r\n                \"city\": \"Boston\",\r\n                \"state\": \"MA\",\r\n                \"zipCode\": \"02115\",\r\n                \"country\": \"United States\"\r\n            },\r\n            \"latitude\": 42.338925,\r\n            \"longitude\": -71.088128,\r\n            \"description\": \"The John A. and Marcia E. Curry Student Center is the crossroads for community life at Northeastern University, serving all members of the University\",\r\n            \"rating\": 4.6,\r\n            \"phone_number\": \"617-373-2000\",\r\n            \"email_address\": \"cie@northeastern.edu\",\r\n            \"website\": \"https://calendar.northeastern.edu/curry_student_center\",\r\n            \"hours\": {\r\n              \"Monday\": {\r\n                  \"opening_time\": \"07:00\",\r\n                  \"closing_time\": \"24:00\"\r\n              },\r\n              \"Tuesday\": null,\r\n              \"Wednesday\": {\r\n                  \"opening_time\": \"07:00\",\r\n                  \"closing_time\": \"24:00\"\r\n              },\r\n              \"Thursday\": {\r\n                  \"opening_time\": \"07:00\",\r\n                  \"closing_time\": \"24:00\"\r\n              },\r\n              \"Friday\": {\r\n                  \"opening_time\": \"07:00\",\r\n                  \"closing_time\": \"23:00\"\r\n              },\r\n              \"Saturday\": {\r\n                  \"opening_time\": \"08:00\",\r\n                  \"closing_time\": \"23:00\"\r\n              },\r\n              \"Sunday\": {\r\n                  \"opening_time\": \"10:00\",\r\n                  \"closing_time\": \"24:00\"\r\n              }\r\n            },\r\n            \"picture\": [\"https://th.bing.com/th/id/OIP.OqpRP8dl-udJN9VAHIiCUQHaE8?rs=1&pid=ImgDetMain\", \"https://mir-s3-cdn-cf.behance.net/project_modules/fs/bd609234077806.56c3572f1b380.jpg\", \"https://www.pcadesign.com/wp-content/uploads/NU-Curry-Dining_5-1536x1114.jpg\"]\r\n        }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://pzsmzmpeki.us-east-2.awsapprunner.com/shelter/",
+					"protocol": "https",
+					"host": [
+						"pzsmzmpeki",
+						"us-east-2",
+						"awsapprunner",
+						"com"
+					],
+					"path": [
+						"shelter",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getShelters",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://pzsmzmpeki.us-east-2.awsapprunner.com/shelter/",
+					"protocol": "https",
+					"host": [
+						"pzsmzmpeki",
+						"us-east-2",
+						"awsapprunner",
+						"com"
+					],
+					"path": [
+						"shelter",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateShelters",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"DynamoDB Metadata Status code is 200\", function () {\r",
+							"    pm.expect(pm.response.json().result.$metadata.httpStatusCode).to.equal(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Curry Student Center\",\r\n  \"address\": {\r\n      \"street\": \"360 Huntington Ave\",\r\n      \"city\": \"Boston\",\r\n      \"state\": \"MA\",\r\n      \"zipCode\": \"02115\",\r\n      \"country\": \"United States\"\r\n  },\r\n  \"latitude\": 42.338925,\r\n  \"longitude\": -71.088128,\r\n  \"description\": \"The John A. and Marcia E. Curry Student Center is the crossroads for community life at Northeastern University, serving all members of the University\",\r\n  \"rating\": 4.6,\r\n  \"phone_number\": \"617-373-2000\",\r\n  \"email_address\": \"cie@northeastern.edu\",\r\n  \"website\": \"https://calendar.northeastern.edu/curry_student_center\",\r\n  \"hours\": {\r\n    \"Monday\": {\r\n        \"opening_time\": \"07:00\",\r\n        \"closing_time\": \"24:00\"\r\n    },\r\n    \"Wednesday\": {\r\n        \"opening_time\": \"07:00\",\r\n        \"closing_time\": \"24:00\"\r\n    },\r\n    \"Thursday\": {\r\n        \"opening_time\": \"07:00\",\r\n        \"closing_time\": \"24:00\"\r\n    },\r\n    \"Friday\": {\r\n        \"opening_time\": \"07:00\",\r\n        \"closing_time\": \"23:00\"\r\n    },\r\n    \"Saturday\": {\r\n        \"opening_time\": \"08:00\",\r\n        \"closing_time\": \"23:00\"\r\n    },\r\n    \"Sunday\": {\r\n        \"opening_time\": \"10:00\",\r\n        \"closing_time\": \"24:00\"\r\n    }\r\n  },\r\n  \"picture\": [\"https://th.bing.com/th/id/OIP.OqpRP8dl-udJN9VAHIiCUQHaE8?rs=1&pid=ImgDetMain\", \"https://mir-s3-cdn-cf.behance.net/project_modules/fs/bd609234077806.56c3572f1b380.jpg\", \"https://www.pcadesign.com/wp-content/uploads/NU-Curry-Dining_5-1536x1114.jpg\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://pzsmzmpeki.us-east-2.awsapprunner.com/shelter/{{postedItemId}}",
+					"protocol": "https",
+					"host": [
+						"pzsmzmpeki",
+						"us-east-2",
+						"awsapprunner",
+						"com"
+					],
+					"path": [
+						"shelter",
+						"{{postedItemId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getShelter",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://pzsmzmpeki.us-east-2.awsapprunner.com/shelter/{{postedItemId}}",
+					"protocol": "https",
+					"host": [
+						"pzsmzmpeki",
+						"us-east-2",
+						"awsapprunner",
+						"com"
+					],
+					"path": [
+						"shelter",
+						"{{postedItemId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteShelter",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Message contains correct shelterId\", function () {\r",
+							"    pm.expect(pm.response.json().message).to.equal(`Shelter with ID ${pm.variables.get(\"postedItemId\")} deleted successfully.`);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://pzsmzmpeki.us-east-2.awsapprunner.com/shelter/{{postedItemId}}",
+					"protocol": "https",
+					"host": [
+						"pzsmzmpeki",
+						"us-east-2",
+						"awsapprunner",
+						"com"
+					],
+					"path": [
+						"shelter",
+						"{{postedItemId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
