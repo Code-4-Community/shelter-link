@@ -49,5 +49,5 @@ export type EventInputModel = {
   website?: { S: string };
   registration_link?: { S: string };
   phone_number?: { S: string };
-  picture?: { SS: string[] };
+  picture?: { L: { S: string }[] };
 };
