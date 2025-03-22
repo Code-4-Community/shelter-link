@@ -16,4 +16,4 @@ jobs:
         run: npm install -g newman
 
       - name: Run Postman Collection
-        run: newman run Shelter_Smoke_Tests.json
+        run: newman run "https://api.getpostman.com/collections/41801404-7648a47f-e23c-453c-af31-0bfde32e1839?apikey=${{ secrets.POSTMAN_API_KEY }}"
