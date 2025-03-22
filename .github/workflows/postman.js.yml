@@ -6,12 +6,14 @@ on:
     branches: [ "main" ]
 
 jobs:
-  call_postman_api:
+  run_postman_collection:
     runs-on: ubuntu-latest
-    env:
-      POSTMAN_API_KEY: "YOUR_POSTMAN_API_KEY"
     steps:
-      - name: Call Postman API
-        run: |
-          curl --request GET "https://api.getpostman.com/collections" \
-               --header "X-Api-Key: $POSTMAN_API_KEY"
+      - name: Clear GitHub Actions Cache
+        run: rm -rf ~/.postman
+        
+      - name: Install Newman
+        run: npm install -g newman
+
+      - name: Run Postman Collection
+        run: newman run Shelter_Smoke_Tests.json
