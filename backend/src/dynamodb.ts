@@ -411,6 +411,14 @@ export class DynamoDbService {
     }
   }
 
+  /**
+   * Checks if an email already exists in the specified table. This method is used to ensure
+   * that emails are unique across the application.
+   *
+   * @param tableName - The name of the table to check for the email.
+   * @param email - The email to check for uniqueness.
+   * @returns True if the email exists, false otherwise.
+   */
   public async checkIfEmailExists(
     tableName: string,
     email: string
@@ -430,6 +438,40 @@ export class DynamoDbService {
     } catch (error) {
       console.error('Error checking email uniqueness:', error);
       throw new Error('Unable to check email uniqueness.');
+    }
+  }
+
+  /**
+   * Queries a table in DynamoDB using the specified key condition expression and expression attribute values.
+   *
+   * @param tableName - The name of the table to query.
+   * @param keyConditionExpression - The key condition expression for the query.
+   * @param expressionAttributeValues - The expression attribute values for the query.
+   * @param indexName - The name of the index to use for the query.
+   * @returns The items returned by the query.
+   */
+  public async queryTable(
+    tableName: string,
+    keyConditionExpression: string,
+    expressionAttributeValues: { [key: string]: any },
+    indexName?: string
+  ): Promise<any[]> {
+    const params = {
+      TableName: tableName,
+      KeyConditionExpression: keyConditionExpression,
+      ExpressionAttributeValues: expressionAttributeValues,
+    };
+
+    if (indexName) {
+      params['IndexName'] = indexName;
+    }
+
+    try {
+      const data = await this.dynamoDbClient.send(new QueryCommand(params));
+      return data.Items || [];
+    } catch (error) {
+      console.error('DynamoDB Query Error:', error);
+      throw new Error(`Unable to query table ${tableName}`);
     }
   }
 }

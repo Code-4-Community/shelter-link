@@ -16,6 +16,16 @@ export type UserModel = {
   created_at: string;
 };
 
+/**
+ * Represents the schema of a user suitable for DynamoDB.
+ *
+ * @property userId - The unique identifier of the user.
+ * @property first_name - The first name of the user.
+ * @property last_name - The last name of the user.
+ * @property email - The email of the user.
+ * @property created_at - The date and time the user was created.
+ *
+ */
 export type UserInputModel = {
   userId: { S: string };
   first_name: { S: string };

@@ -4,9 +4,11 @@ import {
   HttpException,
   Post,
   Body,
+  Get,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { NewUserInput } from '../dtos/newUserDTO';
+import { LoginUserRequest } from '../types';
 
 @Controller('users')
 export class UserController {
@@ -19,6 +21,18 @@ export class UserController {
     } catch (error) {
       throw new HttpException(
         `Unable to create user: ${error.message}`,
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
+  @Get('/login')
+  public async loginUser(@Body() loginData: LoginUserRequest) {
+    try {
+      return await this.userService.loginUser(loginData);
+    } catch (error) {
+      throw new HttpException(
+        `Unable to login user: ${error.message}`,
         HttpStatus.BAD_REQUEST
       );
     }

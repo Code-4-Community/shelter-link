@@ -2,13 +2,14 @@ import { Injectable } from '@nestjs/common';
 
 import { DynamoDbService } from '../dynamodb';
 import { NewUserInput } from '../dtos/newUserDTO';
-import { UserInputModel } from './user.model';
+import { UserInputModel, UserModel } from './user.model';
 import {
   CognitoIdentityProviderClient,
-  AdminCreateUserCommand,
   SignUpCommand,
   AdminConfirmSignUpCommand,
+  InitiateAuthCommand,
 } from '@aws-sdk/client-cognito-identity-provider';
+import { LoginUserRequest } from '../types';
 
 @Injectable()
 export class UserService {
@@ -16,9 +17,14 @@ export class UserService {
   private cognitoClient = new CognitoIdentityProviderClient({
     region: process.env.AWS_REGION,
   });
+
   constructor(private readonly dynamoDbService: DynamoDbService) {}
 
-  public async postUser(userData) {
+  /**
+   * Creates a new user in the database.
+   * @param userData The data of the new user, including email, first and last name, and password
+   */
+  public async postUser(userData: NewUserInput): Promise<void> {
     // Make sure email is unique
     const existingUser = await this.dynamoDbService.checkIfEmailExists(
       this.tableName,
@@ -65,6 +71,14 @@ export class UserService {
     return newUserModel;
   };
 
+  /**
+   * Creates a new user in Cognito.
+   * @param email The email of the new user.
+   * @param password The password of the new user.
+   * @param givenName The first name of the new user.
+   * @param familyName The last name of the new user.
+   * @returns The email of the new user.
+   */
   private createCognitoUser = async (
     email: string,
     password: string,
@@ -103,4 +117,41 @@ export class UserService {
       email,
     };
   };
+
+  /**
+   * Logs in an existing user. Throws an error if the user is not found or the password is incorrect.
+   *
+   * @param loginData The data of the user to log in, including email and password.
+   */
+  public async loginUser(loginData: LoginUserRequest): Promise<UserModel> {
+    try {
+      const input = {
+        ClientId: process.env.COGNITO_CLIENT_ID,
+        AuthFlow: 'USER_PASSWORD_AUTH' as const,
+        AuthParameters: {
+          USERNAME: loginData.body.email,
+          PASSWORD: loginData.body.password,
+        },
+      };
+
+      const command = new InitiateAuthCommand(input);
+      await this.cognitoClient.send(command);
+    } catch (error) {
+      throw new Error(error + 'Invalid email or password');
+    }
+
+    const queryResult = await this.dynamoDbService.queryTable(
+      this.tableName,
+      'email = :email',
+      { ':email': { S: loginData.body.email } },
+      'email-index'
+    );
+
+    if (queryResult.length === 0) {
+      throw new Error('User not found');
+    }
+
+    const user = queryResult[0] as UserModel;
+    return user;
+  }
 }
