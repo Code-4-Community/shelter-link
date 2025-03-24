@@ -27,8 +27,7 @@ export const CompleteMap = () => {
   const [query, setQuery] = useState('');
 
   useFonts({
-    IstokWebRegular: require('../../assets/fonts/IstokWebRegular.ttf'),
-    JomhuriaRegular: require('../../assets/fonts/JomhuriaRegular.ttf'),
+    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Regular.otf'),
   });
 
   const fetchShelters = async () => {
@@ -42,7 +41,7 @@ export const CompleteMap = () => {
   };
 
   useFonts({
-    'AvenirNext': require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
+    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
 
   useEffect(() => {
@@ -85,15 +84,12 @@ export const CompleteMap = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.searchBarContainer}>
-        <SearchBar onSearch={setQuery} />
-      </View>
       <View style={styles.headerContainer}>
         <Header />
       </View>
       <View style={styles.filtersDropdownContainer}>
         <FiltersDropdown />
-        <SearchBar />
+        <SearchBar onSearch={setQuery} />
       </View>
       <Map onMarkerPress={handleMarkerPress} />
       <BottomSheet
@@ -147,7 +143,7 @@ const styles = StyleSheet.create({
     paddingBottom: '7%',
   },
   filtersDropdownContainer: {
-    width: '100%', 
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

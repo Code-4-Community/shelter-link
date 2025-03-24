@@ -1,14 +1,20 @@
-import { backgroundColor, bodyFont, darkMainColor } from '../../constants';
+import { backgroundColor } from '../../constants';
 import React from 'react';
-import { StyleSheet, View, Image, TouchableOpacity, Dimensions } from 'react-native';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import {
+  StyleSheet,
+  View,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../app/App';
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+type AppNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const Logo: React.FC = () => {
-  const navigation = useNavigation<NavigationProp>();
+  const navigation = useNavigation<AppNavigationProp>();
 
   return (
     <View style={styles.container}>
@@ -28,8 +34,8 @@ let imageWidth = 41;
 let imageHeight = 37;
 
 if (screenWidth > 500) {
-  imageWidth = imageWidth * (screenWidth/500)
-  imageHeight = imageHeight * (screenWidth/500)
+  imageWidth = imageWidth * (screenWidth / 500);
+  imageHeight = imageHeight * (screenWidth / 500);
 }
 
 const styles = StyleSheet.create({

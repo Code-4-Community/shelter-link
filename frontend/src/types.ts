@@ -16,6 +16,7 @@ export enum DayOfWeek {
  *
  * shelterId - The unique identifier of the shelter.
  * name - The name of the shelter.
+ * expanded_name - The expanded name of the shelter.
  * address - The address of the shelter.
  * latitude - The latitude of the shelter.
  * longitude - The longitude of the shelter.
@@ -31,6 +32,7 @@ export enum DayOfWeek {
  */
 export type Shelter = {
   shelterId: string;
+  expanded_name?: string;
   name: string;
   address: {
     street: string;

@@ -5,7 +5,7 @@ import { Text, StyleSheet, View, Dimensions } from 'react-native';
 
 const Header = () => {
   useFonts({
-    'AvenirNext': require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
+    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
 
   return (
@@ -46,9 +46,9 @@ const styles = StyleSheet.create({
   },
   headerDescription: {
     fontFamily: bodyFont,
-    fontSize: dynamicTabletSizes.headerDescriptionSize,
+    fontSize: headerDescriptionSize,
     fontWeight: '400',
-    lineHeight: dynamicTabletSizes.headerDescriptionHeight,
+    lineHeight: headerDescriptionHeight,
     textAlign: 'center',
     color: '#1E1E1E',
   },

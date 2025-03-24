@@ -1,5 +1,12 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image, Dimensions } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  Dimensions,
+} from 'react-native';
 import { bodyFont, darkMainColor } from '../../constants';
 import { NewShelterInput } from '../../../backend/src/dtos/newShelterDTO';
 import { useNavigation } from '@react-navigation/native';
@@ -23,13 +30,12 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const ShelterInfoPanel = ({ shelter, style }: ShelterInfoPanelProps) => {
   useFonts({
-    'AvenirNext': require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
+    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
 
   const navigation = useNavigation<NavigationProp>();
-  const [fonts] = useFonts({
-    'IstokWebRegular': require('../../assets/fonts/IstokWebRegular.ttf'),
-    'JomhuriaRegular': require('../../assets/fonts/JomhuriaRegular.ttf')
+  useFonts({
+    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Regular.otf'),
   });
 
   const formatAddress = (address: any) => {
@@ -53,13 +59,16 @@ const ShelterInfoPanel = ({ shelter, style }: ShelterInfoPanelProps) => {
         </View>
       </View>
       <Text style={styles.shelterName}>{shelter.name}</Text>
-      <Text style={styles.shelterNameExpansion}>Expansion Name Placeholder</Text>
+      {shelter.expanded_name && (
+        <Text style={styles.shelterNameExpansion}>{shelter.expanded_name}</Text>
+      )}
       <Text style={{ ...styles.shelterAddressDistance, alignItems: 'center' }}>
-      {shelter.rating}{' '}
+        {shelter.rating}{' '}
         <Image
           style={styles.starIcon}
           source={require('../../assets/starIcon.png')}
-        ></Image> | {formatAddress(shelter.address)} | 2 mi
+        ></Image>{' '}
+        | {formatAddress(shelter.address)} | 2 mi
       </Text>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
@@ -88,7 +97,6 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 const panelWidth = screenWidth * 0.85;
 const panelHeight = (230 / 332) * panelWidth;
 
-
 let panelBorderWidth = 2;
 let shelterNameFontSize = 20;
 let descriptionFontSize = 12;
@@ -105,11 +113,12 @@ if (screenWidth > 500) {
   descriptionFontSize = descriptionFontSize * (screenHeight / 500);
   buttonFontSize = buttonFontSize * (screenHeight / 500);
   shelterNameLineHeight = shelterNameLineHeight * (screenHeight / 500);
-  shelterAddressDistanceLineHeight = shelterAddressDistanceLineHeight * (screenWidth / 500);
+  shelterAddressDistanceLineHeight =
+    shelterAddressDistanceLineHeight * (screenWidth / 500);
   buttonTextLineHeight = buttonTextLineHeight * (screenHeight / 500);
   buttonBorderWidth = buttonBorderWidth * (screenWidth / 500);
   shelterNameMarginTop = shelterNameMarginTop * (screenHeight / 500);
-  iconWidth = iconWidth * (screenWidth / 500)
+  iconWidth = iconWidth * (screenWidth / 500);
 }
 
 const styles = StyleSheet.create({
@@ -151,16 +160,16 @@ const styles = StyleSheet.create({
     fontFamily: bodyFont,
     fontWeight: '500',
     lineHeight: shelterNameLineHeight,
-    color: darkMainColor
+    color: darkMainColor,
   },
   shelterNameExpansion: {
-    marginTop: shelterNameMarginTop*0.8,
+    marginTop: shelterNameMarginTop * 0.8,
     paddingLeft: panelWidth * 0.045,
     fontWeight: '500',
     fontSize: descriptionFontSize,
   },
   shelterAddressDistance: {
-    marginTop: shelterNameMarginTop*0.8,
+    marginTop: shelterNameMarginTop * 0.8,
     paddingLeft: panelWidth * 0.045,
     fontSize: descriptionFontSize,
     fontFamily: bodyFont,

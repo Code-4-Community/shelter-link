@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { Image, TextInput, StyleSheet, View, Dimensions } from 'react-native';
-import { bodyFont, darkMainColor, mainColor } from '../../constants'
+import { bodyFont, darkMainColor, mainColor } from '../../constants';
 import { useFonts } from 'expo-font';
 
-const SearchBar = () => {
+const SearchBar = ({
+  onSearch,
+}: {
+  onSearch: (searchQuery: string) => void;
+}) => {
   useFonts({
-    'AvenirNext': require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
+    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
-  
+
   const [isTyping, setIsTyping] = useState(false);
   const [query, setQuery] = useState('');
 
@@ -25,6 +29,7 @@ const SearchBar = () => {
         style={[
           styles.searchInput,
           {
+            opacity: isTyping ? 1 : 0.6,
             color: mainColor,
           },
         ]}
@@ -44,7 +49,7 @@ const { width: screenWidth } = Dimensions.get('window');
 let searchBarHeight = 28;
 let searchBarBorderWidth = 1;
 let searchBarPaddingTop = 1;
-let searchInputFontSize = 13
+let searchInputFontSize = 13;
 let searchInputPaddingTop = 2;
 let iconWidth = 11;
 if (screenWidth > 500) {
@@ -53,7 +58,7 @@ if (screenWidth > 500) {
   searchBarPaddingTop = searchBarBorderWidth * (screenWidth / 500);
   searchInputFontSize = searchInputFontSize * (screenWidth / 500);
   searchInputPaddingTop = searchInputPaddingTop * (screenWidth / 500);
-  iconWidth = iconWidth * (screenWidth / 500)
+  iconWidth = iconWidth * (screenWidth / 500);
 }
 
 const styles = StyleSheet.create({
