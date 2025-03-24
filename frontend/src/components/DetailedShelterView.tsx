@@ -51,7 +51,6 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
     setShowHoursDropdown(!showHoursDropdown);
   };
 
-
   // for now, this redirects to google maps based on lat and long
   const handleDirections = () => {
     const url = `https://www.google.com/maps/dir/?api=1&destination=${shelter.latitude},${shelter.longitude}`;
@@ -127,9 +126,7 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
       <View style={styles.shelterNameContainer}>
         <Text style={styles.shelterNameText}>{shelter.name}</Text>
       </View>
-      <View style={styles.shelterDescriptionContainer}>
-        <Text style={styles.shelterDescriptionText}>{shelter.description}</Text>
-      </View>
+    
       <View style={styles.quickInfoContainer}>
         {shelter.rating !== undefined && (
           <View style={styles.ratingContainer}>
@@ -143,6 +140,7 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
           </View>
         )}
       </View>
+
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
           style={[styles.button, shelter.website && styles.smallButton]}
@@ -183,6 +181,10 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
 
       <View style={styles.imagesContainer}>
         <ImageGallery images={shelter.picture}/>
+      </View>
+
+      <View style={styles.shelterDescriptionContainer}>
+        <Text style={styles.shelterDescriptionText}>{shelter.description}</Text>
       </View>
     </SafeAreaView>
   );
