@@ -3,6 +3,7 @@ import { DayOfWeek } from '../types';
 export type NewShelterInput = {
   // shelterId: string; // auto generated
   name: string;
+  expanded_name?: string;
   address: {
     street: string;
     city: string;

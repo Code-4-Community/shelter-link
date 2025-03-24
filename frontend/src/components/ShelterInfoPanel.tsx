@@ -27,6 +27,10 @@ const ShelterInfoPanel = ({ shelter, style }: ShelterInfoPanelProps) => {
   });
 
   const navigation = useNavigation<NavigationProp>();
+  const [fonts] = useFonts({
+    'IstokWebRegular': require('../../assets/fonts/IstokWebRegular.ttf'),
+    'JomhuriaRegular': require('../../assets/fonts/JomhuriaRegular.ttf')
+  });
 
   const formatAddress = (address: any) => {
     return `${address.street}, ${address.city}, ${address.state}`;
@@ -83,6 +87,7 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 const panelWidth = screenWidth * 0.85;
 const panelHeight = (230 / 332) * panelWidth;
+
 
 let panelBorderWidth = 2;
 let shelterNameFontSize = 20;

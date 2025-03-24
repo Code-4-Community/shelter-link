@@ -7,8 +7,13 @@ const SearchBar = () => {
   useFonts({
     'AvenirNext': require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
-
+  
   const [isTyping, setIsTyping] = useState(false);
+  const [query, setQuery] = useState('');
+
+  const handleSearch = () => {
+    onSearch(query);
+  };
 
   return (
     <View style={styles.searchBar}>
@@ -24,8 +29,12 @@ const SearchBar = () => {
           },
         ]}
         placeholder="Search"
-        placeholderTextColor={darkMainColor} // Use mainColor for placeholder text
-        onChangeText={(text) => setIsTyping(text.length > 0)}
+        placeholderTextColor={darkMainColor}
+        onChangeText={(text) => {
+          setIsTyping(text.length > 0);
+          setQuery(text);
+        }}
+        onSubmitEditing={handleSearch}
       />
     </View>
   );

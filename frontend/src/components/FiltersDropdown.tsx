@@ -44,12 +44,14 @@ const DropdownComponent = () => {
   );
 };
 const { width: screenWidth } = Dimensions.get('window');
-let dropdownWidth = 87;
-let dropdownHeight = 28;
-let dropdownBorderWidth = 1;
-let dropdownFontSize = 13;
-let customIconWidth = 10;
-let iconWidth = 20;
+let dynamicTabletSizes: Record<string, number> = {};
+dynamicTabletSizes["dropdownWidth"] = 87;
+dynamicTabletSizes["dropdownHeight"] = 28;
+dynamicTabletSizes["dropdownBorderWidth"] = 1;
+dynamicTabletSizes["dropdownFontSize"] = 13;
+dynamicTabletSizes["customIconWidth"] = 10;
+dynamicTabletSizes["iconWidth"] = 20;
+
 if (screenWidth > 500) {
   dropdownWidth = dropdownWidth * (screenWidth / 500);
   dropdownHeight = dropdownHeight * (screenWidth / 500);
@@ -65,8 +67,8 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   dropdown: {
-    width: dropdownWidth,
-    height: dropdownHeight,
+    width: dynamicTabletSizes.dropdownWidth,
+    height: dynamicTabletSizes.dropdownHeight,
     paddingRight: 9,
     backgroundColor: '#FFFFFF',
     borderRadius: 6,
@@ -74,18 +76,18 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     fontFamily: bodyFont,
-    fontSize: dropdownFontSize,
+    fontSize: dynamicTabletSizes.dropdownFontSize,
     color: darkMainColor,
     marginLeft: 16,
   },
   selectedTextStyle: {
     fontFamily: bodyFont,
-    fontSize: dropdownFontSize,
+    fontSize: dynamicTabletSizes.dropdownFontSize,
     color: darkMainColor,
   },
   inputSearchStyle: {
     fontFamily: bodyFont,
-    fontSize: dropdownFontSize,
+    fontSize: dynamicTabletSizes.dropdownFontSize,
     color: darkMainColor,
   },
   customIcon: {
@@ -93,8 +95,8 @@ const styles = StyleSheet.create({
     height: customIconWidth / 2,
   },
   iconStyle: {
-    width: iconWidth,
-    height: iconWidth,
+    width: dynamicTabletSizes.iconWidth,
+    height: dynamicTabletSizes.iconWidth,
     tintColor: darkMainColor
   },
 });

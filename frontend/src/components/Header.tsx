@@ -46,9 +46,9 @@ const styles = StyleSheet.create({
   },
   headerDescription: {
     fontFamily: bodyFont,
-    fontSize: headerDescriptionSize,
+    fontSize: dynamicTabletSizes.headerDescriptionSize,
     fontWeight: '400',
-    lineHeight: headerDescriptionHeight,
+    lineHeight: dynamicTabletSizes.headerDescriptionHeight,
     textAlign: 'center',
     color: '#1E1E1E',
   },
