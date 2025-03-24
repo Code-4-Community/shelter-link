@@ -133,7 +133,10 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
             <Text style={styles.quickInfoText}>
               {shelter.rating.toFixed(1)} 
             </Text>
-            <Image source={require('frontend/assets/teenyicons_star-solid.png')} />
+            <Image 
+              source={require('frontend/assets/teenyicons_star-solid.png')} 
+              style={styles.starIcon}
+            />            
             <Text style={styles.quickInfoText}>
               | {shelter.address.street}, {shelter.address.city}, {shelter.address.state}
             </Text>
@@ -260,6 +263,11 @@ const styles = StyleSheet.create({
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  starIcon: {
+    marginLeft: 4,
+    marginRight: 4,
+    marginBottom: 3,
   },
   quickInfoText: {
     fontFamily: bodyFont,
