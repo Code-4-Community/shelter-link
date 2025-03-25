@@ -10,6 +10,7 @@ import {
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { HoursUpdateModel } from './shelter/shelter.model';
 import { DayOfWeek } from './types';
+import exp from 'constants';
 
 @Injectable()
 export class DynamoDbService {
