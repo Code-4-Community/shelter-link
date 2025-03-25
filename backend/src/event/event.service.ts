@@ -26,7 +26,7 @@ export class EventService {
     try {
       const eventModel = this.postInputToEventModel(eventData);
       const newId =
-        ((await this.dynamoDbService.getHighestShelterId(this.tableName)) ??
+        ((await this.dynamoDbService.getHighestId(this.tableName, 'eventId')) ??
           0) + 1;
       eventModel.eventId.S = newId.toString();
 
