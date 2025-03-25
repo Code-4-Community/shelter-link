@@ -41,14 +41,14 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
   const [showHoursDropdown, setShowHoursDropdown] = useState(false);
 
   useFonts({
-    'AvenirNext': require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
+    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
 
   // handle hours so drop down shows when button is clicked
   const handleHours = () => {
     setShowHoursDropdown(!showHoursDropdown);
   };
-  
+
   // for now, this redirects to google maps based on lat and long
   const handleDirections = () => {
     const url = `https://www.google.com/maps/dir/?api=1&destination=${shelter.latitude},${shelter.longitude}`;
@@ -124,19 +124,20 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
       <View style={styles.shelterNameContainer}>
         <Text style={styles.shelterNameText}>{shelter.name}</Text>
       </View>
-    
+
       <View style={styles.quickInfoContainer}>
         {shelter.rating !== undefined && (
           <View style={styles.ratingContainer}>
             <Text style={styles.quickInfoText}>
-              {shelter.rating.toFixed(1)} 
+              {shelter.rating.toFixed(1)}
             </Text>
-            <Image 
-              source={require('frontend/assets/teenyicons_star-solid.png')} 
+            <Image
+              source={require('frontend/assets/teenyicons_star-solid.png')}
               style={styles.starIcon}
-            />            
+            />
             <Text style={styles.quickInfoText}>
-              | {shelter.address.street}, {shelter.address.city}, {shelter.address.state}
+              | {shelter.address.street}, {shelter.address.city},{' '}
+              {shelter.address.state}
             </Text>
           </View>
         )}
@@ -150,38 +151,42 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
           <Text style={styles.buttonText}>Hours</Text>
         </TouchableOpacity>
 
-
-          <TouchableOpacity
+        <TouchableOpacity
           style={[styles.button, shelter.website && styles.smallButton]}
           onPress={handleDirections}
+        >
+          <Text style={styles.buttonText}>Directions</Text>
+        </TouchableOpacity>
+
+        {shelter.website && (
+          <TouchableOpacity
+            style={styles.websiteButton}
+            onPress={handleWebsite}
           >
-            <Text style={styles.buttonText}>Directions</Text>
+            <Text style={styles.buttonText}>Website</Text>
           </TouchableOpacity>
+        )}
 
-          {shelter.website && (
-            <TouchableOpacity
-              style={styles.websiteButton}
-              onPress={handleWebsite}
-            >
-              <Text style={styles.buttonText}>Website</Text>
-            </TouchableOpacity>
-          )}
-
-          <TouchableOpacity           
-              style={[styles.button, shelter.website && styles.smallButton]}
-              onPress={handleContact}>
-             <Text style={styles.buttonText}>Contact</Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, shelter.website && styles.smallButton]}
+          onPress={handleContact}
+        >
+          <Text style={styles.buttonText}>Contact</Text>
+        </TouchableOpacity>
       </View>
 
       {showHoursDropdown && (
         <View style={styles.allHoursContainer}>
-          <HoursDropdown currentDay={DayOfWeek.MONDAY} currentHours={getHoursForDay(DayOfWeek.MONDAY)} hoursData={hoursData} />
+          <HoursDropdown
+            currentDay={DayOfWeek.MONDAY}
+            currentHours={getHoursForDay(DayOfWeek.MONDAY)}
+            hoursData={hoursData}
+          />
         </View>
       )}
 
       <View style={styles.imagesContainer}>
-        <ImageGallery images={shelter.picture}/>
+        <ImageGallery images={shelter.picture} />
       </View>
 
       <View style={styles.shelterDescriptionContainer}>
@@ -193,30 +198,29 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 let dynamicTabletSizes: Record<string, number> = {};
-dynamicTabletSizes["shelterNameTextSize"] = 64;
-dynamicTabletSizes["shelterNameTextHeight"] = 64;
-dynamicTabletSizes["quickInfoFontSize"] = 15;
-dynamicTabletSizes["quickInfoLineHeight"] = 21.59;
-dynamicTabletSizes["buttonFontSize"] = 13;
-dynamicTabletSizes["buttonLineHeight"] = 15.73;
-dynamicTabletSizes["shelterDescriptionFontSize"] = 15;
-dynamicTabletSizes["shelterDescriptionLineHeight"] = 21.59;
-dynamicTabletSizes["dayTextFontSize"] = 15;
-dynamicTabletSizes["dayTextLineHeight"] = 21.59;
-dynamicTabletSizes["arrowFontSize"] = 12;
-dynamicTabletSizes["redArrowFontSize"] = 17;
-dynamicTabletSizes["hoursTextFontSize"] = 15;
-dynamicTabletSizes["hoursTextLineHeight"] = 21.59;
-dynamicTabletSizes["quickInfoTextPaddingBottom"] = 4;
-dynamicTabletSizes["fullReviewMarginTop"] = 40;
-dynamicTabletSizes["fullReviewMarginLeft"] = 13;
-dynamicTabletSizes["fullReviewWidth"] = 330;
-
+dynamicTabletSizes['shelterNameTextSize'] = 64;
+dynamicTabletSizes['shelterNameTextHeight'] = 64;
+dynamicTabletSizes['quickInfoFontSize'] = 15;
+dynamicTabletSizes['quickInfoLineHeight'] = 21.59;
+dynamicTabletSizes['buttonFontSize'] = 13;
+dynamicTabletSizes['buttonLineHeight'] = 15.73;
+dynamicTabletSizes['shelterDescriptionFontSize'] = 15;
+dynamicTabletSizes['shelterDescriptionLineHeight'] = 21.59;
+dynamicTabletSizes['dayTextFontSize'] = 15;
+dynamicTabletSizes['dayTextLineHeight'] = 21.59;
+dynamicTabletSizes['arrowFontSize'] = 12;
+dynamicTabletSizes['redArrowFontSize'] = 17;
+dynamicTabletSizes['hoursTextFontSize'] = 15;
+dynamicTabletSizes['hoursTextLineHeight'] = 21.59;
+dynamicTabletSizes['quickInfoTextPaddingBottom'] = 4;
+dynamicTabletSizes['fullReviewMarginTop'] = 40;
+dynamicTabletSizes['fullReviewMarginLeft'] = 13;
+dynamicTabletSizes['fullReviewWidth'] = 330;
 
 if (screenWidth > 500) {
-  let widthRatio = screenWidth/500;
+  let widthRatio = screenWidth / 500;
   for (const key in dynamicTabletSizes) {
-    dynamicTabletSizes[key] = (dynamicTabletSizes[key]*widthRatio)
+    dynamicTabletSizes[key] = dynamicTabletSizes[key] * widthRatio;
   }
 }
 
@@ -248,7 +252,6 @@ const styles = StyleSheet.create({
     width: 340,
     fontSize: 18,
     fontFamily: bodyFont,
-    fontWeight: '600',
     color: descriptionFontColor,
     textAlign: 'left',
   },
@@ -276,25 +279,25 @@ const styles = StyleSheet.create({
     lineHeight: dynamicTabletSizes.quickInfoLineHeight,
   },
   smallButton: {
-    width:  screenWidth/5, 
-    marginLeft: screenWidth/75,
-    marginRight: screenWidth/75,
+    width: screenWidth / 5,
+    marginLeft: screenWidth / 75,
+    marginRight: screenWidth / 75,
   },
   buttonsContainer: {
     flexDirection: 'row',
     alignContent: 'center',
     justifyContent: 'center',
     width: '100%',
-    height: screenHeight*0.09,
+    height: screenHeight * 0.09,
     marginTop: 24,
   },
   button: {
-    width: screenWidth/4,
-    height: screenHeight*0.04,
+    width: screenWidth / 4,
+    height: screenHeight * 0.04,
     borderRadius: 4,
     borderWidth: 1,
-    marginLeft: screenWidth/32,
-    marginRight: screenWidth/32,
+    marginLeft: screenWidth / 32,
+    marginRight: screenWidth / 32,
     borderColor: descriptionFontColor,
     backgroundColor: buttonBackgroundColor,
     fontFamily: bodyFont,
@@ -302,12 +305,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   websiteButton: {
-    width: screenWidth/5,
-    height: screenHeight*0.04,
+    width: screenWidth / 5,
+    height: screenHeight * 0.04,
     borderRadius: 4,
     borderWidth: 1,
-    marginLeft: screenWidth/75,
-    marginRight: screenWidth/75,
+    marginLeft: screenWidth / 75,
+    marginRight: screenWidth / 75,
     borderColor: descriptionFontColor,
     backgroundColor: buttonBackgroundColor,
     fontFamily: bodyFont,
@@ -322,8 +325,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   imagesContainer: {
-    paddingTop: screenHeight/68,
-    paddingBottom:  screenHeight/28,
+    paddingTop: screenHeight / 68,
+    paddingBottom: screenHeight / 28,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -337,8 +340,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#D9D9D9',
   },
   shelterDescription: {
-    marginLeft: screenWidth/32,
-    marginRight: screenWidth/32,
+    marginLeft: screenWidth / 32,
+    marginRight: screenWidth / 32,
     marginTop: 19,
     fontSize: dynamicTabletSizes.shelterDescriptionFontSize,
     fontFamily: bodyFont,
@@ -350,7 +353,7 @@ const styles = StyleSheet.create({
     marginTop: dynamicTabletSizes.fullReviewMarginTop,
     marginLeft: dynamicTabletSizes.fullReviewMarginLeft,
     width: dynamicTabletSizes.fullReviewWidth,
-    height: screenHeight*(2/5),
+    height: screenHeight * (2 / 5),
   },
   fullReviewTitleContainer: {
     width: '100%',
