@@ -11,6 +11,13 @@ export enum DayOfWeek {
   SATURDAY = 'Saturday',
 }
 
+export type User = {
+  userId: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+};
+
 /**
  * Represents the model schema of a shelter.
  *
