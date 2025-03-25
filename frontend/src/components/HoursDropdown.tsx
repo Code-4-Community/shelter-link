@@ -7,6 +7,7 @@ import {
   descriptionFontColor,
   mainColor,
 } from '../../constants';
+import { useFonts } from 'expo-font';
 
 interface HoursDropdownProps {
   currentDay: DayOfWeek;
@@ -18,6 +19,10 @@ export const HoursDropdown = ({
   currentHours,
   hoursData,
 }: HoursDropdownProps) => {
+  useFonts({
+    'AvenirNext': require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
+  });
+
   const [isOpen, setIsOpen] = useState(false);
 
   return (

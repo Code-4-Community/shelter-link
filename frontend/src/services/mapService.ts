@@ -1,7 +1,7 @@
 import { Shelter } from '../types';
 import api from './config';
 
-const SHELTER_API_URL = `${process.env.EXPO_PUBLIC_API_URL}/shelter`;
+const SHELTER_API_URL = `${process.env.EXPO_PUBLIC_API_URL}/shelters`;
 
 /**
  * Gets all the shelters from the database.

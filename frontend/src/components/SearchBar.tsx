@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
-import { TextInput, StyleSheet, View, Dimensions } from 'react-native';
-import { bodyFont, mainColor } from '../../constants';
+import { Image, TextInput, StyleSheet, View, Dimensions } from 'react-native';
+import { bodyFont, darkMainColor, mainColor } from '../../constants';
+import { useFonts } from 'expo-font';
 
 const SearchBar = ({
   onSearch,
 }: {
   onSearch: (searchQuery: string) => void;
 }) => {
+  useFonts({
+    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
+  });
+
   const [isTyping, setIsTyping] = useState(false);
   const [query, setQuery] = useState('');
 
@@ -16,6 +21,10 @@ const SearchBar = ({
 
   return (
     <View style={styles.searchBar}>
+      <Image
+        style={styles.searchIcon}
+        source={require('../../assets/searchIcon.png')}
+      />
       <TextInput
         style={[
           styles.searchInput,
@@ -24,8 +33,8 @@ const SearchBar = ({
             color: mainColor,
           },
         ]}
-        placeholder="SEARCH"
-        placeholderTextColor={mainColor} // Use mainColor for placeholder text
+        placeholder="Search"
+        placeholderTextColor={darkMainColor}
         onChangeText={(text) => {
           setIsTyping(text.length > 0);
           setQuery(text);
@@ -37,56 +46,48 @@ const SearchBar = ({
 };
 
 const { width: screenWidth } = Dimensions.get('window');
-let searchBarHeight = 36;
+let searchBarHeight = 28;
 let searchBarBorderWidth = 1;
 let searchBarPaddingTop = 1;
-let searchInputFontSize = 14;
-let searchInputLineHeight = 19.36;
+let searchInputFontSize = 13;
 let searchInputPaddingTop = 2;
+let iconWidth = 11;
 if (screenWidth > 500) {
   searchBarHeight = searchBarHeight * (screenWidth / 500);
   searchBarBorderWidth = searchBarBorderWidth * (screenWidth / 500);
   searchBarPaddingTop = searchBarBorderWidth * (screenWidth / 500);
   searchInputFontSize = searchInputFontSize * (screenWidth / 500);
-  searchInputLineHeight = searchInputLineHeight * (screenWidth / 500);
   searchInputPaddingTop = searchInputPaddingTop * (screenWidth / 500);
-}
-let dynamicTabletSizes: Record<string, number> = {};
-dynamicTabletSizes['searchBarHeight'] = 36;
-dynamicTabletSizes['searchBarBorderWidth'] = 1;
-dynamicTabletSizes['searchBarPaddingTop'] = 1;
-dynamicTabletSizes['searchInputFontSize'] = 14;
-dynamicTabletSizes['searchInputLineHeight'] = 19.36;
-dynamicTabletSizes['searchInputPaddingTop'] = 2;
-
-if (screenWidth > 500) {
-  let widthRatio = screenWidth / 500;
-  for (const key in dynamicTabletSizes) {
-    dynamicTabletSizes[key] = dynamicTabletSizes[key] * widthRatio;
-  }
+  iconWidth = iconWidth * (screenWidth / 500);
 }
 
 const styles = StyleSheet.create({
+  searchIcon: {
+    marginTop: 'auto',
+    marginBottom: 'auto',
+    width: iconWidth,
+    height: iconWidth,
+    tintColor: darkMainColor,
+    marginLeft: 10,
+  },
   searchBar: {
-    width: '90%',
-    height: dynamicTabletSizes.searchBarHeight,
-    borderRadius: 11,
-    borderWidth: dynamicTabletSizes.searchBarBorderWidth,
-    paddingTop: dynamicTabletSizes.searchBarPaddingTop,
-    borderColor: mainColor,
+    flexDirection: 'row',
+    alignContent: 'center',
+    marginLeft: '2%',
+    width: '70%',
+    height: searchBarHeight,
+    borderRadius: 6,
+    borderWidth: searchBarBorderWidth,
+    paddingTop: searchBarPaddingTop,
     backgroundColor: '#FFFFFF',
   },
   searchInput: {
     flex: 1,
     fontFamily: bodyFont,
-    fontSize: dynamicTabletSizes.searchInputFontSize,
-    fontWeight: '500',
-    color: mainColor,
-    paddingLeft: 17,
+    fontSize: searchInputFontSize,
+    color: darkMainColor,
+    paddingLeft: 9,
     paddingRight: 17,
-    paddingTop: 2,
-    lineHeight: dynamicTabletSizes.searchInputLineHeight,
-    opacity: 0.6,
   },
 });
 

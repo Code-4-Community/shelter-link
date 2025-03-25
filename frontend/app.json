@@ -35,13 +35,7 @@
       [
         "expo-font",
         {
-          "fonts": [
-            "./assets/fonts/IstokWebBold.ttf",
-            "./assets/fonts/IstokWebBoldItalic.ttf",
-            "./assets/fonts/IstokWebItalic.ttf",
-            "./assets/fonts/IstokWebRegular.ttf",
-            "./assets/fonts/JomhuriaRegular.ttf"
-          ]
+          "fonts": ["./assets/fonts/AvenirNext.ttf"]
         }
       ]
     ]

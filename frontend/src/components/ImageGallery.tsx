@@ -1,12 +1,17 @@
 import { Image, StyleSheet, TouchableOpacity, View, Text, Dimensions } from 'react-native';
 import React, { useState } from 'react';
 import { darkMainColor } from '../../constants';
+import { useFonts } from 'expo-font';
 
 interface ImageGalleryProps {
   images: string[];
 }
 
 export const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
+  useFonts({
+    'AvenirNext': require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
+  });
+
   const [currentPage, setCurrentPage] = useState(0);
   // total num of "pages" for the carousel (each page holds max two images)
   const totalPages = Math.ceil(images.length / 2);
