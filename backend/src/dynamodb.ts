@@ -5,6 +5,7 @@ import {
   DeleteItemCommand,
   UpdateItemCommand,
   GetItemCommand,
+  QueryCommand,
 } from '@aws-sdk/client-dynamodb';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { HoursUpdateModel } from './shelter/shelter.model';
@@ -56,31 +57,32 @@ export class DynamoDbService {
     }
   }
 
-  public async getHighestShelterId(
-    tableName: string
+  public async getHighestId(
+    tableName: string,
+    id: string
   ): Promise<number | undefined> {
     const params: any = {
       TableName: tableName,
-      ProjectionExpression: 'shelterId', // Project only the id attribute
+      ProjectionExpression: id, // Project only the id attribute
     };
 
     try {
       const data = await this.dynamoDbClient.send(new ScanCommand(params));
-      const shelterIds = data.Items.map((item) =>
-        parseInt(item.shelterId.S, 10)
-      ); // Convert to numbers
+      const ids = data.Items.map(
+        (item) => parseInt(item[id]?.S, 10) // Dynamically access the id attribute
+      );
 
       // Handle potential parsing errors
-      const validShelterIds = shelterIds.filter((id) => !isNaN(id));
+      const validIds = ids.filter((id) => !isNaN(id));
 
-      if (validShelterIds.length === 0) {
+      if (validIds.length === 0) {
         return undefined; // No valid user IDs found
       }
 
-      const highestShelterId = validShelterIds.reduce((max, current) =>
+      const highestId = validIds.reduce((max, current) =>
         Math.max(max, current)
       );
-      return highestShelterId;
+      return highestId;
     } catch (error) {
       console.error('DynamoDB Scan Error:', error);
       throw new Error(`Unable to scan table ${tableName}`);
@@ -407,6 +409,70 @@ export class DynamoDbService {
       throw new Error(
         `Unable to delete item from ${tableName}: ${error.message}`
       );
+    }
+  }
+
+  /**
+   * Checks if an email already exists in the specified table. This method is used to ensure
+   * that emails are unique across the application.
+   *
+   * @param tableName - The name of the table to check for the email.
+   * @param email - The email to check for uniqueness.
+   * @returns True if the email exists, false otherwise.
+   */
+  public async checkIfEmailExists(
+    tableName: string,
+    email: string
+  ): Promise<boolean> {
+    const params = {
+      TableName: tableName,
+      IndexName: 'email-index', // We have a secondary index on the email attribute
+      KeyConditionExpression: 'email = :email',
+      ExpressionAttributeValues: {
+        ':email': { S: email },
+      },
+    };
+
+    try {
+      const data = await this.dynamoDbClient.send(new QueryCommand(params));
+      return data.Items && data.Items.length > 0; // Return true if email exists
+    } catch (error) {
+      console.error('Error checking email uniqueness:', error);
+      throw new Error('Unable to check email uniqueness.');
+    }
+  }
+
+  /**
+   * Queries a table in DynamoDB using the specified key condition expression and expression attribute values.
+   *
+   * @param tableName - The name of the table to query.
+   * @param keyConditionExpression - The key condition expression for the query.
+   * @param expressionAttributeValues - The expression attribute values for the query.
+   * @param indexName - The name of the index to use for the query.
+   * @returns The items returned by the query.
+   */
+  public async queryTable(
+    tableName: string,
+    keyConditionExpression: string,
+    expressionAttributeValues: { [key: string]: any },
+    indexName?: string
+  ): Promise<any[]> {
+    const params = {
+      TableName: tableName,
+      KeyConditionExpression: keyConditionExpression,
+      ExpressionAttributeValues: expressionAttributeValues,
+    };
+
+    if (indexName) {
+      params['IndexName'] = indexName;
+    }
+
+    try {
+      const data = await this.dynamoDbClient.send(new QueryCommand(params));
+      return data.Items || [];
+    } catch (error) {
+      console.error('DynamoDB Query Error:', error);
+      throw new Error(`Unable to query table ${tableName}`);
     }
   }
 }
