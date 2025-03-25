@@ -106,8 +106,8 @@ export class ShelterService {
   public async postShelter(shelterData: NewShelterInput) {
     const shelterModel = this.postInputToShelterModel(shelterData);
     const newId =
-      ((await this.dynamoDbService.getHighestShelterId(this.tableName)) ?? 0) +
-      1;
+      ((await this.dynamoDbService.getHighestId(this.tableName, 'shelterId')) ??
+        0) + 1;
     shelterModel.shelterId.S = newId.toString();
     // If there is a rating, check that it's a number in the range (0, 5]
     if (shelterData.rating !== undefined) {

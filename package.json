@@ -20,6 +20,7 @@
     "@nx/web": "19.6.5",
     "@nx/webpack": "19.6.5",
     "@nx/workspace": "19.6.5",
+    "@react-native-community/cli": "latest",
     "@swc-node/register": "~1.9.1",
     "@swc/core": "~1.5.7",
     "@swc/helpers": "~0.5.11",
@@ -52,6 +53,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.768.0",
     "@aws-sdk/client-dynamodb": "^3.738.0",
     "@expo/metro-config": "~0.19.0",
     "@expo/metro-runtime": "~4.0.0",
@@ -63,6 +65,8 @@
     "@react-native-community/cli-server-api": "^15.1.2",
     "@react-navigation/native": "^7.0.14",
     "@react-navigation/native-stack": "^7.2.0",
+    "amazon-cognito-identity-js": "^6.3.12",
+    "aws-sdk": "^2.1692.0",
     "axios": "^1.6.0",
     "class-validator": "^0.14.1",
     "cors": "^2.8.5",
