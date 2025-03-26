@@ -366,6 +366,7 @@ const styles = StyleSheet.create({
   bottomContainer: {
     flex: 1,
     backgroundColor: containerColor,
+    alignItems: 'center',
   },
   imagesContainer: {
     paddingTop: screenHeight / 28,
