@@ -8,7 +8,7 @@ import {
   View,
   Image,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   backgroundColor,
   headerFont,
@@ -17,12 +17,14 @@ import {
   mainColor,
   buttonBackgroundColor,
   descriptionFontColor,
+  containerColor,
 } from '../../constants';
 import { Shelter, DayOfWeek } from '../types';
 import { ImageGallery } from './ImageGallery';
 import { HoursDropdown } from './HoursDropdown';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useFonts } from 'expo-font';
+import { ScrollView } from 'react-native-gesture-handler';
 
 type RootStackParamList = {
   'Map View': undefined;
@@ -39,6 +41,8 @@ type Props = NativeStackScreenProps<
 export const DetailedShelterView: React.FC<Props> = ({ route }) => {
   const { shelter } = route.params; // get shelter from route params
   const [showHoursDropdown, setShowHoursDropdown] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState(0);
+  const buttonRef = useRef<React.ElementRef<typeof View>>(null);
 
   useFonts({
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
@@ -46,7 +50,11 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
 
   // handle hours so drop down shows when button is clicked
   const handleHours = () => {
-    setShowHoursDropdown(!showHoursDropdown);
+    // Measure the button's position
+    buttonRef.current?.measure((_, __, ___, height, ____, pageY) => {
+      setDropdownPosition(pageY + height); // Set dropdown position below the button
+      setShowHoursDropdown(!showHoursDropdown); // Open the dropdown
+    });
   };
 
   // for now, this redirects to google maps based on lat and long
@@ -121,95 +129,108 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.shelterNameContainer}>
-        <Text style={styles.shelterNameText}>{shelter.name}</Text>
-      </View>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flex: 1 }}>
+        <View style={styles.shelterNameContainer}>
+          <Text style={styles.shelterNameText}>{shelter.name}</Text>
 
-      <View style={styles.quickInfoContainer}>
-        {shelter.rating !== undefined && (
-          <View style={styles.ratingContainer}>
-            <Text style={styles.quickInfoText}>
-              {shelter.rating.toFixed(1)}
+          <View style={styles.quickInfoContainer}>
+            {shelter.expanded_name && (
+              <Text style={styles.shelterExpandedNameText}>
+                {shelter.expanded_name}
+              </Text>
+            )}
+            {shelter.rating !== undefined && (
+              <View style={styles.ratingContainer}>
+                <Text style={styles.quickInfoText}>
+                  {shelter.rating.toFixed(1)}
+                </Text>
+                <Image
+                  source={require('frontend/assets/teenyicons_star-solid.png')}
+                  style={styles.starIcon}
+                />
+                <Text style={styles.quickInfoText}>
+                  | {shelter.address.street}, {shelter.address.city},{' '}
+                  {shelter.address.state}
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
+        <View style={styles.buttonsContainer}>
+          <TouchableOpacity
+            ref={buttonRef}
+            style={[styles.button, shelter.website && styles.smallButton]}
+            onPress={handleHours}
+          >
+            <Text style={styles.buttonText}>
+              Hours <Text style={styles.arrow}>▾</Text>
             </Text>
-            <Image
-              source={require('frontend/assets/teenyicons_star-solid.png')}
-              style={styles.starIcon}
-            />
-            <Text style={styles.quickInfoText}>
-              | {shelter.address.street}, {shelter.address.city},{' '}
-              {shelter.address.state}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, shelter.website && styles.smallButton]}
+            onPress={handleDirections}
+          >
+            <Text style={styles.buttonText}>Directions</Text>
+          </TouchableOpacity>
+
+          {shelter.website && (
+            <TouchableOpacity
+              style={styles.websiteButton}
+              onPress={handleWebsite}
+            >
+              <Text style={styles.buttonText}>Website</Text>
+            </TouchableOpacity>
+          )}
+
+          <TouchableOpacity
+            style={[styles.button, shelter.website && styles.smallButton]}
+            onPress={handleContact}
+          >
+            <Text style={styles.buttonText}>Contact</Text>
+          </TouchableOpacity>
+        </View>
+
+        <HoursDropdown
+          hoursData={hoursData}
+          isOpen={showHoursDropdown}
+          setIsOpen={setShowHoursDropdown}
+          dropdownPosition={dropdownPosition}
+          currentDay={getCurrentDay()}
+        />
+
+        <View style={styles.bottomContainer}>
+          <View style={styles.imagesContainer}>
+            <ImageGallery images={shelter.picture} />
+          </View>
+
+          <View style={styles.shelterDescriptionContainer}>
+            <Text style={styles.shelterDescriptionHeader}>
+              About {shelter.name}
+            </Text>
+            <Text style={styles.shelterDescriptionText}>
+              {shelter.description}
             </Text>
           </View>
-        )}
-      </View>
-
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity
-          style={[styles.button, shelter.website && styles.smallButton]}
-          onPress={handleHours}
-        >
-          <Text style={styles.buttonText}>Hours</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.button, shelter.website && styles.smallButton]}
-          onPress={handleDirections}
-        >
-          <Text style={styles.buttonText}>Directions</Text>
-        </TouchableOpacity>
-
-        {shelter.website && (
-          <TouchableOpacity
-            style={styles.websiteButton}
-            onPress={handleWebsite}
-          >
-            <Text style={styles.buttonText}>Website</Text>
-          </TouchableOpacity>
-        )}
-
-        <TouchableOpacity
-          style={[styles.button, shelter.website && styles.smallButton]}
-          onPress={handleContact}
-        >
-          <Text style={styles.buttonText}>Contact</Text>
-        </TouchableOpacity>
-      </View>
-
-      {showHoursDropdown && (
-        <View style={styles.allHoursContainer}>
-          <HoursDropdown
-            currentDay={DayOfWeek.MONDAY}
-            currentHours={getHoursForDay(DayOfWeek.MONDAY)}
-            hoursData={hoursData}
-          />
         </View>
-      )}
-
-      <View style={styles.imagesContainer}>
-        <ImageGallery images={shelter.picture} />
-      </View>
-
-      <View style={styles.shelterDescriptionContainer}>
-        <Text style={styles.shelterDescriptionText}>{shelter.description}</Text>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 let dynamicTabletSizes: Record<string, number> = {};
-dynamicTabletSizes['shelterNameTextSize'] = 64;
-dynamicTabletSizes['shelterNameTextHeight'] = 64;
-dynamicTabletSizes['quickInfoFontSize'] = 15;
+dynamicTabletSizes['shelterNameTextSize'] = 45;
+dynamicTabletSizes['shelterNameTextHeight'] = 50;
+dynamicTabletSizes['quickInfoFontSize'] = 18;
 dynamicTabletSizes['quickInfoLineHeight'] = 21.59;
-dynamicTabletSizes['buttonFontSize'] = 13;
+dynamicTabletSizes['buttonFontSize'] = 15;
 dynamicTabletSizes['buttonLineHeight'] = 15.73;
 dynamicTabletSizes['shelterDescriptionFontSize'] = 15;
 dynamicTabletSizes['shelterDescriptionLineHeight'] = 21.59;
 dynamicTabletSizes['dayTextFontSize'] = 15;
 dynamicTabletSizes['dayTextLineHeight'] = 21.59;
-dynamicTabletSizes['arrowFontSize'] = 12;
-dynamicTabletSizes['redArrowFontSize'] = 17;
+dynamicTabletSizes['arrowFontSize'] = 18;
 dynamicTabletSizes['hoursTextFontSize'] = 15;
 dynamicTabletSizes['hoursTextLineHeight'] = 21.59;
 dynamicTabletSizes['quickInfoTextPaddingBottom'] = 4;
@@ -229,24 +250,43 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: backgroundColor,
   },
+
   shelterNameContainer: {
-    width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+    width: '90%',
+    alignSelf: 'center',
   },
   shelterNameText: {
     fontFamily: headerFont,
     fontSize: dynamicTabletSizes.shelterNameTextSize,
     fontWeight: '400',
-    lineHeight: dynamicTabletSizes.shelterNameTextHeight,
+    paddingTop: 5,
     color: darkMainColor,
+    alignSelf: 'center',
+    textAlign: 'center', // Ensures text is centered when it wraps
+  },
+  shelterExpandedNameText: {
+    fontFamily: headerFont,
+    fontSize: dynamicTabletSizes.shelterNameTextSize * 0.4,
+    fontWeight: '400',
+    color: darkMainColor,
+    paddingBottom: '5%',
+    textAlign: 'center', // Ensures text is centered when it wraps
   },
   shelterDescriptionContainer: {
-    minHeight: 44,
-    width: '100%',
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
-    paddingLeft: 24,
+    paddingHorizontal: '5%',
+  },
+  shelterDescriptionHeader: {
+    width: 340,
+    fontSize: 25,
+    fontFamily: bodyFont,
+    fontWeight: '700',
+    color: darkMainColor,
+    textAlign: 'center',
+    paddingBottom: 10,
   },
   shelterDescriptionText: {
     width: 340,
@@ -256,10 +296,9 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
   quickInfoContainer: {
-    width: '100%',
-    alignItems: 'flex-start',
     justifyContent: 'flex-start',
-    paddingLeft: 24,
+    paddingTop: '5%',
+    alignItems: 'center',
   },
   ratingContainer: {
     flexDirection: 'row',
@@ -275,8 +314,6 @@ const styles = StyleSheet.create({
     color: descriptionFontColor,
     fontSize: dynamicTabletSizes.quickInfoFontSize,
     fontWeight: '400',
-    paddingBottom: dynamicTabletSizes.paddingBottom,
-    lineHeight: dynamicTabletSizes.quickInfoLineHeight,
   },
   smallButton: {
     width: screenWidth / 5,
@@ -288,8 +325,10 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     justifyContent: 'center',
     width: '100%',
-    height: screenHeight * 0.09,
     marginTop: 24,
+    paddingBottom: 20,
+    borderBottomWidth: 3,
+    borderBottomColor: darkMainColor,
   },
   button: {
     width: screenWidth / 4,
@@ -298,7 +337,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginLeft: screenWidth / 32,
     marginRight: screenWidth / 32,
-    borderColor: descriptionFontColor,
+    borderColor: darkMainColor,
     backgroundColor: buttonBackgroundColor,
     fontFamily: bodyFont,
     alignItems: 'center',
@@ -311,7 +350,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginLeft: screenWidth / 75,
     marginRight: screenWidth / 75,
-    borderColor: descriptionFontColor,
+    borderColor: darkMainColor,
     backgroundColor: buttonBackgroundColor,
     fontFamily: bodyFont,
     alignItems: 'center',
@@ -324,13 +363,18 @@ const styles = StyleSheet.create({
     color: darkMainColor,
     textAlign: 'center',
   },
+  bottomContainer: {
+    flex: 1,
+    backgroundColor: containerColor,
+  },
   imagesContainer: {
-    paddingTop: screenHeight / 68,
+    paddingTop: screenHeight / 28,
     paddingBottom: screenHeight / 28,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
+    width: '100%',
   },
   shelterImage: {
     borderRadius: 10,
@@ -371,8 +415,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   allHoursContainer: {
-    backgroundColor: '#F9F9F9',
-    borderRadius: 8,
+    backgroundColor: '#000000',
+    borderRadius: 20,
     padding: 8,
     marginTop: 4,
   },
@@ -380,10 +424,6 @@ const styles = StyleSheet.create({
     fontFamily: bodyFont,
     color: darkMainColor,
     fontWeight: 700,
-  },
-  arrow: {
-    color: mainColor,
-    fontSize: dynamicTabletSizes.arrowFontSize,
   },
   dayText: {
     fontFamily: bodyFont,
@@ -411,9 +451,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingRight: 50,
   },
-  redArrow: {
+  arrow: {
     color: darkMainColor,
-    fontSize: dynamicTabletSizes.redArrowFontSize,
+    fontSize: dynamicTabletSizes.arrowFontSize,
     marginLeft: 4,
   },
   placeholderStyle: {
