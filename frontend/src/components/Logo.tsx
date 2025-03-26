@@ -18,7 +18,7 @@ const Logo: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => navigation.navigate('Map View')}>
+      <TouchableOpacity onPress={() => navigation.navigate('Home')}>
         <Image
           style={styles.imageStyle}
           source={require('../../assets/Logo.png')}

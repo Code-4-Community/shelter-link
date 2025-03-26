@@ -1,4 +1,11 @@
-import { Image, StyleSheet, TouchableOpacity, View, Text, Dimensions } from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Text,
+  Dimensions,
+} from 'react-native';
 import React, { useState } from 'react';
 import { darkMainColor } from '../../constants';
 import { useFonts } from 'expo-font';
@@ -9,7 +16,7 @@ interface ImageGalleryProps {
 
 export const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
   useFonts({
-    'AvenirNext': require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
+    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
 
   const [currentPage, setCurrentPage] = useState(0);
@@ -17,7 +24,7 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
   const totalPages = Math.ceil(images.length / 2);
 
   const handleNext = () => {
-    // if there r more pages to scroll right
+    // if there are more pages to scroll right
     if (currentPage < totalPages - 1) {
       // assign current page val to be next page
       setCurrentPage((curr) => curr + 1);
@@ -25,7 +32,7 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
   };
 
   const handlePrev = () => {
-    // if there r more pages to scroll left
+    // if there are more pages to scroll left
     if (currentPage > 0) {
       // assign current page val to be next page
       setCurrentPage((curr) => curr - 1);
@@ -84,13 +91,13 @@ const styles = StyleSheet.create({
   imagesContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 22,
+    gap: 20,
   },
   shelterImage: {
-    width: screenWidth/3,
-    height: screenWidth/3,
+    width: screenWidth / 2.6,
+    height: screenWidth / 2.6,
     borderRadius: 10,
-    borderWidth: 3,
+    borderWidth: 1,
     borderColor: darkMainColor,
     backgroundColor: '#D9D9D9',
   },
@@ -103,10 +110,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   leftButton: {
-    left: -screenWidth/10,
+    left: 1,
   },
   rightButton: {
-    right: -screenWidth/10,
+    right: 1,
   },
   navButtonText: {
     color: darkMainColor,
