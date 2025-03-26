@@ -59,8 +59,10 @@ const ShelterInfoPanel = ({ shelter, style }: ShelterInfoPanelProps) => {
         </View>
       </View>
       <Text style={styles.shelterName}>{shelter.name}</Text>
-      {shelter.expanded_name && (
+      {shelter.expanded_name ? (
         <Text style={styles.shelterNameExpansion}>{shelter.expanded_name}</Text>
+      ) : (
+        <View style={{ height: 10 }} />
       )}
       <Text style={{ ...styles.shelterAddressDistance, alignItems: 'center' }}>
         {shelter.rating}{' '}
@@ -68,7 +70,7 @@ const ShelterInfoPanel = ({ shelter, style }: ShelterInfoPanelProps) => {
           style={styles.starIcon}
           source={require('../../assets/starIcon.png')}
         ></Image>{' '}
-        | {formatAddress(shelter.address)} | 2 mi
+        | {formatAddress(shelter.address)}
       </Text>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
@@ -99,8 +101,8 @@ const panelHeight = (230 / 332) * panelWidth;
 
 let panelBorderWidth = 2;
 let shelterNameFontSize = 20;
-let descriptionFontSize = 12;
-let buttonFontSize = 13;
+let descriptionFontSize = 15;
+let buttonFontSize = 14;
 let shelterNameLineHeight = 24.2;
 let shelterAddressDistanceLineHeight = 18.15;
 let buttonTextLineHeight = 15.73;
