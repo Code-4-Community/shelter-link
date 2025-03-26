@@ -259,8 +259,7 @@ const styles = StyleSheet.create({
   },
   shelterNameText: {
     fontFamily: headerFont,
-    fontSize: dynamicTabletSizes.shelterNameTextSize,
-    fontWeight: '400',
+    fontSize: 36,
     paddingTop: 5,
     color: darkMainColor,
     alignSelf: 'center',
@@ -281,7 +280,7 @@ const styles = StyleSheet.create({
   },
   shelterDescriptionHeader: {
     width: 340,
-    fontSize: 25,
+    fontSize: 22,
     fontFamily: bodyFont,
     fontWeight: '700',
     color: darkMainColor,
