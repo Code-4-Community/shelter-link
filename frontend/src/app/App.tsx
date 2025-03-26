@@ -7,10 +7,12 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Shelter } from '../types';
 import Logo from '../components/Logo';
+import { LogIn } from '../components/LogIn';
 
 
 // defines type for nav stack
 export type RootStackParamList = {
+  'Log In': undefined;
   'Map View': undefined;
   'Detailed Shelter View': {
     shelter: Shelter;
@@ -36,6 +38,11 @@ export const App = () => {
           </View>
           {/* add other pages here in this similar way */}
           <Stack.Navigator>
+            <Stack.Screen
+              name="Log In"
+              component={LogIn}
+              options={{ headerShown: false }}
+            />
             <Stack.Screen
               name="Map View"
               component={CompleteMap}
