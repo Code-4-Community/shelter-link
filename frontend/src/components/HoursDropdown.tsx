@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, Dimensions } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Modal,
+  Dimensions,
+} from 'react-native';
 import { DayOfWeek } from '../types';
 import {
   bodyFont,
@@ -10,104 +17,91 @@ import {
 import { useFonts } from 'expo-font';
 
 interface HoursDropdownProps {
-  currentDay: DayOfWeek;
-  currentHours: string;
   hoursData: Array<{ label: string; value: string }>;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+  dropdownPosition: number;
+  currentDay: DayOfWeek;
 }
 
 export const HoursDropdown = ({
-  currentHours,
   hoursData,
+  isOpen,
+  setIsOpen,
+  dropdownPosition,
+  currentDay,
 }: HoursDropdownProps) => {
   useFonts({
-    'AvenirNext': require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
+    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
 
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
-    <View style={styles.mainContainer}>
+    <Modal
+      visible={isOpen}
+      transparent={true}
+      animationType="none"
+      onRequestClose={() => setIsOpen(false)}
+    >
       <TouchableOpacity
-        style={styles.dropdownHeader}
-        onPress={() => setIsOpen(!isOpen)}
+        style={styles.modalOverlay}
+        activeOpacity={1}
+        onPress={() => setIsOpen(false)}
       >
-        <View style={styles.hoursStatusContainer}>
-          <Text
-            style={[
-              styles.currentHours,
-              currentHours === 'Closed' && styles.closedText,
-            ]}
-          >
-            {currentHours}
-          </Text>
-          <Text style={styles.redArrow}>▼</Text>
+        <View
+          style={[
+            styles.dropdownContainer,
+            {
+              position: 'absolute',
+              top: dropdownPosition, // Use the calculated position
+              left: 80, // Adjust left position as needed
+            },
+          ]}
+        >
+          {hoursData.map((item, index) => (
+            <View
+              key={index}
+              style={[
+                styles.dropdownItem,
+                item.value === currentDay && styles.currentDay,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.dropdownItemText,
+                  item.value === currentDay && styles.boldText,
+                ]}
+              >
+                {item.label}
+              </Text>
+            </View>
+          ))}
         </View>
       </TouchableOpacity>
-
-      <Modal
-        visible={isOpen}
-        transparent={true}
-        animationType="none"
-        onRequestClose={() => setIsOpen(false)}
-      >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={() => setIsOpen(false)}
-        >
-          <View
-            style={[
-              styles.dropdownContainer,
-              {
-                position: 'absolute',
-                top: 150,
-              },
-            ]}
-          >
-            {hoursData.map((item, index) => (
-              <View key={index} style={styles.dropdownItem}>
-                <Text
-                  style={[
-                    styles.dropdownItemText,
-                    item.label.includes('Closed') && styles.closedText,
-                  ]}
-                >
-                  {item.label}
-                </Text>
-              </View>
-            ))}
-          </View>
-        </TouchableOpacity>
-      </Modal>
-    </View>
+    </Modal>
   );
 };
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 let dynamicTabletSizes: Record<string, number> = {};
-dynamicTabletSizes["dropdownHeaderMinWidth"] = 120;
-dynamicTabletSizes["dropdownHeaderPaddingHorizontal"] = 12;
-dynamicTabletSizes["dropdownHeaderPaddingRight"] = 50;
-dynamicTabletSizes["currentHoursFontSize"] = 15;
-dynamicTabletSizes["currentHoursMarginRight"] = 8;
-dynamicTabletSizes["redArrowFontSize"] = 17;
-dynamicTabletSizes["dropdownContainerMinWidth"] = 200;
-dynamicTabletSizes["dropdownItemPadding"] = 12;
-dynamicTabletSizes["dropdownItemFontSize"] = 15;
+dynamicTabletSizes['dropdownHeaderMinWidth'] = 120;
+dynamicTabletSizes['dropdownHeaderPaddingHorizontal'] = 12;
+dynamicTabletSizes['dropdownHeaderPaddingRight'] = 50;
+dynamicTabletSizes['currentHoursFontSize'] = 15;
+dynamicTabletSizes['currentHoursMarginRight'] = 8;
+dynamicTabletSizes['dropdownContainerMinWidth'] = 200;
+dynamicTabletSizes['dropdownItemPadding'] = 12;
+dynamicTabletSizes['dropdownItemFontSize'] = 15;
 
 if (screenWidth > 500) {
-  let widthRatio = screenWidth/500;
+  let widthRatio = screenWidth / 500;
   for (const key in dynamicTabletSizes) {
-    dynamicTabletSizes[key] = (dynamicTabletSizes[key]*widthRatio)
+    dynamicTabletSizes[key] = dynamicTabletSizes[key] * widthRatio;
   }
 }
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-  },
   dropdownHeader: {
-    height: screenHeight*0.053,
+    height: screenHeight * 0.053,
     minWidth: dynamicTabletSizes.dropdownHeaderMinWidth,
     paddingHorizontal: dynamicTabletSizes.dropdownHeaderPaddingHorizontal,
     paddingRight: dynamicTabletSizes.dropdownHeaderPaddingRight,
@@ -117,20 +111,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  currentHours: {
-    fontFamily: bodyFont,
-    fontSize: dynamicTabletSizes.currentHoursFontSize,
-    color: mainColor,
-    marginRight: dynamicTabletSizes.currentHoursMarginRight,
+  currentDay: {
+    backgroundColor: mainColor,
   },
-  closedText: {
+  boldText: {
     fontFamily: bodyFont,
     color: darkMainColor,
     fontWeight: '700',
-  },
-  redArrow: {
-    color: darkMainColor,
-    fontSize: dynamicTabletSizes.redArrowFontSize,
   },
   modalOverlay: {
     flex: 1,
@@ -138,7 +125,7 @@ const styles = StyleSheet.create({
   },
   dropdownContainer: {
     backgroundColor: 'white',
-    borderColor: mainColor,
+    borderColor: darkMainColor,
     borderWidth: 1,
     borderRadius: 4,
     marginTop: 5,
@@ -160,6 +147,6 @@ const styles = StyleSheet.create({
   dropdownItemText: {
     fontFamily: bodyFont,
     fontSize: dynamicTabletSizes.dropdownItemFontSize,
-    color: descriptionFontColor,
+    color: darkMainColor,
   },
 });

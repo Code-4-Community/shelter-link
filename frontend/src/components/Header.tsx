@@ -10,10 +10,8 @@ const Header = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>Map</Text>
-      <Text style={styles.headerDescription}>
-        Brief description of map features
-      </Text>
+      <Text style={styles.headerText}>ShelterLink</Text>
+      <Text style={styles.headerDescription}>Search for shelters near you</Text>
     </View>
   );
 };
