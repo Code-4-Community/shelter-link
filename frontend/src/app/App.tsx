@@ -32,7 +32,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
  */
 function AuthenticatedStack() {
   return (
-    <>
+    <SafeAreaView style={styles.safeArea}>
       <View>
         <Logo />
       </View>
@@ -48,8 +48,7 @@ function AuthenticatedStack() {
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
-    </>
-
+    </SafeAreaView>
   );
 }
 
@@ -58,10 +57,14 @@ function AuthenticatedStack() {
  */
 function UnauthenticatedStack() {
   return (
+
+
     <Stack.Navigator>
+
       <Stack.Screen name="Sign In" component={SignInScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Sign Up" component={SignUpScreen} options={{ headerShown: false }} />
     </Stack.Navigator>
+
   );
 }
 
@@ -90,15 +93,15 @@ export const App = () => {
     // Provide the AuthContext to the entire app
     <AuthProvider>
       <NavigationContainer>
+        <View style={{ flex: 1 }}>
+          <GestureHandlerRootView style={{ flex: 1 }}>
 
-        <GestureHandlerRootView style={{ flex: 1 }}>
 
-
-          <MainNavigator />
-        </GestureHandlerRootView>
-
+            <MainNavigator />
+          </GestureHandlerRootView>
+        </View>
       </NavigationContainer>
-    </AuthProvider>
+    </AuthProvider >
   );
 };
 
