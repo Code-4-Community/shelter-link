@@ -63,3 +63,25 @@ export type Shelter = {
   };
   picture: string[]; // Array of S3 URLs
 };
+
+export type NewUserInput = {
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+};
+
+export type UserModel = {
+  userId: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  created_at: string;
+};
+
+export type LoginUserRequest = {
+  body: {
+    email: string;
+    password: string;
+  };
+};
