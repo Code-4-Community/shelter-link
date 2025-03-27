@@ -26,13 +26,25 @@ export class UserController {
     }
   }
 
-  @Get('/login')
+  @Post('/login')
   public async loginUser(@Body() loginData: LoginUserRequest) {
     try {
       return await this.userService.loginUser(loginData);
     } catch (error) {
       throw new HttpException(
         `Unable to login user: ${error.message}`,
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
+  @Get()
+  public async getUsers() {
+    try {
+      return await this.userService.getUsers();
+    } catch (error) {
+      throw new HttpException(
+        `Unable to get users: ${error.message}`,
         HttpStatus.BAD_REQUEST
       );
     }
