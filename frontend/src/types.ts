@@ -11,6 +11,13 @@ export enum DayOfWeek {
   SATURDAY = 'Saturday',
 }
 
+export type User = {
+  userId: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+};
+
 /**
  * Represents the model schema of a shelter.
  *
@@ -55,4 +62,26 @@ export type Shelter = {
     } | null;
   };
   picture: string[]; // Array of S3 URLs
+};
+
+export type NewUserInput = {
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+};
+
+export type UserModel = {
+  userId: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  created_at: string;
+};
+
+export type LoginUserRequest = {
+  body: {
+    email: string;
+    password: string;
+  };
 };
