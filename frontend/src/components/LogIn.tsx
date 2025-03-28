@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import {
     backgroundColor,
     headerFont,
@@ -7,36 +8,90 @@ import {
     buttonBackgroundColor,
     descriptionFontColor,
   } from '../../constants';
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, SafeAreaView, Dimensions, TouchableOpacity } from 'react-native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../app/App';
+
+type AppNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export const LogIn = () => {
+  const navigation = useNavigation<AppNavigationProp>();
+  
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState<{ username?: string; password?: string }>({});
+
+  const validateField = (field: 'username' | 'password', value: string) => {
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [field]: value.trim() ? undefined : `${field === 'username' ? 'Username' : 'Password'} is required`,
+    }));
+  };
+
+  const validateAndLogin = () => {
+    const newErrors: { username?: string; password?: string } = {};
+
+    if (!username.trim()) newErrors.username = 'Username is required';
+    if (!password.trim()) newErrors.password = 'Password is required';
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length === 0) {
+      console.log('Logging in with:', { username, password });
+      // auth nav call here
+    }
+  };
   return (
     <SafeAreaView style={styles.safeArea}>
-        <View styles={styles.headingContainer}>
-            <Text style={styles.heading}>Welcome to ShelterLink!</Text>
-        </View>
-        <View style={styles.loginContainer}>
-            <Text style={styles.loginHeading}>Log In</Text>
+      <View style={styles.headingContainer}>
+        <Text style={styles.heading}>Welcome to ShelterLink!</Text>
+      </View>
+
+      <View style={styles.loginContainer}>
+        <Text style={styles.loginHeading}>Log In</Text>
+
             <View style={styles.usernameContainer}>
-                <Text style={styles.usernameHeading}>Username</Text>
-                <TextInput style={styles.input} placeholder="Enter text here..." />
-            </View>
+            <Text style={styles.usernameHeading}>Username</Text>
+            <TextInput
+              style={[styles.input, errors.username && styles.inputError]}
+              placeholder="Enter text here..."
+              value={username}
+              onChangeText={setUsername}
+              onBlur={() => validateField('username', username)}
+            />
+            {errors.username && <Text style={styles.errorText}>{errors.username}</Text>}
+          </View>
+
             <View style={styles.passwordContainer}>
-                <Text style={styles.passwordHeading}>Password</Text>
-                <TextInput style={styles.input} placeholder="Enter text here..." secureTextEntry />
-            </View>
-            <View style={styles.signUpRedirection}>
-                <Text>New to ShelterLink? </Text>
-                <TouchableOpacity onPress={() => {}}>
-                    <Text style={styles.signUpRedirectionClickable}>Sign Up </Text>
-                </TouchableOpacity>
+            <Text style={styles.passwordHeading}>Password</Text>
+            <TextInput
+              style={[styles.input, errors.password && styles.inputError]}
+              placeholder="Enter text here..."
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+              onBlur={() => validateField('password', password)}
+            />
+            {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+          </View>
+          <View style={styles.signUpRedirection}>
+            <Text>New to ShelterLink? </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Sign Up')}>
+              <Text style={styles.signUpRedirectionClickable}>Sign Up</Text>
+            </TouchableOpacity>
             </View>
         </View>
-        <TouchableOpacity style={styles.loginButton} onPress={() => {}}>
-            <Text style={styles.loginButtonText}>Log In</Text>
+
+        <TouchableOpacity
+          style={[styles.loginButton, (!username || !password) && styles.disabledButton]}
+          onPress={validateAndLogin}
+          disabled={!username || !password} //disabled till both fields are filled
+        >
+          <Text style={styles.loginButtonText}>Log In</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.skipLogin} onPress={() => {}}>
+
+        <TouchableOpacity style={styles.skipLogin} onPress={() => navigation.navigate('Map View')}>
             <Text style={styles.skipLoginText}>Skip login for now</Text>
         </TouchableOpacity>
     </SafeAreaView>
@@ -75,6 +130,7 @@ const styles = StyleSheet.create({
   },
   headingContainer: {
     width: dynamicTabletSizes.headingContainer,
+    alignSelf: 'center',
   },
   heading: {
     fontSize: 36,
@@ -98,7 +154,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 }, 
     shadowOpacity: 0.25, 
     shadowRadius: 4, 
-    // android shadow property
+    //  shadow property
     elevation: 5,
     marginBottom: 24,
   },
@@ -134,10 +190,12 @@ const styles = StyleSheet.create({
     height: screenHeight * 0.04,
     borderColor: '#E8E8E8',
     borderWidth: 1,
-    marginBottom: 10,
     paddingLeft: 16,
     borderRadius: 8,
+    backgroundColor: 'white',
   },
+  inputError: { borderColor: 'red' },
+  errorText: { color: 'red', fontSize: 12, marginTop: 4 },
   signUpRedirection: {
     color: '#000',
     alignSelf: 'center',
@@ -145,6 +203,7 @@ const styles = StyleSheet.create({
     fontFamily: bodyFont,
     fontWeight: 400,
     flexDirection: 'row',
+    marginTop: 10,
   },
   signUpRedirectionClickable:{
     textDecorationLine: 'underline',
@@ -165,14 +224,7 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     alignSelf: 'center',
   },
-  skipLogin: {
-    alignSelf: 'center',
-  },
-  skipLoginText: {
-    color: '#000',
-    fontSize: 14,
-    fontFamily: bodyFont,
-    fontWeight: 400,
-    textDecorationLine: 'underline',
-  }
+  disabledButton: { backgroundColor: '#A9A9A9' }, // greyed-out when disabled
+  skipLogin: { alignSelf: 'center' },
+  skipLoginText: { color: '#000', fontSize: 14, fontFamily: bodyFont, fontWeight: '400', textDecorationLine: 'underline' },
 });
