@@ -17,10 +17,11 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { mainColor, darkMainColor } from 'frontend/constants';
+import { gradientColor1, gradientColor2, labelColor } from 'frontend/constants';
 import { useFonts } from 'expo-font';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../app/App';
+import { createUser } from '../services/userService';
 
 
 type AppNavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -28,7 +29,7 @@ type AppNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 const SignUpScreen = () => {
   const navigation = useNavigation<AppNavigationProp>();
   const { height: screenHeight } = Dimensions.get('window');
-  const { height, width } = useWindowDimensions()
+
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
@@ -144,17 +145,21 @@ const SignUpScreen = () => {
   const handleChange = (field: keyof FormData, value: string) => {
     setFormData((prev: FormData) => ({ ...prev, [field]: value }));
     setErrors((prev: Errors) => ({ ...prev, [field]: '' }));
+
+    // Update password strength when password field changes
+    if (field === 'password') {
+      validatePassword(value);
+    }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Validate all fields
     let isValid = true;
     const newErrors = { ...errors };
 
     Object.keys(formData).forEach((field) => {
-      const typedField = field as keyof FormData;
-      const val = formData[typedField];
-      const errMsg = validateField(field, val);
+      const typedField = field as keyof typeof formData;
+      const errMsg = validateField(field, formData[typedField]);
       if (errMsg) {
         newErrors[typedField] = errMsg;
         isValid = false;
@@ -164,11 +169,24 @@ const SignUpScreen = () => {
     setErrors(newErrors);
 
     if (isValid) {
-      // Submit form or call your sign-up API
-      console.log('Form submitted:', formData);
-      // You could close the modal or navigate away here
+      try {
+        const user = await createUser({
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          email: formData.email,
+          password: formData.password,
+        });
+        console.log('User signed up successfully:', user);
+        // Navigate to a confirmation screen or log in the user automatically.
+      } catch (err) {
+        console.error('Sign up failed:', err);
+        // Optionally, set an error message in the UI.
+      }
+    } else {
+      handleInvalidSubmit();
     }
   };
+
 
   // Animate slide (optional) for an invalid submit "shake"
   const animateSlide = () => {
@@ -199,11 +217,8 @@ const SignUpScreen = () => {
   // Render
   // -------------------------
   return (
-
-
-
     <LinearGradient
-      colors={[darkMainColor, mainColor]}
+      colors={[gradientColor1, gradientColor2]}
       style={styles.gradientBackground}
     >
       <SafeAreaView style={styles.safeArea}>
@@ -225,8 +240,6 @@ const SignUpScreen = () => {
               activeOpacity={1}
               onPress={dismissKeyboard}
             >
-
-
               <Animated.View
                 style={[
                   styles.formContainer,
@@ -290,11 +303,52 @@ const SignUpScreen = () => {
                 />
                 {errors.password ? (
                   <Text style={styles.errorText}>{errors.password}</Text>
-                ) : (
-                  <Text style={styles.passwordNote}>
-                    Must be at least 8 characters long, and must contain uppercase letters, lowercase letters, numbers, and symbols.
-                  </Text>
-                )}
+                ) : null}
+
+                {/* Password Requirements List */}
+                <View style={styles.passwordRequirements}>
+                  <Text style={styles.passwordRequirementsTitle}>Password Requirements:</Text>
+                  <View style={styles.requirementItem}>
+                    <Text style={[
+                      styles.requirementText,
+                      passwordStrength.hasMinLength ? styles.requirementMet : styles.requirementNotMet
+                    ]}>
+                      {passwordStrength.hasMinLength ? "✓" : "✗"} At least 8 characters
+                    </Text>
+                  </View>
+                  <View style={styles.requirementItem}>
+                    <Text style={[
+                      styles.requirementText,
+                      passwordStrength.hasUpperCase ? styles.requirementMet : styles.requirementNotMet
+                    ]}>
+                      {passwordStrength.hasUpperCase ? "✓" : "✗"} At least one uppercase letter
+                    </Text>
+                  </View>
+                  <View style={styles.requirementItem}>
+                    <Text style={[
+                      styles.requirementText,
+                      passwordStrength.hasLowerCase ? styles.requirementMet : styles.requirementNotMet
+                    ]}>
+                      {passwordStrength.hasLowerCase ? "✓" : "✗"} At least one lowercase letter
+                    </Text>
+                  </View>
+                  <View style={styles.requirementItem}>
+                    <Text style={[
+                      styles.requirementText,
+                      passwordStrength.hasNumber ? styles.requirementMet : styles.requirementNotMet
+                    ]}>
+                      {passwordStrength.hasNumber ? "✓" : "✗"} At least one number
+                    </Text>
+                  </View>
+                  <View style={styles.requirementItem}>
+                    <Text style={[
+                      styles.requirementText,
+                      passwordStrength.hasSpecialChar ? styles.requirementMet : styles.requirementNotMet
+                    ]}>
+                      {passwordStrength.hasSpecialChar ? "✓" : "✗"} At least one special character (!@#$%^&*,.?)
+                    </Text>
+                  </View>
+                </View>
 
                 <TouchableOpacity
                   style={styles.submitButton}
@@ -324,8 +378,6 @@ const SignUpScreen = () => {
         </KeyboardAvoidingView>
       </SafeAreaView>
     </LinearGradient>
-
-
   );
 };
 
@@ -357,7 +409,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 36,
     fontWeight: 'bold',
-    color: mainColor,
+    color: labelColor,
     marginVertical: 20,
     textAlign: 'center',
     fontFamily: 'AvenirNext',
@@ -395,19 +447,46 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   passwordNote: {
-    color: '#fff',
+    color: '#666666',
     fontSize: 12,
-
+    marginBottom: 8,
+  },
+  passwordRequirements: {
+    backgroundColor: '#f5f5f5',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 15,
+  },
+  passwordRequirementsTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    color: '#333',
+  },
+  requirementItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 2,
+  },
+  requirementText: {
+    fontSize: 13,
+    marginLeft: 5,
+  },
+  requirementMet: {
+    color: '#27ae60',
+    fontWeight: '500',
+  },
+  requirementNotMet: {
+    color: '#e74c3c',
   },
   submitButton: {
     backgroundColor: '#e3e3e3',
     borderRadius: 10,
     paddingVertical: 15, // Increased height
     alignItems: 'center',
-
   },
   submitButtonText: {
-    color: '#ff5e62',
+    color: labelColor,
     fontWeight: 'bold',
     fontSize: 16,
   },

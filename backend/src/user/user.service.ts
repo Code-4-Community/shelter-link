@@ -55,6 +55,34 @@ export class UserService {
   }
 
   /**
+   * Retrieves all users from the database.
+   * @returns An array of user models.
+   */
+  public async getUsers(): Promise<UserModel[]> {
+    try {
+      const data = await this.dynamoDbService.scanTable(this.tableName);
+      return data.map((item) => this.userModelToOutput(item));
+    } catch (e) {
+      throw new Error('Unable to get users: ' + e);
+    }
+  }
+
+  /**
+   * Converts a DynamoDB user model to a user model.
+   * @param item The DynamoDB user model.
+   * @returns The user model.
+   */
+  private userModelToOutput = (item: UserInputModel): UserModel => {
+    return {
+      userId: item.userId.S,
+      first_name: item.first_name.S,
+      last_name: item.last_name.S,
+      email: item.email.S,
+      created_at: item.created_at.S,
+    };
+  };
+
+  /**
    * Converts the input data to a user model suitable for DynamoDB.
    * @param input The input data for the new user.
    * @returns The user model.
