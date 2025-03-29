@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Modal,
   Text,
   View,
   StyleSheet,
@@ -13,23 +12,28 @@ import {
   SafeAreaView,
   Keyboard,
   Dimensions,
-  useWindowDimensions,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { gradientColor1, gradientColor2, labelColor } from 'frontend/constants';
+import {
+  gradientColor1,
+  gradientColor2,
+  headerFontColor,
+  header1FontSize,
+  bodyFontSize,
+  caption2FontSize,
+  caption1FontSize,
+} from 'frontend/constants';
 import { useFonts } from 'expo-font';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../app/App';
 import { createUser } from '../services/userService';
-
 
 type AppNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const SignUpScreen = () => {
   const navigation = useNavigation<AppNavigationProp>();
   const { height: screenHeight } = Dimensions.get('window');
-
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
@@ -187,7 +191,6 @@ const SignUpScreen = () => {
     }
   };
 
-
   // Animate slide (optional) for an invalid submit "shake"
   const animateSlide = () => {
     Animated.sequence([
@@ -231,7 +234,7 @@ const SignUpScreen = () => {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={[
               styles.scrollContent,
-              { minHeight: screenHeight * 0.9 }
+              { minHeight: screenHeight * 0.9 },
             ]}
             keyboardShouldPersistTaps="handled"
           >
@@ -307,45 +310,72 @@ const SignUpScreen = () => {
 
                 {/* Password Requirements List */}
                 <View style={styles.passwordRequirements}>
-                  <Text style={styles.passwordRequirementsTitle}>Password Requirements:</Text>
+                  <Text style={styles.passwordRequirementsTitle}>
+                    Password Requirements:
+                  </Text>
                   <View style={styles.requirementItem}>
-                    <Text style={[
-                      styles.requirementText,
-                      passwordStrength.hasMinLength ? styles.requirementMet : styles.requirementNotMet
-                    ]}>
-                      {passwordStrength.hasMinLength ? "✓" : "✗"} At least 8 characters
+                    <Text
+                      style={[
+                        styles.requirementText,
+                        passwordStrength.hasMinLength
+                          ? styles.requirementMet
+                          : styles.requirementNotMet,
+                      ]}
+                    >
+                      {passwordStrength.hasMinLength ? '✓' : '✗'} At least 8
+                      characters
                     </Text>
                   </View>
                   <View style={styles.requirementItem}>
-                    <Text style={[
-                      styles.requirementText,
-                      passwordStrength.hasUpperCase ? styles.requirementMet : styles.requirementNotMet
-                    ]}>
-                      {passwordStrength.hasUpperCase ? "✓" : "✗"} At least one uppercase letter
+                    <Text
+                      style={[
+                        styles.requirementText,
+                        passwordStrength.hasUpperCase
+                          ? styles.requirementMet
+                          : styles.requirementNotMet,
+                      ]}
+                    >
+                      {passwordStrength.hasUpperCase ? '✓' : '✗'} At least one
+                      uppercase letter
                     </Text>
                   </View>
                   <View style={styles.requirementItem}>
-                    <Text style={[
-                      styles.requirementText,
-                      passwordStrength.hasLowerCase ? styles.requirementMet : styles.requirementNotMet
-                    ]}>
-                      {passwordStrength.hasLowerCase ? "✓" : "✗"} At least one lowercase letter
+                    <Text
+                      style={[
+                        styles.requirementText,
+                        passwordStrength.hasLowerCase
+                          ? styles.requirementMet
+                          : styles.requirementNotMet,
+                      ]}
+                    >
+                      {passwordStrength.hasLowerCase ? '✓' : '✗'} At least one
+                      lowercase letter
                     </Text>
                   </View>
                   <View style={styles.requirementItem}>
-                    <Text style={[
-                      styles.requirementText,
-                      passwordStrength.hasNumber ? styles.requirementMet : styles.requirementNotMet
-                    ]}>
-                      {passwordStrength.hasNumber ? "✓" : "✗"} At least one number
+                    <Text
+                      style={[
+                        styles.requirementText,
+                        passwordStrength.hasNumber
+                          ? styles.requirementMet
+                          : styles.requirementNotMet,
+                      ]}
+                    >
+                      {passwordStrength.hasNumber ? '✓' : '✗'} At least one
+                      number
                     </Text>
                   </View>
                   <View style={styles.requirementItem}>
-                    <Text style={[
-                      styles.requirementText,
-                      passwordStrength.hasSpecialChar ? styles.requirementMet : styles.requirementNotMet
-                    ]}>
-                      {passwordStrength.hasSpecialChar ? "✓" : "✗"} At least one special character (!@#$%^&*,.?)
+                    <Text
+                      style={[
+                        styles.requirementText,
+                        passwordStrength.hasSpecialChar
+                          ? styles.requirementMet
+                          : styles.requirementNotMet,
+                      ]}
+                    >
+                      {passwordStrength.hasSpecialChar ? '✓' : '✗'} At least one
+                      special character (!@#$%^&*,.?)
                     </Text>
                   </View>
                 </View>
@@ -353,7 +383,9 @@ const SignUpScreen = () => {
                 <TouchableOpacity
                   style={styles.submitButton}
                   onPress={() => {
-                    const allValid = Object.values(errors).every((e) => e === '');
+                    const allValid = Object.values(errors).every(
+                      (e) => e === ''
+                    );
                     handleSubmit();
                     if (!allValid) handleInvalidSubmit();
                   }}
@@ -371,7 +403,12 @@ const SignUpScreen = () => {
 
               {/* Add extra space at the bottom when keyboard is visible */}
               {keyboardVisible && (
-                <View style={{ height: Platform.OS === 'android' ? keyboardHeight * 0.5 : 20 }} />
+                <View
+                  style={{
+                    height:
+                      Platform.OS === 'android' ? keyboardHeight * 0.5 : 20,
+                  }}
+                />
               )}
             </TouchableOpacity>
           </ScrollView>
@@ -407,9 +444,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: 36,
+    fontSize: header1FontSize,
     fontWeight: 'bold',
-    color: labelColor,
+    color: headerFontColor,
     marginVertical: 20,
     textAlign: 'center',
     fontFamily: 'AvenirNext',
@@ -422,7 +459,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   label: {
-    fontSize: 16,
+    fontSize: bodyFontSize,
     marginBottom: 6,
     color: '#000000',
     fontFamily: 'ProximaNova-Regular',
@@ -432,8 +469,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 10,
     paddingHorizontal: 12,
-    marginBottom: 10,
-    fontSize: 16, // Slightly larger font
+    marginBottom: 15,
+    fontSize: bodyFontSize, // Slightly larger font
     borderWidth: 1,
     borderColor: '#e3e3e3',
   },
@@ -443,12 +480,12 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: '#FF4444',
-    fontSize: 12,
+    fontSize: caption2FontSize,
     marginBottom: 8,
   },
   passwordNote: {
     color: '#666666',
-    fontSize: 12,
+    fontSize: caption2FontSize,
     marginBottom: 8,
   },
   passwordRequirements: {
@@ -458,7 +495,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   passwordRequirementsTitle: {
-    fontSize: 14,
+    fontSize: caption1FontSize,
     fontWeight: 'bold',
     marginBottom: 5,
     color: '#333',
@@ -469,7 +506,7 @@ const styles = StyleSheet.create({
     marginVertical: 2,
   },
   requirementText: {
-    fontSize: 13,
+    fontSize: caption1FontSize,
     marginLeft: 5,
   },
   requirementMet: {
@@ -486,9 +523,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   submitButtonText: {
-    color: labelColor,
+    color: headerFontColor,
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: bodyFontSize,
   },
   loginLink: {
     marginTop: 16,
