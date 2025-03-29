@@ -6,6 +6,7 @@
  * @property last_name - The last name of the user.
  * @property email - The email of the user.
  * @property created_at - The date and time the user was created.
+ * @property role - The role of the user. Either "admin" or "user". Defaults to "user".
  *
  */
 export type UserModel = {
@@ -14,6 +15,7 @@ export type UserModel = {
   last_name: string;
   email: string;
   created_at: string;
+  role?: string;
 };
 
 /**
@@ -24,6 +26,7 @@ export type UserModel = {
  * @property last_name - The last name of the user.
  * @property email - The email of the user.
  * @property created_at - The date and time the user was created.
+ * @property role - The role of the user. Either "admin" or "user". Defaults to "user".
  *
  */
 export type UserInputModel = {
@@ -32,4 +35,5 @@ export type UserInputModel = {
   last_name: { S: string };
   email: { S: string };
   created_at: { S: string };
+  role?: { S: string };
 };

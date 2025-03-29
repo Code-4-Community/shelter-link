@@ -4,5 +4,6 @@ export type NewUserInput = {
   last_name: string;
   email: string;
   password: string;
+  role?: string; // optional, default is 'user'
   // created_at: string; // auto generated
 };

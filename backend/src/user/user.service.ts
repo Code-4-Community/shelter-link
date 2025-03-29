@@ -9,7 +9,7 @@ import {
   AdminConfirmSignUpCommand,
   InitiateAuthCommand,
 } from '@aws-sdk/client-cognito-identity-provider';
-import { LoginUserRequest } from '../types';
+import { LoginUserRequest, UserRole } from '../types';
 
 @Injectable()
 export class UserService {
@@ -96,6 +96,11 @@ export class UserService {
       created_at: { S: new Date().toISOString() },
     };
 
+    if (input.role) {
+      newUserModel.role = { S: input.role };
+    } else {
+      newUserModel.role = { S: UserRole.USER }; // Default role
+    }
     return newUserModel;
   };
 
