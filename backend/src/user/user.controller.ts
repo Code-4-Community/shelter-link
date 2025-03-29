@@ -9,6 +9,7 @@ import {
 import { UserService } from './user.service';
 import { NewUserInput } from '../dtos/newUserDTO';
 import { LoginUserRequest } from '../types';
+import { UserModel } from './user.model';
 
 @Controller('users')
 export class UserController {
@@ -17,7 +18,13 @@ export class UserController {
   @Post()
   public async postUser(@Body() userData: NewUserInput) {
     try {
-      return await this.userService.postUser(userData);
+      const user = await this.userService.postUser(userData);
+
+      return {
+        statusCode: HttpStatus.CREATED,
+        message: 'User created successfully',
+        user: user,
+      };
     } catch (error) {
       throw new HttpException(
         `Unable to create user: ${error.message}`,
