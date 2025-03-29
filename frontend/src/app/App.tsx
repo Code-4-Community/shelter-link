@@ -8,13 +8,14 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import Logo from '../components/Logo';
 import CompleteMap from '../components/CompleteMap';
-import { DetailedShelterView } from '../components/DetailedShelterView';
+import DetailedShelterView from '../components/DetailedShelterView';
 
 import { Shelter } from '../types';
 import { AuthProvider, useAuth } from '../hooks/AuthContext';
 
 import SignUpScreen from '../components/SignUpScreen';
 import SignInScreen from '../components/SignInScreen';
+import AllEventsViewer from '../components/AllEventsViewer';
 
 
 // defines type for nav stack
@@ -22,6 +23,7 @@ export type RootStackParamList = {
   'Sign In': undefined;
   'Sign Up': undefined;
   'Map View': undefined;
+  'All Events View': undefined;
   'Detailed Shelter View': { shelter: Shelter };
 };
 
@@ -45,6 +47,11 @@ function AuthenticatedStack() {
         <Stack.Screen
           name="Detailed Shelter View"
           component={DetailedShelterView}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen 
+          name="All Events View"
+          component={AllEventsViewer}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
