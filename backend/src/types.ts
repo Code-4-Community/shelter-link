@@ -27,10 +27,10 @@ export interface LoginUserRequest extends Request {
 
 /**
  * Enum representing user roles.
- * - USER: Regular user role.
- * - ADMIN: Administrator role. Administrators can see new shelter applications, and accept, modify, or reject them.
+ * - USER - Regular user role.
+ * - ADMIN - Administrator role.
  */
 export enum UserRole {
-  USER = 'user',
-  ADMIN = 'admin',
+  USER = 'USER',
+  ADMIN = 'ADMIN',
 }
