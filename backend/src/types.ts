@@ -24,3 +24,13 @@ export interface LoginUserRequest extends Request {
     password: string;
   };
 }
+
+/**
+ * Enum representing user roles.
+ * - USER - Regular user role.
+ * - ADMIN - Administrator role.
+ */
+export enum UserRole {
+  USER = 'USER',
+  ADMIN = 'ADMIN',
+}
