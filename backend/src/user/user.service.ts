@@ -56,7 +56,6 @@ export class UserService {
     await this.dynamoDbService.postItem(this.tableName, userModel);
 
     const userOutput = this.userModelToOutput(userModel);
-    console.log(userOutput); // Check the output user data
 
     return userOutput;
   }
@@ -122,7 +121,6 @@ export class UserService {
     givenName: string,
     familyName: string
   ): Promise<{ email: string }> => {
-    console.log('Creating Cognito user:', process.env.COGNITO_CLIENT_ID);
     const signUpParams = {
       ClientId: process.env.COGNITO_CLIENT_ID,
       Username: email,
