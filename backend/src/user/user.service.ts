@@ -104,6 +104,11 @@ export class UserService {
       role: { S: input.role ? input.role : UserRole.USER }, // Default to USER role
     };
 
+    if (input.role) {
+      newUserModel.role = { S: input.role };
+    } else {
+      newUserModel.role = { S: UserRole.USER }; // Default role
+    }
     return newUserModel;
   };
 
