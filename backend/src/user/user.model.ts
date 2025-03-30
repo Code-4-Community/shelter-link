@@ -36,5 +36,4 @@ export type UserInputModel = {
   email: { S: string };
   created_at: { S: string };
   role?: { S: string };
-  role?: { S: string };
 };
