@@ -39,16 +39,6 @@ function AuthenticatedStack() {
         <Logo />
       </View>
       <Stack.Navigator>
-        <Stack.Screen
-          name="Map View"
-          component={CompleteMap}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Detailed Shelter View"
-          component={DetailedShelterView}
-          options={{ headerShown: false }}
-        />
         <Stack.Screen 
           name="All Events View"
           component={AllEventsViewer}

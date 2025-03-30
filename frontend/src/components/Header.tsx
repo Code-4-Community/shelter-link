@@ -3,15 +3,20 @@ import { bodyFont, darkMainColor, headerFont } from '../../constants';
 import React from 'react';
 import { Text, StyleSheet, View, Dimensions } from 'react-native';
 
-const Header = () => {
+type HeaderProps = {
+  title: string;
+  description?: string;
+};
+
+const Header = ({ title, description }: HeaderProps) => {
   useFonts({
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>ShelterLink</Text>
-      <Text style={styles.headerDescription}>Search for shelters near you</Text>
+      <Text style={styles.headerText}>{title}</Text>
+      {description && (<Text style={styles.headerDescription}>Search for shelters near you</Text>)}
     </View>
   );
 };

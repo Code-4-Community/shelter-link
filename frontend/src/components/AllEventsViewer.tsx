@@ -48,11 +48,7 @@ export const AllEventsViewer = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.headerContainer}>
-        <Header />
-      </View>
-      <View style={styles.filtersDropdownContainer}>
-        <FiltersDropdown />
-        <SearchBar onSearch={setQuery} />
+        <Header title="Events"/>
       </View>
         {selectedEvent ? (
           <EventInfoPanel
@@ -80,37 +76,10 @@ const styles = StyleSheet.create({
   itemContainer: {
     marginTop: 29,
   },
-  searchBarContainer: {
-    alignItems: 'center',
-    paddingBottom: '6%',
-    paddingTop: '10%',
-  },
   headerContainer: {
     alignItems: 'center',
     paddingHorizontal: '10%',
     paddingBottom: '7%',
-  },
-  filtersDropdownContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: '3%',
-    paddingBottom: '6%',
-    borderStyle: 'solid',
-    borderBottomWidth: 4,
-    borderColor: darkMainColor,
-  },
-  map: {
-    width: '100%',
-    height: '100%',
-  },
-  bottomSheet: {
-    borderTopLeftRadius: 33,
-    borderTopRightRadius: 33,
-    alignItems: 'center',
-    backgroundColor: '#FFFFF',
-    paddingBottom: 500,
   },
   noResultsContainer: {
     flex: 1,

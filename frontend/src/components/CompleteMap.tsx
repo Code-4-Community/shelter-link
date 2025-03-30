@@ -85,7 +85,7 @@ export const CompleteMap = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.headerContainer}>
-        <Header />
+      <Header title="ShelterLink" description="Search for shelters near you"/>
       </View>
       <View style={styles.filtersDropdownContainer}>
         <FiltersDropdown />
