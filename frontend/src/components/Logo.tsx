@@ -23,7 +23,12 @@ const Logo: React.FC<{ headerText?: string }> = ({ headerText }) => {
   const navigation = useNavigation<AppNavigationProp>();
 
   return (
-    <View style={[styles.container, { justifyContent: 'center' }]}>
+    <View
+      style={[
+        styles.container,
+        { justifyContent: 'center', paddingHorizontal: 20 },
+      ]}
+    >
       <TouchableOpacity
         style={styles.imageContainer}
         onPress={() => navigation.navigate('Map View')}
@@ -69,6 +74,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontFamily: headerFont,
+    fontWeight: 'bold',
     fontSize: 36,
     paddingTop: 5,
     color: darkMainColor,

@@ -221,7 +221,6 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
               <Text style={styles.shelterDescriptionHeader}>
                 Features and Resources
               </Text>
-              {/* <View style={styles.shelterTagContainer}> */}
               {Object.entries(shelter.tags).map(([key, value]) => {
                 if (value) {
                   return (
@@ -236,7 +235,6 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
                 }
                 return null;
               })}
-              {/* </View> */}
             </View>
           </View>
         </ScrollView>
@@ -314,16 +312,14 @@ const styles = StyleSheet.create({
     width: '95%',
   },
   shelterTagMainContainer: {
-    alignItems: 'flex-start',
     justifyContent: 'flex-start',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingHorizontal: 3,
+    padding: 10,
     borderWidth: 1,
     borderColor: darkMainColor,
     borderRadius: 10,
     backgroundColor: containerColor,
-    paddingTop: 10,
     width: '95%',
   },
   shelterDescriptionHeader: {
@@ -412,6 +408,7 @@ const styles = StyleSheet.create({
   bottomContainer: {
     flex: 1,
     alignItems: 'center',
+    paddingBottom: 15,
   },
   imagesContainer: {
     paddingTop: screenHeight / 28,

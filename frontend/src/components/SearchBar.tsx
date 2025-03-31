@@ -30,7 +30,7 @@ const SearchBar = ({
           styles.searchInput,
           {
             opacity: isTyping ? 1 : 0.6,
-            color: mainColor,
+            color: 'black',
           },
         ]}
         placeholder="Search"
