@@ -69,6 +69,8 @@ export type NewUserInput = {
   last_name: string;
   email: string;
   password: string;
+  role?: string; // Optional role field
+  // If not provided, defaults to 'USER' in the backend.
 };
 
 export type UserModel = {
@@ -77,6 +79,7 @@ export type UserModel = {
   last_name: string;
   email: string;
   created_at: string;
+  role?: string;
 };
 
 export type LoginUserRequest = {

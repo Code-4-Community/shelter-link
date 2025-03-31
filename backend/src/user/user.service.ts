@@ -8,8 +8,9 @@ import {
   SignUpCommand,
   AdminConfirmSignUpCommand,
   InitiateAuthCommand,
+  UsernameExistsException,
 } from '@aws-sdk/client-cognito-identity-provider';
-import { LoginUserRequest } from '../types';
+import { LoginUserRequest, UserRole } from '../types';
 
 @Injectable()
 export class UserService {
@@ -23,35 +24,40 @@ export class UserService {
   /**
    * Creates a new user in the database.
    * @param userData The data of the new user, including email, first and last name, and password
+   *
+   * @returns The created user model.
    */
-  public async postUser(userData: NewUserInput): Promise<void> {
-    // Make sure email is unique
-    const existingUser = await this.dynamoDbService.checkIfEmailExists(
-      this.tableName,
-      userData.email
-    );
-    if (existingUser) {
-      throw new Error(
-        `A user with the email ${userData.email} already exists.`
+  public async postUser(userData: NewUserInput): Promise<UserModel> {
+    try {
+      // Create Cognito user. If a user is already signed up with he given email, an error will be thrown
+      await this.createCognitoUser(
+        userData.email,
+        userData.password,
+        userData.first_name,
+        userData.last_name
       );
+    } catch (error) {
+      if (error instanceof UsernameExistsException) {
+        console.log('User already exists with this email:', error);
+        throw new Error(
+          'User already exists with this email. Please use a different email.'
+        );
+      } else {
+        throw new Error('Error creating Cognito user: ' + error);
+      }
     }
-
     const userModel = this.postInputToUserModel(userData);
     const newId =
       ((await this.dynamoDbService.getHighestId(this.tableName, 'userId')) ??
         0) + 1;
     userModel.userId.S = newId.toString();
 
-    // Create Cognito User
-    await this.createCognitoUser(
-      userData.email,
-      userData.password,
-      userData.first_name,
-      userData.last_name
-    );
-
     // Save to DynamoDB
     await this.dynamoDbService.postItem(this.tableName, userModel);
+
+    const userOutput = this.userModelToOutput(userModel);
+
+    return userOutput;
   }
 
   /**
@@ -79,6 +85,7 @@ export class UserService {
       last_name: item.last_name.S,
       email: item.email.S,
       created_at: item.created_at.S,
+      role: item.role ? item.role.S : UserRole.USER, // Default to USER if not provided
     };
   };
 
@@ -94,8 +101,14 @@ export class UserService {
       last_name: { S: input.last_name },
       email: { S: input.email },
       created_at: { S: new Date().toISOString() },
+      role: { S: input.role ? input.role : UserRole.USER }, // Default to USER role
     };
 
+    if (input.role) {
+      newUserModel.role = { S: input.role };
+    } else {
+      newUserModel.role = { S: UserRole.USER }; // Default role
+    }
     return newUserModel;
   };
 
