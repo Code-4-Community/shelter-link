@@ -216,10 +216,17 @@ export class DynamoDbService {
         names
       );
     } else {
-      //Non-list case, still includes nested values
-      ExpressionAttributeValues[`:${names[names.length - 1]}`] = {
-        S: attributeValues[i],
-      };
+      if (attributeValues[i] === 'true' || attributeValues[i] === 'false') {
+        // Boolean case
+        ExpressionAttributeValues[`:${names[names.length - 1]}`] = {
+          BOOL: attributeValues[i] === 'true',
+        };
+      } else {
+        //Non-list case, still includes nested values
+        ExpressionAttributeValues[`:${names[names.length - 1]}`] = {
+          S: attributeValues[i],
+        };
+      }
     }
 
     return UpdateExpression;

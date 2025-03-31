@@ -15,7 +15,11 @@ import FiltersDropdown from '../components/FiltersDropdown';
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import ShelterInfoPanel from '../components/ShelterInfoPanel';
 import { Shelter } from '../types';
-import { backgroundColor, darkMainColor } from '../../constants';
+import {
+  backgroundColor,
+  darkMainColor,
+  gradientColor1,
+} from '../../constants';
 import getShelters from '../services/mapService';
 import { useFonts } from 'expo-font';
 
@@ -123,7 +127,7 @@ export const CompleteMap = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: backgroundColor,
+    backgroundColor: gradientColor1,
   },
   container: {
     flex: 1,

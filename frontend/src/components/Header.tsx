@@ -10,7 +10,6 @@ const Header = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>ShelterLink</Text>
       <Text style={styles.headerDescription}>Search for shelters near you</Text>
     </View>
   );
@@ -30,6 +29,7 @@ if (screenWidth > 500) {
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 15,
     alignItems: 'center',
     width: '100%',
   },

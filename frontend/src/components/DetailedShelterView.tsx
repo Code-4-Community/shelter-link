@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import React, { useRef, useState } from 'react';
 import {
-  backgroundColor,
   headerFont,
   darkMainColor,
   bodyFont,
@@ -18,6 +17,8 @@ import {
   buttonBackgroundColor,
   descriptionFontColor,
   containerColor,
+  gradientColor1,
+  gradientColor2,
 } from '../../constants';
 import { Shelter, DayOfWeek } from '../types';
 import { ImageGallery } from './ImageGallery';
@@ -25,6 +26,7 @@ import { HoursDropdown } from './HoursDropdown';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useFonts } from 'expo-font';
 import { ScrollView } from 'react-native-gesture-handler';
+import { LinearGradient } from 'expo-linear-gradient';
 
 type RootStackParamList = {
   'Map View': undefined;
@@ -128,93 +130,118 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
   }));
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flex: 1 }}>
-        <View style={styles.shelterNameContainer}>
-          <Text style={styles.shelterNameText}>{shelter.name}</Text>
-
-          <View style={styles.quickInfoContainer}>
-            {shelter.expanded_name && (
-              <Text style={styles.shelterExpandedNameText}>
-                {shelter.expanded_name}
-              </Text>
-            )}
-            {shelter.rating !== undefined && (
-              <View style={styles.ratingContainer}>
-                <Text style={styles.quickInfoText}>
-                  {shelter.rating.toFixed(1)}
+    <LinearGradient
+      colors={[gradientColor1, gradientColor2]}
+      style={styles.gradientBackground}
+    >
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flex: 1 }}>
+          <View style={styles.shelterNameContainer}>
+            <View style={styles.quickInfoContainer}>
+              {shelter.expanded_name && (
+                <Text style={styles.shelterExpandedNameText}>
+                  {shelter.expanded_name}
                 </Text>
-                <Image
-                  source={require('frontend/assets/teenyicons_star-solid.png')}
-                  style={styles.starIcon}
-                />
-                <Text style={styles.quickInfoText}>
-                  | {shelter.address.street}, {shelter.address.city},{' '}
-                  {shelter.address.state}
-                </Text>
-              </View>
-            )}
+              )}
+              {shelter.rating !== undefined && (
+                <View style={styles.ratingContainer}>
+                  <Text style={styles.quickInfoText}>
+                    {shelter.rating.toFixed(1)}
+                  </Text>
+                  <Image
+                    source={require('frontend/assets/teenyicons_star-solid.png')}
+                    style={styles.starIcon}
+                  />
+                  <Text style={styles.quickInfoText}>
+                    | {shelter.address.street}, {shelter.address.city},{' '}
+                    {shelter.address.state}
+                  </Text>
+                </View>
+              )}
+            </View>
           </View>
-        </View>
-        <View style={styles.buttonsContainer}>
-          <TouchableOpacity
-            ref={buttonRef}
-            style={[styles.button, shelter.website && styles.smallButton]}
-            onPress={handleHours}
-          >
-            <Text style={styles.buttonText}>
-              Hours <Text style={styles.arrow}>▾</Text>
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.button, shelter.website && styles.smallButton]}
-            onPress={handleDirections}
-          >
-            <Text style={styles.buttonText}>Directions</Text>
-          </TouchableOpacity>
-
-          {shelter.website && (
+          <View style={styles.buttonsContainer}>
             <TouchableOpacity
-              style={styles.websiteButton}
-              onPress={handleWebsite}
+              ref={buttonRef}
+              style={[styles.button, shelter.website && styles.smallButton]}
+              onPress={handleHours}
             >
-              <Text style={styles.buttonText}>Website</Text>
+              <Text style={styles.buttonText}>
+                Hours <Text style={styles.arrow}>▾</Text>
+              </Text>
             </TouchableOpacity>
-          )}
 
-          <TouchableOpacity
-            style={[styles.button, shelter.website && styles.smallButton]}
-            onPress={handleContact}
-          >
-            <Text style={styles.buttonText}>Contact</Text>
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity
+              style={[styles.button, shelter.website && styles.smallButton]}
+              onPress={handleDirections}
+            >
+              <Text style={styles.buttonText}>Directions</Text>
+            </TouchableOpacity>
 
-        <HoursDropdown
-          hoursData={hoursData}
-          isOpen={showHoursDropdown}
-          setIsOpen={setShowHoursDropdown}
-          dropdownPosition={dropdownPosition}
-          currentDay={getCurrentDay()}
-        />
+            {shelter.website && (
+              <TouchableOpacity
+                style={styles.websiteButton}
+                onPress={handleWebsite}
+              >
+                <Text style={styles.buttonText}>Website</Text>
+              </TouchableOpacity>
+            )}
 
-        <View style={styles.bottomContainer}>
-          <View style={styles.imagesContainer}>
-            <ImageGallery images={shelter.picture} />
+            <TouchableOpacity
+              style={[styles.button, shelter.website && styles.smallButton]}
+              onPress={handleContact}
+            >
+              <Text style={styles.buttonText}>Contact</Text>
+            </TouchableOpacity>
           </View>
 
-          <View style={styles.shelterDescriptionContainer}>
-            <Text style={styles.shelterDescriptionHeader}>
-              About {shelter.name}
-            </Text>
-            <Text style={styles.shelterDescriptionText}>
-              {shelter.description}
-            </Text>
+          <HoursDropdown
+            hoursData={hoursData}
+            isOpen={showHoursDropdown}
+            setIsOpen={setShowHoursDropdown}
+            dropdownPosition={dropdownPosition}
+            currentDay={getCurrentDay()}
+          />
+
+          <View style={styles.bottomContainer}>
+            <View style={styles.imagesContainer}>
+              <ImageGallery images={shelter.picture} />
+            </View>
+
+            <View style={styles.shelterDescriptionContainer}>
+              <Text style={styles.shelterDescriptionHeader}>
+                About {shelter.name}
+              </Text>
+              <Text style={styles.shelterDescriptionText}>
+                {shelter.description}
+              </Text>
+            </View>
+
+            <View style={styles.shelterTagMainContainer}>
+              <Text style={styles.shelterDescriptionHeader}>
+                Features and Resources
+              </Text>
+              {/* <View style={styles.shelterTagContainer}> */}
+              {Object.entries(shelter.tags).map(([key, value]) => {
+                if (value) {
+                  return (
+                    <View key={key} style={styles.shelterTagContainer}>
+                      <Text key={key} style={styles.shelterTags}>
+                        {key === 'lgbtq_focused'
+                          ? (key = 'LGBTQ+ focused')
+                          : key.replace(/_/g, ' ')}
+                      </Text>
+                    </View>
+                  );
+                }
+                return null;
+              })}
+              {/* </View> */}
+            </View>
           </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+        </ScrollView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 };
 
@@ -248,9 +275,10 @@ if (screenWidth > 500) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: backgroundColor,
   },
-
+  gradientBackground: {
+    flex: 1,
+  },
   shelterNameContainer: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -266,10 +294,10 @@ const styles = StyleSheet.create({
     textAlign: 'center', // Ensures text is centered when it wraps
   },
   shelterExpandedNameText: {
-    fontFamily: headerFont,
+    fontFamily: bodyFont,
+    fontWeight: '700',
     fontSize: dynamicTabletSizes.shelterNameTextSize * 0.4,
-    fontWeight: '400',
-    color: darkMainColor,
+    color: descriptionFontColor,
     paddingBottom: '5%',
     textAlign: 'center', // Ensures text is centered when it wraps
   },
@@ -277,6 +305,26 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
     paddingHorizontal: '5%',
+    borderWidth: 1,
+    borderColor: darkMainColor,
+    borderRadius: 10,
+    backgroundColor: containerColor,
+    paddingVertical: 10,
+    marginBottom: 20,
+    width: '95%',
+  },
+  shelterTagMainContainer: {
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: 3,
+    borderWidth: 1,
+    borderColor: darkMainColor,
+    borderRadius: 10,
+    backgroundColor: containerColor,
+    paddingTop: 10,
+    width: '95%',
   },
   shelterDescriptionHeader: {
     width: 340,
@@ -296,7 +344,6 @@ const styles = StyleSheet.create({
   },
   quickInfoContainer: {
     justifyContent: 'flex-start',
-    paddingTop: '5%',
     alignItems: 'center',
   },
   ratingContainer: {
@@ -364,7 +411,6 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     flex: 1,
-    backgroundColor: containerColor,
     alignItems: 'center',
   },
   imagesContainer: {
@@ -391,6 +437,20 @@ const styles = StyleSheet.create({
     fontFamily: bodyFont,
     fontWeight: '400',
     lineHeight: dynamicTabletSizes.shelterDescriptionLineHeight,
+    color: descriptionFontColor,
+  },
+  shelterTagContainer: {
+    borderWidth: 1,
+    borderColor: descriptionFontColor,
+    backgroundColor: 'white',
+    padding: 5,
+    borderRadius: 10,
+    margin: 5,
+  },
+  shelterTags: {
+    fontSize: dynamicTabletSizes.shelterDescriptionFontSize,
+    fontFamily: bodyFont,
+    fontWeight: '700',
     color: descriptionFontColor,
   },
   fullReview: {

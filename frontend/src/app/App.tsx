@@ -16,7 +16,6 @@ import { AuthProvider, useAuth } from '../hooks/AuthContext';
 import SignUpScreen from '../components/SignUpScreen';
 import SignInScreen from '../components/SignInScreen';
 
-
 // defines type for nav stack
 export type RootStackParamList = {
   'Sign In': undefined;
@@ -33,19 +32,22 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 function AuthenticatedStack() {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View>
-        <Logo />
-      </View>
       <Stack.Navigator>
         <Stack.Screen
           name="Map View"
           component={CompleteMap}
-          options={{ headerShown: false }}
+          options={{
+            headerShown: true,
+            header: () => <Logo headerText="ShelterLink" />, // Pass header text here
+          }}
         />
         <Stack.Screen
           name="Detailed Shelter View"
           component={DetailedShelterView}
-          options={{ headerShown: false }}
+          options={({ route }) => ({
+            headerShown: true,
+            header: () => <Logo headerText={route.params.shelter.name} />, // Access shelter name from route params
+          })}
         />
       </Stack.Navigator>
     </SafeAreaView>
@@ -57,14 +59,18 @@ function AuthenticatedStack() {
  */
 function UnauthenticatedStack() {
   return (
-
-
     <Stack.Navigator>
-
-      <Stack.Screen name="Sign In" component={SignInScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Sign Up" component={SignUpScreen} options={{ headerShown: false }} />
+      <Stack.Screen
+        name="Sign In"
+        component={SignInScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Sign Up"
+        component={SignUpScreen}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
-
   );
 }
 
@@ -76,7 +82,11 @@ function MainNavigator() {
 
   if (loading) {
     // Loading screen while fetching user data
-    return <View style={styles.centeredView}><Logo /></View>;
+    return (
+      <View style={styles.centeredView}>
+        <Logo />
+      </View>
+    );
   }
 
   return user ? <AuthenticatedStack /> : <UnauthenticatedStack />;
@@ -95,13 +105,11 @@ export const App = () => {
       <NavigationContainer>
         <View style={{ flex: 1 }}>
           <GestureHandlerRootView style={{ flex: 1 }}>
-
-
             <MainNavigator />
           </GestureHandlerRootView>
         </View>
       </NavigationContainer>
-    </AuthProvider >
+    </AuthProvider>
   );
 };
 
