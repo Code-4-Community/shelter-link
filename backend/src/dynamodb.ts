@@ -150,7 +150,7 @@ export class DynamoDbService {
     tableName: string,
     shelterId: string,
     attributeNames: string[],
-    attributeValues: (string | number)[]
+    attributeValues: (string | number | boolean)[]
   ) {
     if (attributeNames.length !== attributeValues.length) {
       const err = `Error updating attributes of shelter ${shelterId} to table ${tableName}: 
@@ -184,7 +184,7 @@ export class DynamoDbService {
     ExpressionAttributeNames,
     ExpressionAttributeValues,
     attributeNames: string[],
-    attributeValues: (string | number)[]
+    attributeValues: (string | number | boolean)[]
   ): string {
     let currVal = attributeValues[i] as string;
 
@@ -291,7 +291,7 @@ export class DynamoDbService {
     tableName: string,
     shelterId: string,
     attributeNames: string[],
-    attributeValues: (string | number)[],
+    attributeValues: (string | number | boolean)[],
     hoursMap: boolean | HoursUpdateModel
   ) {
     const Key = { shelterId: { S: shelterId + '' } };
