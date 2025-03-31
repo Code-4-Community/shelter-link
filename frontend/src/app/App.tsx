@@ -1,5 +1,5 @@
 // App.tsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -7,6 +7,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import Logo from '../components/Logo';
+import { LogIn } from '../components/LogIn';
 import CompleteMap from '../components/CompleteMap';
 import { DetailedShelterView } from '../components/DetailedShelterView';
 
@@ -19,7 +20,7 @@ import SignInScreen from '../components/SignInScreen';
 
 // defines type for nav stack
 export type RootStackParamList = {
-  'Sign In': undefined;
+  'Log In': undefined;
   'Sign Up': undefined;
   'Map View': undefined;
   'Detailed Shelter View': { shelter: Shelter };
@@ -57,14 +58,15 @@ function AuthenticatedStack() {
  */
 function UnauthenticatedStack() {
   return (
-
-
-    <Stack.Navigator>
-
-      <Stack.Screen name="Sign In" component={SignInScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Sign Up" component={SignUpScreen} options={{ headerShown: false }} />
-    </Stack.Navigator>
-
+    <SafeAreaView style={styles.safeArea}>
+      <View>
+        <Logo />
+      </View>
+      <Stack.Navigator>
+        <Stack.Screen name="Log In" component={LogIn} options={{ headerShown: false }} />
+        <Stack.Screen name="Sign Up" component={SignUpScreen} options={{ headerShown: false }} />
+      </Stack.Navigator>
+    </SafeAreaView>
   );
 }
 
@@ -72,7 +74,12 @@ function UnauthenticatedStack() {
  * Decides which stack to render based on whether user is logged in.
  */
 function MainNavigator() {
-  const { user, loading } = useAuth();
+  const { user, loading, logout } = useAuth();
+
+  useEffect(() => {
+    // Force logout (for testing purposes)
+    logout();
+  }, []);
 
   if (loading) {
     // Loading screen while fetching user data
@@ -95,8 +102,6 @@ export const App = () => {
       <NavigationContainer>
         <View style={{ flex: 1 }}>
           <GestureHandlerRootView style={{ flex: 1 }}>
-
-
             <MainNavigator />
           </GestureHandlerRootView>
         </View>
