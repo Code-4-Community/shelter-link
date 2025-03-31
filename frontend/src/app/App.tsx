@@ -39,7 +39,7 @@ function AuthenticatedStack() {
           component={CompleteMap}
           options={{
             headerShown: true,
-            header: () => <Logo headerText="ShelterLink" />, // Pass header text here
+            header: () => <Logo headerText="ShelterLink" />,
           }}
         />
         <Stack.Screen
@@ -61,15 +61,41 @@ function AuthenticatedStack() {
 function UnauthenticatedStack() {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View>
-        <Logo />
-      </View>
       <Stack.Navigator>
-        <Stack.Screen name="Log In" component={LogIn} options={{ headerShown: false }} />
-        <Stack.Screen name="Sign Up" component={SignUpScreen} options={{ headerShown: false }} />
+        <Stack.Screen
+          name="Log In"
+          component={LogIn}
+          options={{
+            headerShown: true,
+            header: () => <Logo />,
+          }}
+        />
+        <Stack.Screen
+          name="Sign Up"
+          component={SignUpScreen}
+          options={{
+            headerShown: true,
+            header: () => <Logo headerText="ShelterLink" />,
+          }}
+        />
+        <Stack.Screen
+          name="Map View"
+          component={CompleteMap}
+          options={{
+            headerShown: true,
+            header: () => <Logo headerText="ShelterLink" />,
+          }}
+        />
+        <Stack.Screen
+          name="Detailed Shelter View"
+          component={DetailedShelterView}
+          options={({ route }) => ({
+            headerShown: true,
+            header: () => <Logo headerText={route.params.shelter.name} />, // Access shelter name from route params
+          })}
+        />
       </Stack.Navigator>
     </SafeAreaView>
-
   );
 }
 
