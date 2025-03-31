@@ -17,7 +17,6 @@ import { AuthProvider, useAuth } from '../hooks/AuthContext';
 import SignUpScreen from '../components/SignUpScreen';
 import SignInScreen from '../components/SignInScreen';
 
-
 // defines type for nav stack
 export type RootStackParamList = {
   'Log In': undefined;
@@ -34,19 +33,22 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 function AuthenticatedStack() {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View>
-        <Logo />
-      </View>
       <Stack.Navigator>
         <Stack.Screen
           name="Map View"
           component={CompleteMap}
-          options={{ headerShown: false }}
+          options={{
+            headerShown: true,
+            header: () => <Logo headerText="ShelterLink" />,
+          }}
         />
         <Stack.Screen
           name="Detailed Shelter View"
           component={DetailedShelterView}
-          options={{ headerShown: false }}
+          options={({ route }) => ({
+            headerShown: true,
+            header: () => <Logo headerText={route.params.shelter.name} />, // Access shelter name from route params
+          })}
         />
       </Stack.Navigator>
     </SafeAreaView>
@@ -59,12 +61,39 @@ function AuthenticatedStack() {
 function UnauthenticatedStack() {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View>
-        <Logo />
-      </View>
       <Stack.Navigator>
-        <Stack.Screen name="Log In" component={LogIn} options={{ headerShown: false }} />
-        <Stack.Screen name="Sign Up" component={SignUpScreen} options={{ headerShown: false }} />
+        <Stack.Screen
+          name="Log In"
+          component={LogIn}
+          options={{
+            headerShown: true,
+            header: () => <Logo />,
+          }}
+        />
+        <Stack.Screen
+          name="Sign Up"
+          component={SignUpScreen}
+          options={{
+            headerShown: true,
+            header: () => <Logo headerText="ShelterLink" />,
+          }}
+        />
+        <Stack.Screen
+          name="Map View"
+          component={CompleteMap}
+          options={{
+            headerShown: true,
+            header: () => <Logo headerText="ShelterLink" />,
+          }}
+        />
+        <Stack.Screen
+          name="Detailed Shelter View"
+          component={DetailedShelterView}
+          options={({ route }) => ({
+            headerShown: true,
+            header: () => <Logo headerText={route.params.shelter.name} />, // Access shelter name from route params
+          })}
+        />
       </Stack.Navigator>
     </SafeAreaView>
   );
@@ -83,7 +112,11 @@ function MainNavigator() {
 
   if (loading) {
     // Loading screen while fetching user data
-    return <View style={styles.centeredView}><Logo /></View>;
+    return (
+      <View style={styles.centeredView}>
+        <Logo />
+      </View>
+    );
   }
 
   return user ? <AuthenticatedStack /> : <UnauthenticatedStack />;
@@ -106,7 +139,7 @@ export const App = () => {
           </GestureHandlerRootView>
         </View>
       </NavigationContainer>
-    </AuthProvider >
+    </AuthProvider>
   );
 };
 

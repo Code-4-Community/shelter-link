@@ -226,6 +226,7 @@ export class ShelterService {
   public async getShelters(): Promise<ShelterModel[]> {
     try {
       const data = await this.dynamoDbService.scanTable(this.tableName);
+
       return data.map((item) => this.shelterModelToOutput(item));
     } catch (e) {
       throw new Error('Unable to get shelters: ' + e);
@@ -336,6 +337,35 @@ export class ShelterService {
         },
       },
       picture: { L: input.picture.map((url) => ({ S: url })) }, // Convert list of URLs to DynamoDB format
+      tags: {
+        M: {
+          wheelchair_accessible: {
+            BOOL: input.tags?.wheelchair_accessible ?? false,
+          },
+          pet_friendly: { BOOL: input.tags?.pet_friendly ?? false },
+          family_friendly: { BOOL: input.tags?.family_friendly ?? false },
+          legal_aid: { BOOL: input.tags?.legal_aid ?? false },
+          lgbtq_focused: { BOOL: input.tags?.lgbtq_focused ?? false },
+          mental_health_resources: {
+            BOOL: input.tags?.mental_health_resources ?? false,
+          },
+          overnight_stay: { BOOL: input.tags?.overnight_stay ?? false },
+          food_resources: { BOOL: input.tags?.food_resources ?? false },
+          clothing_resources: { BOOL: input.tags?.clothing_resources ?? false },
+          transportation_resources: {
+            BOOL: input.tags?.transportation_resources ?? false,
+          },
+          hygiene_facilities: { BOOL: input.tags?.hygiene_facilities ?? false },
+          job_assistance: { BOOL: input.tags?.job_assistance ?? false },
+          medical_resources: { BOOL: input.tags?.medical_resources ?? false },
+          educational_programs: {
+            BOOL: input.tags?.educational_programs ?? false,
+          },
+          substance_abuse_support: {
+            BOOL: input.tags?.substance_abuse_support ?? false,
+          },
+        },
+      },
     };
 
     if (input.rating !== undefined) {
@@ -348,38 +378,6 @@ export class ShelterService {
 
     if (input.expanded_name !== undefined) {
       newShelterModel.expanded_name = { S: input.expanded_name };
-    }
-
-    if (input.tags !== undefined) {
-      newShelterModel.tags = {
-        M: {
-          wheelchair_accessible: {
-            BOOL: input.tags.wheelchair_accessible ?? false,
-          },
-          pet_friendly: { BOOL: input.tags.pet_friendly ?? false },
-          family_friendly: { BOOL: input.tags.family_friendly ?? false },
-          legal_aid: { BOOL: input.tags.legal_aid ?? false },
-          lgbtq_focused: { BOOL: input.tags.lgbtq_focused ?? false },
-          mental_health_resources: {
-            BOOL: input.tags.mental_health_resources ?? false,
-          },
-          overnight_stay: { BOOL: input.tags.overnight_stay ?? false },
-          food_resources: { BOOL: input.tags.food_resources ?? false },
-          clothing_resources: { BOOL: input.tags.clothing_resources ?? false },
-          transportation_resources: {
-            BOOL: input.tags.transportation_resources ?? false,
-          },
-          hygiene_facilities: { BOOL: input.tags.hygiene_facilities ?? false },
-          job_assistance: { BOOL: input.tags.job_assistance ?? false },
-          medical_resources: { BOOL: input.tags.medical_resources ?? false },
-          educational_programs: {
-            BOOL: input.tags.educational_programs ?? false,
-          },
-          substance_abuse_support: {
-            BOOL: input.tags.substance_abuse_support ?? false,
-          },
-        },
-      };
     }
 
     return newShelterModel;

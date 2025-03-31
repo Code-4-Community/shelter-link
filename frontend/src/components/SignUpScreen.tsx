@@ -23,6 +23,7 @@ import {
   bodyFontSize,
   caption2FontSize,
   caption1FontSize,
+  header2FontSize,
 } from 'frontend/constants';
 import { useFonts } from 'expo-font';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -242,10 +243,7 @@ const SignUpScreen = () => {
         >
           <ScrollView
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={[
-              styles.scrollContent,
-              { minHeight: screenHeight * 0.9 },
-            ]}
+            contentContainerStyle={[styles.scrollContent]}
             keyboardShouldPersistTaps="handled"
           >
             <TouchableOpacity
@@ -420,7 +418,7 @@ const SignUpScreen = () => {
 
                   <TouchableOpacity
                     style={styles.loginLink}
-                    onPress={() => navigation.navigate('Sign In')}
+                    onPress={() => navigation.navigate('Log In')}
                   >
                     <Text style={styles.label}>Already have an account?</Text>
                   </TouchableOpacity>
@@ -449,7 +447,6 @@ export default SignUpScreen;
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: 'transparent',
   },
   gradientBackground: {
     flex: 1,
@@ -460,7 +457,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: 20,
-    paddingBottom: 40,
+    paddingBottom: 10,
     justifyContent: 'center',
   },
   contentWrapper: {
@@ -470,7 +467,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: header1FontSize,
+    fontSize: header2FontSize * 1.2,
     fontWeight: 'bold',
     color: headerFontColor,
     marginVertical: 20,
@@ -483,18 +480,18 @@ const styles = StyleSheet.create({
   formContainer: {
     width: '100%',
     backgroundColor: 'rgba(255,255,255, 1)',
-    borderRadius: 20,
+    borderRadius: 10,
     paddingHorizontal: 20,
     marginBottom: 20,
   },
   label: {
     fontSize: bodyFontSize,
-    marginBottom: 6,
+    marginBottom: 2,
     color: '#000000',
     fontFamily: 'ProximaNova-Regular',
   },
   input: {
-    height: 50, // Increased height for better touch targets
+    height: 40, // Increased height for better touch targets
     backgroundColor: '#fff',
     borderRadius: 10,
     paddingHorizontal: 12,

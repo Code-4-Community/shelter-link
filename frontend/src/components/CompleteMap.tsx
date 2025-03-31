@@ -15,9 +15,10 @@ import FiltersDropdown from '../components/FiltersDropdown';
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import ShelterInfoPanel from '../components/ShelterInfoPanel';
 import { Shelter } from '../types';
-import { backgroundColor, darkMainColor } from '../../constants';
+import { darkMainColor, gradientColor1 } from '../../constants';
 import getShelters from '../services/mapService';
 import { useFonts } from 'expo-font';
+import { useFocusEffect } from '@react-navigation/native';
 
 export const CompleteMap = () => {
   const sheetRef = useRef<BottomSheet>(null);
@@ -25,6 +26,7 @@ export const CompleteMap = () => {
   const [selectedShelter, setSelectedShelter] = useState<Shelter | null>(null);
   const [shelters, setShelters] = useState<Shelter[]>([]);
   const [query, setQuery] = useState('');
+  const [key, setKey] = useState(0);
 
   useFonts({
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Regular.otf'),
@@ -33,7 +35,7 @@ export const CompleteMap = () => {
   const fetchShelters = async () => {
     try {
       const data = await getShelters(); // Use mapService to fetch shelters
-      setShelters(data);
+      setShelters([...data]);
     } catch (error) {
       console.error('Error fetching shelters:', error);
     } finally {
@@ -44,9 +46,17 @@ export const CompleteMap = () => {
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
 
-  useEffect(() => {
-    fetchShelters();
-  }, [query]);
+  useFocusEffect(
+    useCallback(() => {
+      console.log('Screen focused');
+      fetchShelters();
+
+      // Cleanup function
+      return () => {
+        console.log('Screen unfocused');
+      };
+    }, [])
+  );
 
   const handleMarkerPress = useCallback((shelter: Shelter) => {
     setSelectedShelter(shelter);
@@ -62,7 +72,7 @@ export const CompleteMap = () => {
 
   const filteredShelters = useMemo(() => {
     if (query === '') {
-      return shelters;
+      return [...shelters];
     } else {
       const fuseOptions = {
         findAllMatches: true,
@@ -105,6 +115,7 @@ export const CompleteMap = () => {
         ) : filteredShelters.length > 0 ? (
           <BottomSheetFlatList
             data={filteredShelters}
+            extraData={[query, shelters]}
             keyExtractor={(item) =>
               `${item.name}-${item.address.street}`.replace(/\s+/g, '')
             } // creating a unique id
@@ -123,7 +134,7 @@ export const CompleteMap = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: backgroundColor,
+    backgroundColor: gradientColor1,
   },
   container: {
     flex: 1,

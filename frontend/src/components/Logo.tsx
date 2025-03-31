@@ -1,9 +1,15 @@
-import { backgroundColor } from '../../constants';
+import {
+  backgroundColor,
+  darkMainColor,
+  gradientColor1,
+  headerFont,
+} from '../../constants';
 import React from 'react';
 import {
   StyleSheet,
   View,
   Image,
+  Text,
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
@@ -13,17 +19,26 @@ import { RootStackParamList } from '../app/App';
 
 type AppNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-const Logo: React.FC = () => {
+const Logo: React.FC<{ headerText?: string }> = ({ headerText }) => {
   const navigation = useNavigation<AppNavigationProp>();
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity onPress={() => navigation.navigate('Map View')}>
+    <View
+      style={[
+        styles.container,
+        { justifyContent: 'center', paddingHorizontal: 20 },
+      ]}
+    >
+      <TouchableOpacity
+        style={styles.imageContainer}
+        onPress={() => navigation.navigate('Map View')}
+      >
         <Image
           style={styles.imageStyle}
           source={require('../../assets/Logo.png')}
         />
       </TouchableOpacity>
+      {headerText && <Text style={styles.headerText}>{headerText}</Text>}
     </View>
   );
 };
@@ -48,7 +63,23 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: backgroundColor,
+    backgroundColor: gradientColor1,
+    justifyContent: 'center',
+    paddingTop: 25,
+    paddingBottom: 15,
+  },
+  imageContainer: {
+    position: 'absolute',
+    left: 5,
+  },
+  headerText: {
+    fontFamily: headerFont,
+    fontWeight: 'bold',
+    fontSize: 36,
+    paddingTop: 5,
+    color: darkMainColor,
+    alignSelf: 'center',
+    textAlign: 'center',
   },
 });
 

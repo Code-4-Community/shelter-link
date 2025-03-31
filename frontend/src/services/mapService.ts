@@ -10,7 +10,6 @@ const SHELTER_API_URL = `${process.env.EXPO_PUBLIC_API_URL}/shelters`;
  */
 const getShelters = async (): Promise<[Shelter]> => {
   const res = await api.get(SHELTER_API_URL);
-
   if (res.status !== 200) {
     throw new Error('Error while fetching shelters');
   }

@@ -1,31 +1,47 @@
 import { useNavigation } from '@react-navigation/native';
 import {
-    backgroundColor,
-    headerFont,
-    darkMainColor,
-    bodyFont,
-    mainColor,
-    buttonBackgroundColor,
-    descriptionFontColor,
-  } from '../../constants';
+  backgroundColor,
+  headerFont,
+  darkMainColor,
+  bodyFont,
+  mainColor,
+  buttonBackgroundColor,
+  descriptionFontColor,
+  gradientColor1,
+  gradientColor2,
+} from '../../constants';
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, SafeAreaView, Dimensions, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  SafeAreaView,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../app/App';
+import { LinearGradient } from 'expo-linear-gradient';
 
 type AppNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export const LogIn = () => {
   const navigation = useNavigation<AppNavigationProp>();
-  
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState<{ username?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{
+    username?: string;
+    password?: string;
+  }>({});
 
   const validateField = (field: 'username' | 'password', value: string) => {
     setErrors((prevErrors) => ({
       ...prevErrors,
-      [field]: value.trim() ? undefined : `${field === 'username' ? 'Username' : 'Password'} is required`,
+      [field]: value.trim()
+        ? undefined
+        : `${field === 'username' ? 'Username' : 'Password'} is required`,
     }));
   };
 
@@ -43,58 +59,73 @@ export const LogIn = () => {
     }
   };
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.headingContainer}>
-        <Text style={styles.heading}>Welcome to ShelterLink!</Text>
-      </View>
+    <LinearGradient
+      colors={[gradientColor1, gradientColor2]}
+      style={styles.gradientBackground}
+    >
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.headingContainer}>
+          <Text style={styles.heading}>Welcome to ShelterLink!</Text>
+        </View>
 
-      <View style={styles.loginContainer}>
-        <Text style={styles.loginHeading}>Log In</Text>
+        <View style={styles.loginContainer}>
+          <Text style={styles.loginHeading}>Log In</Text>
 
-            <View style={styles.usernameContainer}>
+          <View style={styles.usernameContainer}>
             <Text style={styles.usernameHeading}>Username</Text>
             <TextInput
               style={[styles.input, errors.username && styles.inputError]}
-              placeholder="Enter text here..."
+              placeholder="Email"
               value={username}
               onChangeText={setUsername}
               onBlur={() => validateField('username', username)}
             />
-            {errors.username && <Text style={styles.errorText}>{errors.username}</Text>}
+            {errors.username && (
+              <Text style={styles.errorText}>{errors.username}</Text>
+            )}
           </View>
 
-            <View style={styles.passwordContainer}>
+          <View style={styles.passwordContainer}>
             <Text style={styles.passwordHeading}>Password</Text>
             <TextInput
               style={[styles.input, errors.password && styles.inputError]}
-              placeholder="Enter text here..."
+              placeholder="Password"
               secureTextEntry
               value={password}
               onChangeText={setPassword}
               onBlur={() => validateField('password', password)}
             />
-            {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+            {errors.password && (
+              <Text style={styles.errorText}>{errors.password}</Text>
+            )}
           </View>
           <View style={styles.signUpRedirection}>
             <Text>New to ShelterLink? </Text>
             <TouchableOpacity onPress={() => navigation.navigate('Sign Up')}>
               <Text style={styles.signUpRedirectionClickable}>Sign Up</Text>
             </TouchableOpacity>
-            </View>
+          </View>
         </View>
 
         <TouchableOpacity
-          style={[styles.loginButton, (!username || !password) && styles.disabledButton]}
+          style={[
+            styles.loginButton,
+            (!username || !password) && styles.disabledButton,
+          ]}
           onPress={validateAndLogin}
           disabled={!username || !password} //disabled till both fields are filled
         >
           <Text style={styles.loginButtonText}>Log In</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.skipLogin} onPress={() => navigation.navigate('Map View')}>
-            <Text style={styles.skipLoginText}>Skip login for now</Text>
+        <TouchableOpacity
+          style={styles.skipLogin}
+          onPress={() => navigation.navigate('Map View')}
+        >
+          <Text style={styles.skipLoginText}>Skip login for now</Text>
         </TouchableOpacity>
-    </SafeAreaView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 };
 
@@ -126,7 +157,9 @@ if (screenWidth > 500) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: backgroundColor,
+  },
+  gradientBackground: {
+    flex: 1,
   },
   headingContainer: {
     width: dynamicTabletSizes.headingContainer,
@@ -150,10 +183,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderColor: descriptionFontColor,
     borderWidth: 1,
-    shadowColor: 'rgba(0, 0, 0, 0.25)', 
-    shadowOffset: { width: 0, height: 4 }, 
-    shadowOpacity: 0.25, 
-    shadowRadius: 4, 
+    shadowColor: 'rgba(0, 0, 0, 0.25)',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
     //  shadow property
     elevation: 5,
     marginBottom: 24,
@@ -205,7 +238,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 10,
   },
-  signUpRedirectionClickable:{
+  signUpRedirectionClickable: {
     textDecorationLine: 'underline',
   },
   loginButton: {
@@ -226,5 +259,11 @@ const styles = StyleSheet.create({
   },
   disabledButton: { backgroundColor: '#A9A9A9' }, // greyed-out when disabled
   skipLogin: { alignSelf: 'center' },
-  skipLoginText: { color: '#000', fontSize: 14, fontFamily: bodyFont, fontWeight: '400', textDecorationLine: 'underline' },
+  skipLoginText: {
+    color: '#000',
+    fontSize: 14,
+    fontFamily: bodyFont,
+    fontWeight: '400',
+    textDecorationLine: 'underline',
+  },
 });
