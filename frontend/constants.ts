@@ -8,6 +8,8 @@ export const backgroundColor = '#EADDF2'; //Background color of application
 export const containerColor = '#f6f0fa'; // Colors for component containers (off white)
 export const buttonBackgroundColor = '#FFFFFF'; //Background color for buttons (for now)
 export const descriptionFontColor = '#000'; //Font color that is used for descriptions
+export const labelColor = '#DB474A'; //Red color for the labels
+
 export const gradientColor1 = '#E3D8F1'; //Purple color of the gradient
 export const gradientColor2 = '#D3E6F9'; //Blue color of the gradient
 
