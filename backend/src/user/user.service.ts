@@ -11,10 +11,18 @@ import {
   UsernameExistsException,
 } from '@aws-sdk/client-cognito-identity-provider';
 import { LoginUserRequest, UserRole } from '../types';
+import {
+  UserEventBookmarkInputModel,
+  UserEventBookmarkModel,
+  UserShelterBookmarkInputModel,
+  UserShelterBookmarkModel,
+} from './userBookmarks.model';
 
 @Injectable()
 export class UserService {
   private readonly tableName = 'shelterlinkUsers';
+  private readonly shelterBookmarkTableName = 'shelterlinkShelterBookmarks';
+  private readonly eventBookmarkTableName = 'shelterlinkEventBookmarks';
   private cognitoClient = new CognitoIdentityProviderClient({
     region: process.env.AWS_REGION,
   });
@@ -195,4 +203,160 @@ export class UserService {
     const user = queryResult[0] as UserModel;
     return user;
   }
+
+  /**
+   * Posts a user's bookmark (either a shelter or event) to the database. If the bookmark already exists, it will be deleted.
+   * @param userId The ID of the user.
+   * @param bookmarkId The ID of the event or shelter to bookmark.
+   * @param type The type of bookmark ('shelter' or 'event').
+   * @returns The created bookmark model.
+   * @throws Error if the type is not 'shelter' or 'event'.
+   * @throws Error if there is an error saving or deleting the bookmark to the database.
+   */
+  public async postOrDeleteBookmark(
+    userId: string,
+    bookmarkId: string,
+    type: string
+  ) {
+    if (type !== 'shelter' && type !== 'event') {
+      throw new Error('Invalid type. Must be either "shelter" or "event".');
+    }
+
+    const bookmarkModel = this.postInputToBookmarkModel(
+      userId,
+      bookmarkId,
+      type
+    );
+
+    // check if the event or shelter exists
+    const queryResult = await this.dynamoDbService.queryTable(
+      type === 'shelter' ? 'shelterlinkShelters' : 'shelterlinkEvents',
+      `${type}Id = :bookmarkId`,
+      { ':bookmarkId': { S: bookmarkId } }
+    );
+    if (queryResult.length === 0) {
+      throw new Error(`${type} with ID ${bookmarkId} does not exist.`);
+    }
+
+    // check if the bookmark exists
+    const bookmarkQueryResult = await this.dynamoDbService.queryTable(
+      type === 'shelter'
+        ? this.shelterBookmarkTableName
+        : this.eventBookmarkTableName,
+      'userId = :userId AND ' + `${type}Id = :bookmarkId`,
+      {
+        ':userId': { S: userId },
+        ':bookmarkId': { S: bookmarkId },
+      }
+    );
+    if (bookmarkQueryResult.length > 0) {
+      // If the bookmark exists, delete it
+      await this.dynamoDbService.deleteItem(
+        type === 'shelter'
+          ? this.shelterBookmarkTableName
+          : this.eventBookmarkTableName,
+        { userId: { S: userId }, [type + 'Id']: { S: bookmarkId } }
+      );
+      return {
+        message: 'Bookmark deleted successfully',
+      };
+    }
+    // If the bookmark does not exist, create it
+    // Save to DynamoDB
+    if (type === 'shelter') {
+      await this.dynamoDbService.postItem(
+        this.shelterBookmarkTableName,
+        bookmarkModel
+      );
+    } else {
+      await this.dynamoDbService.postItem(
+        this.eventBookmarkTableName,
+        bookmarkModel
+      );
+    }
+
+    return {
+      message: 'Bookmark created successfully',
+      bookmark: this.bookmarkModelToOutput(bookmarkModel),
+    };
+  }
+
+  /**
+   * Retrieves a user's bookmarks from the database.
+   * @param userId The ID of the user.
+   * @param type The type of bookmark ('shelter' or 'event').
+   * @returns An array of bookmark models.
+   */
+  public async getUserBookmarks(
+    userId: string,
+    type: 'shelter' | 'event'
+  ): Promise<(UserShelterBookmarkModel | UserEventBookmarkModel)[]> {
+    if (type !== 'shelter' && type !== 'event') {
+      throw new Error('Invalid type. Must be either "shelter" or "event".');
+    }
+
+    try {
+      const tablename =
+        type === 'shelter'
+          ? this.shelterBookmarkTableName
+          : this.eventBookmarkTableName;
+      const data = await this.dynamoDbService.scanTable(
+        tablename,
+        'userId = :userId',
+        { ':userId': { S: userId } }
+      );
+      return data.map((item) => this.bookmarkModelToOutput(item));
+    } catch (e) {
+      throw new Error('Unable to get bookmarks: ' + e);
+    }
+  }
+
+  /**
+   * Converts the input data to a bookmark model suitable for DynamoDB.
+   * @param userId The ID of the user.
+   * @param bookmarkId The ID of the event or shelter to bookmark.
+   * @returns The bookmark model.
+   */
+  private postInputToBookmarkModel = (
+    userId: string,
+    bookmarkId: string,
+    type: 'shelter' | 'event'
+  ): UserShelterBookmarkInputModel | UserEventBookmarkInputModel => {
+    if (type === 'shelter') {
+      return {
+        userId: { S: userId },
+        shelterId: { S: bookmarkId },
+        created_at: { S: new Date().toISOString() },
+      };
+    } else {
+      return {
+        userId: { S: userId },
+        eventId: { S: bookmarkId },
+        created_at: { S: new Date().toISOString() },
+      };
+    }
+  };
+
+  /**
+   * Converts a DynamoDB bookmark model to a bookmark model.
+   * @param item The DynamoDB bookmark model.
+   * @returns The bookmark model.
+   */
+  private bookmarkModelToOutput = (
+    item: UserShelterBookmarkInputModel | UserEventBookmarkInputModel
+  ): UserShelterBookmarkModel | UserEventBookmarkModel => {
+    if ('shelterId' in item) {
+      return {
+        userId: item.userId.S,
+        shelterId: item.shelterId.S,
+        created_at: item.created_at.S,
+      };
+    } else {
+      return {
+        userId: item.userId.S,
+        eventId: item.eventId.S,
+        created_at: item.created_at.S,
+      };
+    }
+  };
 }

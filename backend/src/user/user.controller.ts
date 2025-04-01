@@ -5,10 +5,13 @@ import {
   Post,
   Body,
   Get,
+  Query,
+  Param,
+  Delete,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { NewUserInput } from '../dtos/newUserDTO';
-import { LoginUserRequest } from '../types';
+import { BookmarkRequest, LoginUserRequest } from '../types';
 import { UserModel } from './user.model';
 
 @Controller('users')
@@ -55,5 +58,27 @@ export class UserController {
         HttpStatus.BAD_REQUEST
       );
     }
+  }
+
+  @Get('/bookmarks/:userId')
+  public async getUserBookmarks(
+    @Param('userId') userId: string,
+    @Query('type') type: 'shelter' | 'event'
+  ) {
+    return await this.userService.getUserBookmarks(userId, type);
+  }
+
+  @Post('/bookmarks/:type')
+  public async postUserBookmark(
+    @Param('type') type: 'shelter' | 'event',
+    @Body() bookmarkData: BookmarkRequest
+  ) {
+    const { userId, bookmarkId } = bookmarkData.body;
+
+    return await this.userService.postOrDeleteBookmark(
+      userId,
+      bookmarkId,
+      type
+    );
   }
 }
