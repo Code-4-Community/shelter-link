@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       try {
         const storedUser = await AsyncStorage.getItem('user');
         if (storedUser) {
-          setUser(JSON.parse(storedUser));
+          // setUser(JSON.parse(storedUser));
         }
       } catch (error) {
         console.warn('Error loading user from storage:', error);

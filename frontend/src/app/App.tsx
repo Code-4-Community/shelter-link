@@ -87,14 +87,18 @@ function MapStackNavigator() {
         name="Map View"
         component={CompleteMap}
         options={{
-          headerShown: false,
+          headerShown: true,
+          header: () => <Logo headerText="ShelterLink" />,
         }}
       />
       {/* Screen accessible from Map View, but still inside the tab navigator */}
       <Stack.Screen
         name="Detailed Shelter View"
         component={DetailedShelterView}
-        options={{ headerShown: false }}
+        options={({ route }) => ({
+          headerShown: true,
+          header: () => <Logo headerText={route.params.shelter.name} />, // Access shelter name from route params
+        })}
       />
     </Stack.Navigator>
   );
@@ -139,8 +143,7 @@ function UnauthenticatedStack() {
           name="Log In"
           component={UnauthenticatedTabs}
           options={{
-            headerShown: true,
-            header: () => <Logo />,
+            headerShown: false,
           }}
         />
         <Stack.Screen
@@ -162,10 +165,6 @@ function UnauthenticatedStack() {
         <Stack.Screen
           name="Detailed Shelter View"
           component={UnauthenticatedTabs}
-          options={({ route }) => ({
-            headerShown: true,
-            header: () => <Logo headerText={route.params.shelter.name} />, // Access shelter name from route params
-          })}
         />
       </Stack.Navigator>
     </SafeAreaView>
