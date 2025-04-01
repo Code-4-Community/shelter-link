@@ -16,6 +16,9 @@ import { AuthProvider, useAuth } from '../hooks/AuthContext';
 
 import SignUpScreen from '../components/SignUpScreen';
 import SignInScreen from '../components/SignInScreen';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
+import { containerColor, darkMainColor } from 'frontend/constants';
 
 // defines type for nav stack
 export type RootStackParamList = {
@@ -26,6 +29,80 @@ export type RootStackParamList = {
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
+const Tab = createBottomTabNavigator();
+
+function UnauthenticatedTabs() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          let iconName: 'map-outline' | 'person-outline';
+          if (route.name === 'Map View') {
+            iconName = 'map-outline';
+          } else {
+            iconName = 'person-outline';
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: darkMainColor,
+        tabBarInactiveTintColor: containerColor,
+        headerShown: false,
+      })}
+    >
+      <Tab.Screen name="Map View" component={MapStackNavigator} />
+    </Tab.Navigator>
+  );
+}
+
+function AuthenticatedTabs() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          let iconName: 'map-outline' | 'person-outline';
+          if (route.name === 'Map View') {
+            iconName = 'map-outline';
+          } else {
+            iconName = 'person-outline';
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: darkMainColor,
+        tabBarInactiveTintColor: containerColor,
+        headerShown: false,
+      })}
+    >
+      <Tab.Screen name="Map View" component={MapStackNavigator} />
+    </Tab.Navigator>
+  );
+}
+
+function MapStackNavigator() {
+  return (
+    <Stack.Navigator>
+      {/* Default screen inside the tab */}
+      <Stack.Screen
+        name="Map View"
+        component={CompleteMap}
+        options={{
+          headerShown: true,
+          header: () => <Logo headerText="ShelterLink" />,
+        }}
+      />
+      {/* Screen accessible from Map View, but still inside the tab navigator */}
+      <Stack.Screen
+        name="Detailed Shelter View"
+        component={DetailedShelterView}
+        options={({ route }) => ({
+          headerShown: true,
+          header: () => <Logo headerText={route.params.shelter.name} />, // Access shelter name from route params
+        })}
+      />
+    </Stack.Navigator>
+  );
+}
 
 /**
  * Screens that require authentication:
@@ -36,7 +113,7 @@ function AuthenticatedStack() {
       <Stack.Navigator>
         <Stack.Screen
           name="Map View"
-          component={CompleteMap}
+          component={AuthenticatedTabs}
           options={{
             headerShown: true,
             header: () => <Logo headerText="ShelterLink" />,
@@ -44,7 +121,7 @@ function AuthenticatedStack() {
         />
         <Stack.Screen
           name="Detailed Shelter View"
-          component={DetailedShelterView}
+          component={AuthenticatedTabs}
           options={({ route }) => ({
             headerShown: true,
             header: () => <Logo headerText={route.params.shelter.name} />, // Access shelter name from route params
@@ -64,15 +141,14 @@ function UnauthenticatedStack() {
       <Stack.Navigator>
         <Stack.Screen
           name="Log In"
-          component={LogIn}
+          component={UnauthenticatedTabs}
           options={{
-            headerShown: true,
-            header: () => <Logo />,
+            headerShown: false,
           }}
         />
         <Stack.Screen
           name="Sign Up"
-          component={SignUpScreen}
+          component={UnauthenticatedTabs}
           options={{
             headerShown: true,
             header: () => <Logo headerText="ShelterLink" />,
@@ -80,7 +156,7 @@ function UnauthenticatedStack() {
         />
         <Stack.Screen
           name="Map View"
-          component={CompleteMap}
+          component={UnauthenticatedTabs}
           options={{
             headerShown: true,
             header: () => <Logo headerText="ShelterLink" />,
@@ -88,11 +164,7 @@ function UnauthenticatedStack() {
         />
         <Stack.Screen
           name="Detailed Shelter View"
-          component={DetailedShelterView}
-          options={({ route }) => ({
-            headerShown: true,
-            header: () => <Logo headerText={route.params.shelter.name} />, // Access shelter name from route params
-          })}
+          component={UnauthenticatedTabs}
         />
       </Stack.Navigator>
     </SafeAreaView>
