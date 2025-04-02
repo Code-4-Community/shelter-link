@@ -23,6 +23,8 @@ import {
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../app/App';
 import { LinearGradient } from 'expo-linear-gradient';
+import { loginUser } from '../services/userService';
+import { useAuth } from '../hooks/AuthContext';
 
 type AppNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -35,6 +37,7 @@ export const LogIn = () => {
     username?: string;
     password?: string;
   }>({});
+  const { login } = useAuth();
 
   const validateField = (field: 'username' | 'password', value: string) => {
     setErrors((prevErrors) => ({
@@ -45,7 +48,7 @@ export const LogIn = () => {
     }));
   };
 
-  const validateAndLogin = () => {
+  const validateAndLogin = async () => {
     const newErrors: { username?: string; password?: string } = {};
 
     if (!username.trim()) newErrors.username = 'Username is required';
@@ -54,8 +57,25 @@ export const LogIn = () => {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      console.log('Logging in with:', { username, password });
-      // auth nav call here
+      try {
+        const loginRequest = {
+          body: {
+            email: username,
+            password: password,
+          },
+        };
+        const user = await loginUser(loginRequest);
+        console.log('Login successful:', user);
+
+        // set user in context
+        login(user);
+      } catch (error) {
+        console.error('Login failed:', error);
+        setErrors({
+          username: 'Invalid username or password',
+          password: 'Invalid username or password',
+        });
+      }
     }
   };
   return (

@@ -33,9 +33,9 @@ const createUser = async (userData: NewUserInput): Promise<any> => {
  * While sending a body with GET is unconventional and it should be post instead, it still works.
  */
 const loginUser = async (loginData: LoginUserRequest): Promise<UserModel> => {
-  const res = await api.get(`${USER_API_URL}/login`, { data: loginData });
+  const res = await api.post(`${USER_API_URL}/login`, loginData);
 
-  if (res.status !== 200) {
+  if (res.status !== 201) {
     throw new Error('Error while logging in user');
   }
   return res.data;
