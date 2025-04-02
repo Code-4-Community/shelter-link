@@ -178,7 +178,7 @@ export class UserService {
       const command = new InitiateAuthCommand(input);
       await this.cognitoClient.send(command);
     } catch (error) {
-      throw new Error(error + 'Invalid email or password');
+      throw new Error(error);
     }
 
     const queryResult = await this.dynamoDbService.queryTable(
