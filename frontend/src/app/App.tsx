@@ -18,7 +18,12 @@ import SignUpScreen from '../components/SignUpScreen';
 import SignInScreen from '../components/SignInScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { containerColor, darkMainColor } from 'frontend/constants';
+import {
+  backgroundColor,
+  containerColor,
+  darkMainColor,
+} from 'frontend/constants';
+import { ProfilePage } from '../components/ProfilePage';
 
 // defines type for nav stack
 export type RootStackParamList = {
@@ -26,58 +31,12 @@ export type RootStackParamList = {
   'Sign Up': undefined;
   'Map View': undefined;
   'Detailed Shelter View': { shelter: Shelter };
+  Profile: undefined;
+  Map: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
-
-function UnauthenticatedTabs() {
-  return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ color, size }) => {
-          let iconName: 'map-outline' | 'person-outline';
-          if (route.name === 'Map View') {
-            iconName = 'map-outline';
-          } else {
-            iconName = 'person-outline';
-          }
-
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
-        tabBarActiveTintColor: darkMainColor,
-        tabBarInactiveTintColor: containerColor,
-        headerShown: false,
-      })}
-    >
-      <Tab.Screen name="Map View" component={MapStackNavigator} />
-    </Tab.Navigator>
-  );
-}
-
-function AuthenticatedTabs() {
-  return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ color, size }) => {
-          let iconName: 'map-outline' | 'person-outline';
-          if (route.name === 'Map View') {
-            iconName = 'map-outline';
-          } else {
-            iconName = 'person-outline';
-          }
-
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
-        tabBarActiveTintColor: darkMainColor,
-        tabBarInactiveTintColor: containerColor,
-        headerShown: false,
-      })}
-    >
-      <Tab.Screen name="Map View" component={MapStackNavigator} />
-    </Tab.Navigator>
-  );
-}
 
 function MapStackNavigator() {
   return (
@@ -88,19 +47,52 @@ function MapStackNavigator() {
         component={CompleteMap}
         options={{
           headerShown: true,
-          header: () => <Logo headerText="ShelterLink" />,
+          header: () => <Logo headerText="ShelterLink" navigateTo="Map View" />,
         }}
       />
-      {/* Screen accessible from Map View, but still inside the tab navigator */}
+      {/* Navigates from Map to DetailedShelterView, keeping tabs visible */}
       <Stack.Screen
         name="Detailed Shelter View"
         component={DetailedShelterView}
         options={({ route }) => ({
           headerShown: true,
-          header: () => <Logo headerText={route.params.shelter.name} />, // Access shelter name from route params
+          header: () => (
+            <Logo
+              headerText={route.params.shelter.name}
+              navigateTo="Map View"
+            />
+          ),
         })}
       />
     </Stack.Navigator>
+  );
+}
+
+function BottomTabsNavigator() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          const iconName =
+            route.name === 'Map' ? 'map-outline' : 'person-outline';
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: darkMainColor,
+        tabBarInactiveTintColor: backgroundColor,
+        headerShown: false,
+      })}
+    >
+      {/* Use MapStackNavigator instead of defining Map View multiple times */}
+      <Tab.Screen name="Map" component={MapStackNavigator} />
+      <Tab.Screen
+        name="Profile"
+        component={ProfilePage}
+        options={{
+          headerShown: true,
+          header: () => <Logo headerText="ShelterLink" navigateTo="Map" />,
+        }}
+      />
+    </Tab.Navigator>
   );
 }
 
@@ -111,21 +103,11 @@ function AuthenticatedStack() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <Stack.Navigator>
+        {/* BottomTabsNavigator manages everything, including MapStack */}
         <Stack.Screen
           name="Map View"
-          component={AuthenticatedTabs}
-          options={{
-            headerShown: true,
-            header: () => <Logo headerText="ShelterLink" />,
-          }}
-        />
-        <Stack.Screen
-          name="Detailed Shelter View"
-          component={AuthenticatedTabs}
-          options={({ route }) => ({
-            headerShown: true,
-            header: () => <Logo headerText={route.params.shelter.name} />, // Access shelter name from route params
-          })}
+          component={BottomTabsNavigator}
+          options={{ headerShown: false }}
         />
       </Stack.Navigator>
     </SafeAreaView>
@@ -141,30 +123,26 @@ function UnauthenticatedStack() {
       <Stack.Navigator>
         <Stack.Screen
           name="Log In"
-          component={UnauthenticatedTabs}
+          component={LogIn}
           options={{
-            headerShown: false,
+            headerShown: true,
+            header: () => <Logo navigateTo="Map View" />,
           }}
         />
         <Stack.Screen
           name="Sign Up"
-          component={UnauthenticatedTabs}
+          component={SignUpScreen}
           options={{
             headerShown: true,
-            header: () => <Logo headerText="ShelterLink" />,
+            header: () => (
+              <Logo headerText="ShelterLink" navigateTo="Map View" />
+            ),
           }}
         />
         <Stack.Screen
           name="Map View"
-          component={UnauthenticatedTabs}
-          options={{
-            headerShown: true,
-            header: () => <Logo headerText="ShelterLink" />,
-          }}
-        />
-        <Stack.Screen
-          name="Detailed Shelter View"
-          component={UnauthenticatedTabs}
+          component={BottomTabsNavigator}
+          options={{ headerShown: false }}
         />
       </Stack.Navigator>
     </SafeAreaView>
@@ -186,7 +164,7 @@ function MainNavigator() {
     // Loading screen while fetching user data
     return (
       <View style={styles.centeredView}>
-        <Logo />
+        <Logo navigateTo="Map View" />
       </View>
     );
   }

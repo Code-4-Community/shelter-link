@@ -19,7 +19,10 @@ import { RootStackParamList } from '../app/App';
 
 type AppNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-const Logo: React.FC<{ headerText?: string }> = ({ headerText }) => {
+const Logo: React.FC<{
+  headerText?: string;
+  navigateTo: keyof RootStackParamList;
+}> = ({ headerText, navigateTo }) => {
   const navigation = useNavigation<AppNavigationProp>();
 
   return (
@@ -31,7 +34,7 @@ const Logo: React.FC<{ headerText?: string }> = ({ headerText }) => {
     >
       <TouchableOpacity
         style={styles.imageContainer}
-        onPress={() => navigation.navigate('Map View')}
+        onPress={() => navigation.navigate(navigateTo as any)}
       >
         <Image
           style={styles.imageStyle}
