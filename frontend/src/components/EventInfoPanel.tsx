@@ -60,7 +60,7 @@ const EventInfoPanel = ({ event, style }: EventInfoPanelProps) => {
         </View>
       </View>
       <View style={styles.bookmarkContainer}>
-       <Ionicons name={bookmarked ? "bookmark" : "bookmark-outline"} size={26} color={darkMainColor} style={styles.bookmarkImage}/>
+       <Ionicons name={bookmarked ? "bookmark" : "bookmark-outline"} size={26} color={darkMainColor} style={styles.bookmarkImage}  onClick={() => {setBookmarked(!bookmarked)}} />
       </View>
       <Text style={styles.eventName}>{event.event_name}</Text>
         <View style={{ height: 10 }} />
