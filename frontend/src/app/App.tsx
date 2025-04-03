@@ -75,17 +75,20 @@ function BottomTabsNavigator() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
-          let iconName: 'map-outline' | 'person-outline' | 'calendar';
+          let iconName: 'map-outline' | 'person-outline' | 'calendar-outline';
           switch(route.name) {
             case 'Map':
               iconName = 'map-outline'
+              break;
             case 'Profile':
               iconName = 'person-outline';
+              break;
             case 'Events':
-              iconName = 'calendar';
+              iconName = 'calendar-outline';
+              break;
             default:
               Error(`Route ${route.name} is unrecognized`);
-              iconName = 'map-outline';
+              iconName = 'calendar-outline';
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
