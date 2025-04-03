@@ -205,7 +205,7 @@ export class UserService {
   }
 
   /**
-   * Posts a user's bookmark (either a shelter or event) to the database. If the bookmark already exists, it will be deleted.
+   * Posts a user's bookmark (either a shelter or event) to the database.
    * @param userId The ID of the user.
    * @param bookmarkId The ID of the event or shelter to bookmark.
    * @param type The type of bookmark ('shelter' or 'event').
@@ -213,11 +213,7 @@ export class UserService {
    * @throws Error if the type is not 'shelter' or 'event'.
    * @throws Error if there is an error saving or deleting the bookmark to the database.
    */
-  public async postOrDeleteBookmark(
-    userId: string,
-    bookmarkId: string,
-    type: string
-  ) {
+  public async postBookmark(userId: string, bookmarkId: string, type: string) {
     if (type !== 'shelter' && type !== 'event') {
       throw new Error('Invalid type. Must be either "shelter" or "event".');
     }
@@ -238,30 +234,6 @@ export class UserService {
       throw new Error(`${type} with ID ${bookmarkId} does not exist.`);
     }
 
-    // check if the bookmark exists
-    const bookmarkQueryResult = await this.dynamoDbService.queryTable(
-      type === 'shelter'
-        ? this.shelterBookmarkTableName
-        : this.eventBookmarkTableName,
-      'userId = :userId AND ' + `${type}Id = :bookmarkId`,
-      {
-        ':userId': { S: userId },
-        ':bookmarkId': { S: bookmarkId },
-      }
-    );
-    if (bookmarkQueryResult.length > 0) {
-      // If the bookmark exists, delete it
-      await this.dynamoDbService.deleteItem(
-        type === 'shelter'
-          ? this.shelterBookmarkTableName
-          : this.eventBookmarkTableName,
-        { userId: { S: userId }, [type + 'Id']: { S: bookmarkId } }
-      );
-      return {
-        message: 'Bookmark deleted successfully',
-      };
-    }
-    // If the bookmark does not exist, create it
     // Save to DynamoDB
     if (type === 'shelter') {
       await this.dynamoDbService.postItem(
@@ -279,6 +251,33 @@ export class UserService {
       message: 'Bookmark created successfully',
       bookmark: this.bookmarkModelToOutput(bookmarkModel),
     };
+  }
+
+  /**
+   * Deletes a user's bookmark (either a shelter or event) from the database.
+   * @param userId The ID of the user.
+   * @param bookmarkId The ID of the event or shelter to delete.
+   * @param type The type of bookmark ('shelter' or 'event').
+   * @returns A success message.
+   */
+  public async deleteBookmark(
+    userId: string,
+    bookmarkId: string,
+    type: string
+  ): Promise<{ message: string }> {
+    try {
+      await this.dynamoDbService.deleteItem(
+        type === 'shelter'
+          ? this.shelterBookmarkTableName
+          : this.eventBookmarkTableName,
+        { userId: { S: userId }, [type + 'Id']: { S: bookmarkId } }
+      );
+      return {
+        message: 'Bookmark deleted successfully',
+      };
+    } catch (error) {
+      throw new Error('Error deleting bookmark: ' + error);
+    }
   }
 
   /**

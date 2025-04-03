@@ -75,10 +75,16 @@ export class UserController {
   ) {
     const { userId, bookmarkId } = bookmarkData.body;
 
-    return await this.userService.postOrDeleteBookmark(
-      userId,
-      bookmarkId,
-      type
-    );
+    return await this.userService.postBookmark(userId, bookmarkId, type);
+  }
+
+  @Delete('/bookmarks/:type')
+  public async deleteUserBookmark(
+    @Param('type') type: 'shelter' | 'event',
+    @Body() bookmarkData: BookmarkRequest
+  ) {
+    const { userId, bookmarkId } = bookmarkData.body;
+
+    return await this.userService.deleteBookmark(userId, bookmarkId, type);
   }
 }
