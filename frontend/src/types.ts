@@ -11,11 +11,19 @@ export enum DayOfWeek {
   SATURDAY = 'Saturday',
 }
 
+export type User = {
+  userId: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+};
+
 /**
  * Represents the model schema of a shelter.
  *
  * shelterId - The unique identifier of the shelter.
  * name - The name of the shelter.
+ * expanded_name - The expanded name of the shelter.
  * address - The address of the shelter.
  * latitude - The latitude of the shelter.
  * longitude - The longitude of the shelter.
@@ -31,6 +39,7 @@ export enum DayOfWeek {
  */
 export type Shelter = {
   shelterId: string;
+  expanded_name?: string;
   name: string;
   address: {
     street: string;
@@ -53,4 +62,46 @@ export type Shelter = {
     } | null;
   };
   picture: string[]; // Array of S3 URLs
+  tags: {
+    wheelchair_accessible?: boolean;
+    pet_friendly?: boolean;
+    family_friendly?: boolean;
+    legal_aid?: boolean;
+    lgbtq_focused?: boolean;
+    mental_health_resources?: boolean;
+    overnight_stay?: boolean;
+    food_resources?: boolean;
+    clothing_resources?: boolean;
+    transportation_resources?: boolean;
+    hygiene_facilities?: boolean;
+    job_assistance?: boolean;
+    medical_resources?: boolean;
+    educational_programs?: boolean;
+    substance_abuse_support?: boolean;
+  };
+};
+
+export type NewUserInput = {
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+  role?: string; // Optional role field
+  // If not provided, defaults to 'USER' in the backend.
+};
+
+export type UserModel = {
+  userId: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  created_at: string;
+  role?: string;
+};
+
+export type LoginUserRequest = {
+  body: {
+    email: string;
+    password: string;
+  };
 };

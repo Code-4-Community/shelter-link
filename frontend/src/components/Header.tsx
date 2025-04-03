@@ -1,51 +1,52 @@
+import { useFonts } from 'expo-font';
 import { bodyFont, darkMainColor, headerFont } from '../../constants';
 import React from 'react';
 import { Text, StyleSheet, View, Dimensions } from 'react-native';
 
 const Header = () => {
+  useFonts({
+    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
+  });
+
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>Map</Text>
-      <Text style={styles.headerDescription}>
-        Brief description of map features
-      </Text>
+      <Text style={styles.headerDescription}>Search for shelters near you</Text>
     </View>
   );
 };
 
 const { width: screenWidth } = Dimensions.get('window');
-let dynamicTabletSizes: Record<string, number> = {};
-dynamicTabletSizes["headerTextSize"] = 84;
-dynamicTabletSizes["headerLineHeight"] = 43.57;
-dynamicTabletSizes["headerDescriptionSize"] = 17;
-dynamicTabletSizes["headerDescriptionHeight"] = 18.15;
-
+let headerTextSize = 36;
+let headerLineHeight = 43.57;
+let headerDescriptionSize = 17;
+let headerDescriptionHeight = 18.15;
 if (screenWidth > 500) {
-  let widthRatio = screenWidth/500;
-  for (const key in dynamicTabletSizes) {
-    dynamicTabletSizes[key] = (dynamicTabletSizes[key]*widthRatio)
-  }
+  headerTextSize = headerTextSize * (screenWidth / 500);
+  headerLineHeight = headerLineHeight * (screenWidth / 500);
+  headerDescriptionSize = headerDescriptionSize * (screenWidth / 500);
+  headerDescriptionHeight = headerDescriptionHeight * (screenWidth / 500);
 }
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 15,
     alignItems: 'center',
     width: '100%',
   },
   headerText: {
     fontFamily: headerFont,
-    fontSize: dynamicTabletSizes.headerTextSize,
-    fontWeight: '400',
-    lineHeight: dynamicTabletSizes.headerLineHeight,
+    fontSize: headerTextSize,
+    fontWeight: '700',
+    lineHeight: headerLineHeight,
     textAlign: 'center',
     color: darkMainColor,
-    marginBottom: 9,
+    marginBottom: 30,
   },
   headerDescription: {
     fontFamily: bodyFont,
-    fontSize: dynamicTabletSizes.headerDescriptionSize,
+    fontSize: headerDescriptionSize,
     fontWeight: '400',
-    lineHeight: dynamicTabletSizes.headerDescriptionHeight,
+    lineHeight: headerDescriptionHeight,
     textAlign: 'center',
     color: '#1E1E1E',
   },

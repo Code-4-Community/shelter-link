@@ -1,23 +1,29 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { HoursUpdateModel, ShelterInputModel, ShelterModel, ShelterUpdateModel } from './shelter.model';
+import {
+  HoursUpdateModel,
+  ShelterInputModel,
+  ShelterModel,
+  ShelterUpdateModel,
+} from './shelter.model';
 import { DynamoDbService } from '../dynamodb';
 import { NewShelterInput } from '../dtos/newShelterDTO';
-import { DayOfWeek } from '../types';
 
 @Injectable()
 export class ShelterService {
   private readonly tableName = 'shelterlinkShelters';
-  constructor(private readonly dynamoDbService: DynamoDbService) { }
+  constructor(private readonly dynamoDbService: DynamoDbService) {}
 
   /**
    * Handles what values to push given the key within updateShelter is of type 'address'
-   * @param buildAttributeNamesList Reference type 
+   * @param buildAttributeNamesList Reference type
    * @param buildAttributeValuesList Reference type
    */
-  private updateShelterHandleAddress(buildAttributeNamesList: string[],
-    buildAttributeValuesList: (string | number)[],
-    desiredUpdates: ShelterUpdateModel) {
-    const addressFields = ["city", "country", "state", "street", "zipCode"];
+  private updateShelterHandleAddress(
+    buildAttributeNamesList: string[],
+    buildAttributeValuesList: (string | number | boolean)[],
+    desiredUpdates: ShelterUpdateModel
+  ) {
+    const addressFields = ['city', 'country', 'state', 'street', 'zipCode'];
     //within the address key, adding each field specified
     for (const field of addressFields) {
       if (desiredUpdates.address[field]) {
@@ -28,15 +34,51 @@ export class ShelterService {
   }
 
   /**
+   * Handles what values to push given the key within updateShelter is of type 'tags'
+   * @param buildAttributeNamesList Reference type
+   * @param buildAttributeValuesList Reference type
+   */
+  private updateShelterHandleTags(
+    buildAttributeNamesList: string[],
+    buildAttributeValuesList: (string | number | boolean)[],
+    desiredUpdates: ShelterUpdateModel
+  ) {
+    const tagFields = [
+      'wheelchair_accessible',
+      'pet_friendly',
+      'family_friendly',
+      'legal_aid',
+      'lgbtq_focused',
+      'mental_health_resources',
+      'overnight_stay',
+      'food_resources',
+      'clothing_resources',
+      'transportation_resources',
+      'hygiene_facilities',
+      'job_assistance',
+      'medical_resources',
+      'educational_programs',
+      'substance_abuse_support',
+    ];
+    //within the address key, adding each field specified
+    for (const field of tagFields) {
+      if (desiredUpdates.tags[field]) {
+        buildAttributeNamesList.push(`tags.${field}`);
+        buildAttributeValuesList.push(desiredUpdates.tags[field]);
+      }
+    }
+  }
+
+  /**
    * Handle behavior given something (e) was caught
    * @param e the object that was caught
    */
   private async updateShelterHandleCatch(e: any) {
-      // NotFoundException gets passed up from dynamodb.ts
-      if (e instanceof NotFoundException) {
-        throw e;
-      }
-      throw new Error('Unable to update new shelter: ' + e);
+    // NotFoundException gets passed up from dynamodb.ts
+    if (e instanceof NotFoundException) {
+      throw e;
+    }
+    throw new Error('Unable to update new shelter: ' + e);
   }
 
   /**
@@ -44,18 +86,34 @@ export class ShelterService {
    * @param shelterId The id of the shelter to update
    * @param desiredUpdates Object containing the desired fields and values to update
    */
-  public async updateShelter(shelterId: string, desiredUpdates: ShelterUpdateModel) {
+  public async updateShelter(
+    shelterId: string,
+    desiredUpdates: ShelterUpdateModel
+  ) {
     let buildAttributeNamesList: string[] = []; //names of the fields
-    let buildAttributeValuesList: (string | number)[] = []; //desired values to update
-    let hoursMap: false | HoursUpdateModel  = false;
-    
+    let buildAttributeValuesList: (string | number | boolean)[] = []; //desired values to update
+    let hoursMap: false | HoursUpdateModel = false;
+
     for (let key in desiredUpdates) {
       if (key === 'shelterId') {
         continue;
-      } else if (key === 'address') { //checking the top level key
-        this.updateShelterHandleAddress(buildAttributeNamesList, buildAttributeValuesList, desiredUpdates);
-      } else if (key === 'hours') { //checking the top level key
+      } else if (key === 'address') {
+        //checking the top level key
+        this.updateShelterHandleAddress(
+          buildAttributeNamesList,
+          buildAttributeValuesList,
+          desiredUpdates
+        );
+      } else if (key === 'hours') {
+        //checking the top level key
         hoursMap = desiredUpdates.hours;
+      } else if (key === 'tags') {
+        //checking the top level key
+        this.updateShelterHandleTags(
+          buildAttributeNamesList,
+          buildAttributeValuesList,
+          desiredUpdates
+        );
       } else {
         // top level keys with no nesting
         buildAttributeNamesList.push(key);
@@ -69,8 +127,13 @@ export class ShelterService {
       }
     }
     try {
-      const result = await this.dynamoDbService.updateAttributes(this.tableName, shelterId,
-        buildAttributeNamesList, buildAttributeValuesList, hoursMap);
+      const result = await this.dynamoDbService.updateAttributes(
+        this.tableName,
+        shelterId,
+        buildAttributeNamesList,
+        buildAttributeValuesList,
+        hoursMap
+      );
       return { result };
     } catch (e) {
       this.updateShelterHandleCatch(e);
@@ -87,30 +150,73 @@ export class ShelterService {
     const shelterModel = this.postInputToShelterModel(shelterData);
     console.log(shelterModel);
     const newId =
-      ((await this.dynamoDbService.getHighestShelterId(this.tableName)) ?? 0) +
-      1;
-    if (newId.toString().indexOf('Error') >= 0) {
-      throw new Error(newId.toString().substring(5));
-    }
+      ((await this.dynamoDbService.getHighestId(this.tableName, 'shelterId')) ??
+        0) + 1;
     shelterModel.shelterId.S = newId.toString();
-    console.log('Using new ID:' + shelterModel.shelterId.S);
-    try {
-      // If there is a rating, check that it's a number in the range (0, 5]
-      if (shelterData.rating !== undefined) {
-        const rating = shelterData.rating;
-        if (rating <= 0 || rating > 5) {
-          throw new Error('Rating must be a number in the range (0, 5]');
+    // If there is a rating, check that it's a number in the range (0, 5]
+    if (shelterData.rating !== undefined) {
+      const rating = shelterData.rating;
+      if (rating <= 0 || rating > 5) {
+        throw new Error('Rating must be a number in the range (0, 5]');
+      }
+    }
+
+    // Make sure opening time is not after closing
+    for (const day in shelterData.hours) {
+      if (shelterData.hours.hasOwnProperty(day)) {
+        const hours = shelterData.hours[day];
+        if (hours) {
+          const { opening_time, closing_time } = hours;
+
+          const [openingHour, openingMinute] = opening_time
+            .split(':')
+            .map(Number);
+          const [closingHour, closingMinute] = closing_time
+            .split(':')
+            .map(Number);
+
+          // Make sure opening time is not after closing
+          if (
+            openingHour > closingHour ||
+            (openingHour === closingHour && openingMinute >= closingMinute)
+          ) {
+            throw new Error(
+              `Opening time must be before closing time on ${day}`
+            );
+          }
+
+          // Make sure hours are between 00:00 and 24:00
+          if (
+            openingHour < 0 ||
+            openingHour > 23 ||
+            closingHour < 0 ||
+            closingHour > 23 ||
+            openingMinute < 0 ||
+            openingMinute > 59 ||
+            closingMinute < 0 ||
+            closingMinute > 59
+          ) {
+            throw new Error(`Hours must be between 00:00 and 24:00 on ${day}`);
+          }
+
+          // Make sure hours string follows HH:MM format
+          if (
+            opening_time.length !== 5 ||
+            closing_time.length !== 5 ||
+            opening_time[2] !== ':' ||
+            closing_time[2] !== ':'
+          ) {
+            throw new Error(`Hours must follow HH:MM format on ${day}`);
+          }
         }
       }
-      const result = await this.dynamoDbService.postItem(
-        this.tableName,
-        shelterModel
-      );
-      console.log({ ...result, id: newId });
-      return { ...result, id: newId };
-    } catch (e) {
-      throw new Error('Unable to post new shelter: ' + e);
     }
+
+    const result = await this.dynamoDbService.postItem(
+      this.tableName,
+      shelterModel
+    );
+    return { ...result, id: newId };
   }
 
   /**
@@ -121,6 +227,7 @@ export class ShelterService {
   public async getShelters(): Promise<ShelterModel[]> {
     try {
       const data = await this.dynamoDbService.scanTable(this.tableName);
+
       return data.map((item) => this.shelterModelToOutput(item));
     } catch (e) {
       throw new Error('Unable to get shelters: ' + e);
@@ -174,63 +281,92 @@ export class ShelterService {
         M: {
           Monday: input.hours.Monday
             ? {
-              M: {
-                opening_time: { S: input.hours.Monday.opening_time },
-                closing_time: { S: input.hours.Monday.closing_time },
-              },
-            }
+                M: {
+                  opening_time: { S: input.hours.Monday.opening_time },
+                  closing_time: { S: input.hours.Monday.closing_time },
+                },
+              }
             : null,
           Tuesday: input.hours.Tuesday
             ? {
-              M: {
-                opening_time: { S: input.hours.Tuesday.opening_time },
-                closing_time: { S: input.hours.Tuesday.closing_time },
-              },
-            }
+                M: {
+                  opening_time: { S: input.hours.Tuesday.opening_time },
+                  closing_time: { S: input.hours.Tuesday.closing_time },
+                },
+              }
             : null,
           Wednesday: input.hours.Wednesday
             ? {
-              M: {
-                opening_time: { S: input.hours.Wednesday.opening_time },
-                closing_time: { S: input.hours.Wednesday.closing_time },
-              },
-            }
+                M: {
+                  opening_time: { S: input.hours.Wednesday.opening_time },
+                  closing_time: { S: input.hours.Wednesday.closing_time },
+                },
+              }
             : null,
           Thursday: input.hours.Thursday
             ? {
-              M: {
-                opening_time: { S: input.hours.Thursday.opening_time },
-                closing_time: { S: input.hours.Thursday.closing_time },
-              },
-            }
+                M: {
+                  opening_time: { S: input.hours.Thursday.opening_time },
+                  closing_time: { S: input.hours.Thursday.closing_time },
+                },
+              }
             : null,
           Friday: input.hours.Friday
             ? {
-              M: {
-                opening_time: { S: input.hours.Friday.opening_time },
-                closing_time: { S: input.hours.Friday.closing_time },
-              },
-            }
+                M: {
+                  opening_time: { S: input.hours.Friday.opening_time },
+                  closing_time: { S: input.hours.Friday.closing_time },
+                },
+              }
             : null,
           Saturday: input.hours.Saturday
             ? {
-              M: {
-                opening_time: { S: input.hours.Saturday.opening_time },
-                closing_time: { S: input.hours.Saturday.closing_time },
-              },
-            }
+                M: {
+                  opening_time: { S: input.hours.Saturday.opening_time },
+                  closing_time: { S: input.hours.Saturday.closing_time },
+                },
+              }
             : null,
           Sunday: input.hours.Sunday
             ? {
-              M: {
-                opening_time: { S: input.hours.Sunday.opening_time },
-                closing_time: { S: input.hours.Sunday.closing_time },
-              },
-            }
+                M: {
+                  opening_time: { S: input.hours.Sunday.opening_time },
+                  closing_time: { S: input.hours.Sunday.closing_time },
+                },
+              }
             : null,
         },
       },
       picture: { L: input.picture.map((url) => ({ S: url })) }, // Convert list of URLs to DynamoDB format
+      tags: {
+        M: {
+          wheelchair_accessible: {
+            BOOL: input.tags?.wheelchair_accessible ?? false,
+          },
+          pet_friendly: { BOOL: input.tags?.pet_friendly ?? false },
+          family_friendly: { BOOL: input.tags?.family_friendly ?? false },
+          legal_aid: { BOOL: input.tags?.legal_aid ?? false },
+          lgbtq_focused: { BOOL: input.tags?.lgbtq_focused ?? false },
+          mental_health_resources: {
+            BOOL: input.tags?.mental_health_resources ?? false,
+          },
+          overnight_stay: { BOOL: input.tags?.overnight_stay ?? false },
+          food_resources: { BOOL: input.tags?.food_resources ?? false },
+          clothing_resources: { BOOL: input.tags?.clothing_resources ?? false },
+          transportation_resources: {
+            BOOL: input.tags?.transportation_resources ?? false,
+          },
+          hygiene_facilities: { BOOL: input.tags?.hygiene_facilities ?? false },
+          job_assistance: { BOOL: input.tags?.job_assistance ?? false },
+          medical_resources: { BOOL: input.tags?.medical_resources ?? false },
+          educational_programs: {
+            BOOL: input.tags?.educational_programs ?? false,
+          },
+          substance_abuse_support: {
+            BOOL: input.tags?.substance_abuse_support ?? false,
+          },
+        },
+      },
     };
 
     if (input.rating !== undefined) {
@@ -239,6 +375,10 @@ export class ShelterService {
 
     if (input.website !== undefined) {
       newShelterModel.website = { S: input.website };
+    }
+
+    if (input.expanded_name !== undefined) {
+      newShelterModel.expanded_name = { S: input.expanded_name };
     }
 
     return newShelterModel;
@@ -268,45 +408,45 @@ export class ShelterService {
       hours: {
         Monday: input.hours.M.Monday
           ? {
-            opening_time: input.hours.M.Monday.M.opening_time.S,
-            closing_time: input.hours.M.Monday.M.closing_time.S,
-          }
+              opening_time: input.hours.M.Monday.M.opening_time.S,
+              closing_time: input.hours.M.Monday.M.closing_time.S,
+            }
           : null,
         Tuesday: input.hours.M.Tuesday
           ? {
-            opening_time: input.hours.M.Tuesday.M.opening_time.S,
-            closing_time: input.hours.M.Tuesday.M.closing_time.S,
-          }
+              opening_time: input.hours.M.Tuesday.M.opening_time.S,
+              closing_time: input.hours.M.Tuesday.M.closing_time.S,
+            }
           : null,
         Wednesday: input.hours.M.Wednesday
           ? {
-            opening_time: input.hours.M.Wednesday.M.opening_time.S,
-            closing_time: input.hours.M.Wednesday.M.closing_time.S,
-          }
+              opening_time: input.hours.M.Wednesday.M.opening_time.S,
+              closing_time: input.hours.M.Wednesday.M.closing_time.S,
+            }
           : null,
         Thursday: input.hours.M.Thursday
           ? {
-            opening_time: input.hours.M.Thursday.M.opening_time.S,
-            closing_time: input.hours.M.Thursday.M.closing_time.S,
-          }
+              opening_time: input.hours.M.Thursday.M.opening_time.S,
+              closing_time: input.hours.M.Thursday.M.closing_time.S,
+            }
           : null,
         Friday: input.hours.M.Friday
           ? {
-            opening_time: input.hours.M.Friday.M.opening_time.S,
-            closing_time: input.hours.M.Friday.M.closing_time.S,
-          }
+              opening_time: input.hours.M.Friday.M.opening_time.S,
+              closing_time: input.hours.M.Friday.M.closing_time.S,
+            }
           : null,
         Saturday: input.hours.M.Saturday
           ? {
-            opening_time: input.hours.M.Saturday.M.opening_time.S,
-            closing_time: input.hours.M.Saturday.M.closing_time.S,
-          }
+              opening_time: input.hours.M.Saturday.M.opening_time.S,
+              closing_time: input.hours.M.Saturday.M.closing_time.S,
+            }
           : null,
         Sunday: input.hours.M.Sunday
           ? {
-            opening_time: input.hours.M.Sunday.M.opening_time.S,
-            closing_time: input.hours.M.Sunday.M.closing_time.S,
-          }
+              opening_time: input.hours.M.Sunday.M.opening_time.S,
+              closing_time: input.hours.M.Sunday.M.closing_time.S,
+            }
           : null,
       },
       picture: input.picture.L.map((url: { S: string }) => url.S),
@@ -318,6 +458,30 @@ export class ShelterService {
 
     if (input.website !== undefined) {
       newShelterModel.website = input.website.S;
+    }
+
+    if (input.expanded_name !== undefined) {
+      newShelterModel.expanded_name = input.expanded_name.S;
+    }
+
+    if (input.tags !== undefined) {
+      newShelterModel.tags = {
+        wheelchair_accessible: input.tags.M.wheelchair_accessible.BOOL,
+        pet_friendly: input.tags.M.pet_friendly.BOOL,
+        family_friendly: input.tags.M.family_friendly.BOOL,
+        legal_aid: input.tags.M.legal_aid.BOOL,
+        lgbtq_focused: input.tags.M.lgbtq_focused.BOOL,
+        mental_health_resources: input.tags.M.mental_health_resources.BOOL,
+        overnight_stay: input.tags.M.overnight_stay.BOOL,
+        food_resources: input.tags.M.food_resources.BOOL,
+        clothing_resources: input.tags.M.clothing_resources.BOOL,
+        transportation_resources: input.tags.M.transportation_resources.BOOL,
+        hygiene_facilities: input.tags.M.hygiene_facilities.BOOL,
+        job_assistance: input.tags.M.job_assistance.BOOL,
+        medical_resources: input.tags.M.medical_resources.BOOL,
+        educational_programs: input.tags.M.educational_programs.BOOL,
+        substance_abuse_support: input.tags.M.substance_abuse_support.BOOL,
+      };
     }
 
     return newShelterModel;

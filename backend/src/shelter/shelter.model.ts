@@ -5,6 +5,7 @@ import { DayOfWeek } from '../types';
  *
  * @property shelterId The unique identifier of the shelter.
  * @property name The name of the shelter.
+ * @property expanded_name The expanded name of the shelter.
  * @property address The address of the shelter.
  * @property latitude The latitude of the shelter.
  * @property longitude The longitude of the shelter.
@@ -17,11 +18,13 @@ import { DayOfWeek } from '../types';
  * which maps to the opening and closing times. If the shelter is closed on a particular
  * day, the value is null.
  * @property picture Picture(s) of the shelter.
+ * @property tags The tags associated with the shelter. Defaults to false for all tags.
  *
  */
 export type ShelterModel = {
   shelterId: string;
   name: string;
+  expanded_name?: string;
   address: {
     street: string;
     city: string;
@@ -43,11 +46,29 @@ export type ShelterModel = {
     } | null;
   };
   picture: string[]; // Array of S3 URLs
+  tags?: {
+    wheelchair_accessible?: boolean;
+    pet_friendly?: boolean;
+    family_friendly?: boolean;
+    legal_aid?: boolean;
+    lgbtq_focused?: boolean;
+    mental_health_resources?: boolean;
+    overnight_stay?: boolean;
+    food_resources?: boolean;
+    clothing_resources?: boolean;
+    transportation_resources?: boolean;
+    hygiene_facilities?: boolean;
+    job_assistance?: boolean;
+    medical_resources?: boolean;
+    educational_programs?: boolean;
+    substance_abuse_support?: boolean;
+  };
 };
 
 export type ShelterInputModel = {
   shelterId: { S: string };
   name: { S: string };
+  expanded_name?: { S: string };
   address: {
     M: {
       street: { S: string };
@@ -75,11 +96,30 @@ export type ShelterInputModel = {
     };
   };
   picture: { L: { S: string }[] };
+  tags?: {
+    M: {
+      wheelchair_accessible?: { BOOL: boolean };
+      pet_friendly?: { BOOL: boolean };
+      family_friendly?: { BOOL: boolean };
+      legal_aid?: { BOOL: boolean };
+      lgbtq_focused?: { BOOL: boolean };
+      mental_health_resources?: { BOOL: boolean };
+      overnight_stay?: { BOOL: boolean };
+      food_resources?: { BOOL: boolean };
+      clothing_resources?: { BOOL: boolean };
+      transportation_resources?: { BOOL: boolean };
+      hygiene_facilities?: { BOOL: boolean };
+      job_assistance?: { BOOL: boolean };
+      medical_resources?: { BOOL: boolean };
+      educational_programs?: { BOOL: boolean };
+      substance_abuse_support?: { BOOL: boolean };
+    };
+  };
 };
-
 
 export type ShelterUpdateModel = {
   name?: string;
+  expanded_name?: string;
   address?: {
     street?: string;
     city?: string;
@@ -101,11 +141,28 @@ export type ShelterUpdateModel = {
     };
   };
   picture?: string[];
- };
+  tags?: {
+    wheelchair_accessible?: boolean;
+    pet_friendly?: boolean;
+    family_friendly?: boolean;
+    legal_aid?: boolean;
+    lgbtq_focused?: boolean;
+    mental_health_resources?: boolean;
+    overnight_stay?: boolean;
+    food_resources?: boolean;
+    clothing_resources?: boolean;
+    transportation_resources?: boolean;
+    hygiene_facilities?: boolean;
+    job_assistance?: boolean;
+    medical_resources?: boolean;
+    educational_programs?: boolean;
+    substance_abuse_support?: boolean;
+  };
+};
 
- export type HoursUpdateModel = {
-   [day in DayOfWeek]?: {
+export type HoursUpdateModel = {
+  [day in DayOfWeek]?: {
     opening_time?: string;
     closing_time?: string;
   };
- }
+};

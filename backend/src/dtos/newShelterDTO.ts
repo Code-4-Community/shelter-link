@@ -3,6 +3,7 @@ import { DayOfWeek } from '../types';
 export type NewShelterInput = {
   // shelterId: string; // auto generated
   name: string;
+  expanded_name?: string;
   address: {
     street: string;
     city: string;
@@ -25,4 +26,21 @@ export type NewShelterInput = {
     } | null;
   };
   picture: string[];
+  tags?: {
+    wheelchair_accessible?: boolean;
+    pet_friendly?: boolean;
+    family_friendly?: boolean;
+    legal_aid?: boolean;
+    lgbtq_focused?: boolean;
+    mental_health_resources?: boolean;
+    overnight_stay?: boolean;
+    food_resources?: boolean;
+    clothing_resources?: boolean;
+    transportation_resources?: boolean;
+    hygiene_facilities?: boolean;
+    job_assistance?: boolean;
+    medical_resources?: boolean;
+    educational_programs?: boolean;
+    substance_abuse_support?: boolean;
+  };
 };

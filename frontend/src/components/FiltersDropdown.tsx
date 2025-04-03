@@ -1,3 +1,4 @@
+import { useFonts } from 'expo-font';
 import { bodyFont, darkMainColor } from '../../constants';
 import React, { useState } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
@@ -13,6 +14,10 @@ const data = [
 // created a multi-select component for filters
 // need to add some sort of indication of what is currently selected in dropdown list
 const DropdownComponent = () => {
+  useFonts({
+    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
+  });
+
   const [selected, setSelected] = useState([]);
 
   return (
@@ -39,19 +44,19 @@ const DropdownComponent = () => {
   );
 };
 const { width: screenWidth } = Dimensions.get('window');
-let dynamicTabletSizes: Record<string, number> = {};
-dynamicTabletSizes["dropdownWidth"] = 87;
-dynamicTabletSizes["dropdownHeight"] = 28;
-dynamicTabletSizes["dropdownBorderWidth"] = 1;
-dynamicTabletSizes["dropdownFontSize"] = 13;
-dynamicTabletSizes["customIconWidth"] = 10;
-dynamicTabletSizes["iconWidth"] = 20;
-
+let dropdownWidth = 87;
+let dropdownHeight = 28;
+let dropdownBorderWidth = 1;
+let dropdownFontSize = 13;
+let customIconWidth = 10;
+let iconWidth = 20;
 if (screenWidth > 500) {
-  let widthRatio = screenWidth/500;
-  for (const key in dynamicTabletSizes) {
-    dynamicTabletSizes[key] = (dynamicTabletSizes[key]*widthRatio)
-  }
+  dropdownWidth = dropdownWidth * (screenWidth / 500);
+  dropdownHeight = dropdownHeight * (screenWidth / 500);
+  dropdownBorderWidth = dropdownBorderWidth * (screenWidth / 500);
+  dropdownFontSize = dropdownFontSize * (screenWidth / 500);
+  customIconWidth = customIconWidth * (screenWidth / 500);
+  iconWidth = iconWidth * (screenWidth / 500);
 }
 
 const styles = StyleSheet.create({
@@ -60,38 +65,37 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   dropdown: {
-    width: dynamicTabletSizes.dropdownWidth,
-    height: dynamicTabletSizes.dropdownHeight,
+    width: dropdownWidth,
+    height: dropdownHeight,
     paddingRight: 9,
     backgroundColor: '#FFFFFF',
-    borderRadius: 4,
-    borderWidth: dynamicTabletSizes.dropdownBorderWidth,
-    borderColor: darkMainColor,
+    borderRadius: 6,
+    borderWidth: dropdownBorderWidth,
   },
   placeholderStyle: {
     fontFamily: bodyFont,
-    fontSize: dynamicTabletSizes.dropdownFontSize,
+    fontSize: dropdownFontSize,
     color: darkMainColor,
     marginLeft: 16,
   },
   selectedTextStyle: {
     fontFamily: bodyFont,
-    fontSize: dynamicTabletSizes.dropdownFontSize,
+    fontSize: dropdownFontSize,
     color: darkMainColor,
   },
   inputSearchStyle: {
     fontFamily: bodyFont,
-    fontSize: dynamicTabletSizes.dropdownFontSize,
+    fontSize: dropdownFontSize,
     color: darkMainColor,
   },
   customIcon: {
-    width: dynamicTabletSizes.customIconWidth,
-    height: dynamicTabletSizes.customIconWidth/2,
+    width: customIconWidth,
+    height: customIconWidth / 2,
   },
   iconStyle: {
-    width: dynamicTabletSizes.iconWidth,
-    height: dynamicTabletSizes.iconWidth,
-    tintColor: darkMainColor
+    width: iconWidth,
+    height: iconWidth,
+    tintColor: darkMainColor,
   },
 });
 

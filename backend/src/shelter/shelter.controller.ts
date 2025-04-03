@@ -1,26 +1,33 @@
 import {
   Controller,
   Post,
-  Put,
   Body,
   Param,
-  Query,
   Get,
   Delete,
   NotFoundException,
+  HttpException,
+  HttpStatus,
   Patch,
 } from '@nestjs/common';
 import { NewShelterInput } from '../dtos/newShelterDTO';
 import { UpdateShelterInput } from '../dtos/updateShelterDTO';
 import { ShelterService } from './shelter.service';
 
-@Controller('shelter')
+@Controller('shelters')
 export class ShelterController {
   constructor(private readonly shelterService: ShelterService) {}
 
   @Post()
   public async postShelter(@Body() shelterData: NewShelterInput) {
-    return this.shelterService.postShelter(shelterData);
+    try {
+      return await this.shelterService.postShelter(shelterData);
+    } catch (error) {
+      throw new HttpException(
+        `Unable to create shelter: ${error.message}`,
+        HttpStatus.BAD_REQUEST
+      );
+    }
   }
 
   @Get()
@@ -28,11 +35,13 @@ export class ShelterController {
     return this.shelterService.getShelters();
   }
 
-  @Patch('/update')
-  public async updateShelter(@Body() updateData: UpdateShelterInput) {
-    return this.shelterService.updateShelter(updateData.shelterId, updateData);
+  @Patch('/:shelterId')
+  public async updateShelter(
+    @Param('shelterId') shelterId: string,
+    @Body() updateData: UpdateShelterInput
+  ) {
+    return this.shelterService.updateShelter(shelterId, updateData);
   }
-
 
   @Get('/:shelterId')
   public async getShelter(@Param('shelterId') shelterId: string) {
