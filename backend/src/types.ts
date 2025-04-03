@@ -34,3 +34,15 @@ export enum UserRole {
   USER = 'USER',
   ADMIN = 'ADMIN',
 }
+
+/**
+ * Interface extending the request body when logging in an existing user, which contains:
+ * - userId - The ID of the user.
+ * - bookmarkId - The ID of the bookmark.
+ */
+export interface BookmarkRequest extends Request {
+  body: {
+    userId: string;
+    bookmarkId: string;
+  };
+}
