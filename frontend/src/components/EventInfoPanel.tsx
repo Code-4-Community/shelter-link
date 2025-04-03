@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -12,6 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Event } from '../types';
 import { useFonts } from 'expo-font';
+import { Ionicons } from '@expo/vector-icons';
 
 type EventInfoPanelProps = {
   event: Event;
@@ -35,6 +36,7 @@ const EventInfoPanel = ({ event, style }: EventInfoPanelProps) => {
   useFonts({
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Regular.otf'),
   });
+  const [bookmarked, setBookmarked] = useState(false);
 
   const formatAddress = (address: any) => {
     return `${address.street}, ${address.city}, ${address.state}`;
@@ -58,11 +60,8 @@ const EventInfoPanel = ({ event, style }: EventInfoPanelProps) => {
         </View>
       </View>
       <View style={styles.bookmarkContainer}>
-         <Image
-           style={styles.bookmarkImage}
-           source={require('../../assets/bookmark.png')}
-         />
-       </View>
+       <Ionicons name={bookmarked ? "bookmark" : "bookmark-outline"} size={26} color={darkMainColor} style={styles.bookmarkImage}/>
+      </View>
       <Text style={styles.eventName}>{event.event_name}</Text>
         <View style={{ height: 10 }} />
       <Text style={{ ...styles.eventLocationDistance, alignItems: 'center' }}>
@@ -89,6 +88,14 @@ const EventInfoPanel = ({ event, style }: EventInfoPanelProps) => {
     </TouchableOpacity>
   );
 };
+
+/*
+
+        <Image
+           style={styles.bookmarkImage}
+           source={require('../../assets/bookmark.png')}
+         />
+         */
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
