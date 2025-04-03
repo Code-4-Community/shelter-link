@@ -20,8 +20,8 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
   });
 
   const [currentPage, setCurrentPage] = useState(0);
-  // total num of "pages" for the carousel (each page holds max two images)
-  const totalPages = Math.ceil(images.length / 2);
+  // total num of "pages" for the carousel (each page one image)
+  const totalPages = images.length;
 
   const handleNext = () => {
     // if there are more pages to scroll right
@@ -39,8 +39,8 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
     }
   };
 
-  const startIdx = currentPage * 2;
-  const currentImages = images.slice(startIdx, startIdx + 2);
+  const startIdx = currentPage;
+  const currentImages = images.slice(startIdx, startIdx + 1);
 
   return (
     <View style={styles.galleryContainer}>
@@ -91,11 +91,10 @@ const styles = StyleSheet.create({
   imagesContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 20,
   },
   shelterImage: {
-    width: screenWidth / 2.6,
-    height: screenWidth / 2.6,
+    width: screenWidth / 1.3,
+    height: screenWidth / 1.3,
     borderRadius: 10,
     borderWidth: 1,
     borderColor: darkMainColor,

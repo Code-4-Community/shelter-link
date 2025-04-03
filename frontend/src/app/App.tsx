@@ -1,5 +1,5 @@
 // App.tsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -7,6 +7,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import Logo from '../components/Logo';
+import { LogIn } from '../components/LogIn';
 import CompleteMap from '../components/CompleteMap';
 import DetailedShelterView from '../components/DetailedShelterView';
 
@@ -15,19 +16,86 @@ import { AuthProvider, useAuth } from '../hooks/AuthContext';
 
 import SignUpScreen from '../components/SignUpScreen';
 import SignInScreen from '../components/SignInScreen';
-import AllEventsViewer from '../components/AllEventsViewer';
-
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
+import {
+  backgroundColor,
+  containerColor,
+  darkMainColor,
+} from 'frontend/constants';
+import { ProfilePage } from '../components/ProfilePage';
 
 // defines type for nav stack
 export type RootStackParamList = {
-  'Sign In': undefined;
+  'Log In': undefined;
   'Sign Up': undefined;
   'Map View': undefined;
   'All Events View': undefined;
   'Detailed Shelter View': { shelter: Shelter };
+  Profile: undefined;
+  Map: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
+const Tab = createBottomTabNavigator();
+
+function MapStackNavigator() {
+  return (
+    <Stack.Navigator>
+      {/* Default screen inside the tab */}
+      <Stack.Screen
+        name="Map View"
+        component={CompleteMap}
+        options={{
+          headerShown: true,
+          header: () => <Logo headerText="ShelterLink" navigateTo="Map View" />,
+        }}
+      />
+      {/* Navigates from Map to DetailedShelterView, keeping tabs visible */}
+      <Stack.Screen
+        name="Detailed Shelter View"
+        component={DetailedShelterView}
+        options={({ route }) => ({
+          headerShown: true,
+          header: () => (
+            <Logo
+              headerText={route.params.shelter.name}
+              navigateTo="Map View"
+            />
+          ),
+        })}
+      />
+    </Stack.Navigator>
+  );
+}
+
+function BottomTabsNavigator() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          const iconName =
+            route.name === 'Map' ? 'map-outline' : 'person-outline';
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: darkMainColor,
+        tabBarInactiveTintColor: backgroundColor,
+        headerShown: false,
+      })}
+    >
+      {/* Use MapStackNavigator instead of defining Map View multiple times */}
+      <Tab.Screen name="Map" component={MapStackNavigator} />
+      <Tab.Screen
+        name="Profile"
+        component={ProfilePage}
+        options={{
+          headerShown: true,
+          header: () => <Logo headerText="ShelterLink" navigateTo="Map" />,
+        }}
+      />
+    </Tab.Navigator>
+  );
+}
 
 /**
  * Screens that require authentication:
@@ -35,13 +103,11 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 function AuthenticatedStack() {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View>
-        <Logo />
-      </View>
       <Stack.Navigator>
-        <Stack.Screen 
-          name="All Events View"
-          component={AllEventsViewer}
+        {/* BottomTabsNavigator manages everything, including MapStack */}
+        <Stack.Screen
+          name="Map View"
+          component={BottomTabsNavigator}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
@@ -54,14 +120,33 @@ function AuthenticatedStack() {
  */
 function UnauthenticatedStack() {
   return (
-
-
-    <Stack.Navigator>
-
-      <Stack.Screen name="Sign In" component={SignInScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Sign Up" component={SignUpScreen} options={{ headerShown: false }} />
-    </Stack.Navigator>
-
+    <SafeAreaView style={styles.safeArea}>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Log In"
+          component={LogIn}
+          options={{
+            headerShown: true,
+            header: () => <Logo navigateTo="Map View" />,
+          }}
+        />
+        <Stack.Screen
+          name="Sign Up"
+          component={SignUpScreen}
+          options={{
+            headerShown: true,
+            header: () => (
+              <Logo headerText="ShelterLink" navigateTo="Map View" />
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="Map View"
+          component={BottomTabsNavigator}
+          options={{ headerShown: false }}
+        />
+      </Stack.Navigator>
+    </SafeAreaView>
   );
 }
 
@@ -69,11 +154,20 @@ function UnauthenticatedStack() {
  * Decides which stack to render based on whether user is logged in.
  */
 function MainNavigator() {
-  const { user, loading } = useAuth();
+  const { user, loading, logout } = useAuth();
+
+  useEffect(() => {
+    // Force logout (for testing purposes)
+    logout();
+  }, []);
 
   if (loading) {
     // Loading screen while fetching user data
-    return <View style={styles.centeredView}><Logo /></View>;
+    return (
+      <View style={styles.centeredView}>
+        <Logo navigateTo="Map View" />
+      </View>
+    );
   }
 
   return user ? <AuthenticatedStack /> : <UnauthenticatedStack />;
@@ -92,13 +186,11 @@ export const App = () => {
       <NavigationContainer>
         <View style={{ flex: 1 }}>
           <GestureHandlerRootView style={{ flex: 1 }}>
-
-
             <MainNavigator />
           </GestureHandlerRootView>
         </View>
       </NavigationContainer>
-    </AuthProvider >
+    </AuthProvider>
   );
 };
 

@@ -35,6 +35,7 @@ if (screenWidth > 500) {
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 15,
     alignItems: 'center',
     width: '100%',
   },

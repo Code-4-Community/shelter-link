@@ -11,12 +11,15 @@ const USER_API_URL = `${process.env.EXPO_PUBLIC_API_URL}/users`;
  * @throws Error if the response status is not 200 or 201.
  */
 const createUser = async (userData: NewUserInput): Promise<any> => {
-  const res = await api.post(USER_API_URL, userData);
-  console.log(res);
-  if (res.status !== 200 && res.status !== 201) {
-    throw new Error('Error while creating user');
+  try {
+    const res = await api.post(USER_API_URL, userData);
+    if (res.status !== 200 && res.status !== 201) {
+      throw new Error('Error while creating user');
+    }
+    return res.data.user;
+  } catch (e) {
+    throw new Error('Error creating user');
   }
-  return res.data;
 };
 
 /**
@@ -30,9 +33,9 @@ const createUser = async (userData: NewUserInput): Promise<any> => {
  * While sending a body with GET is unconventional and it should be post instead, it still works.
  */
 const loginUser = async (loginData: LoginUserRequest): Promise<UserModel> => {
-  const res = await api.get(`${USER_API_URL}/login`, { data: loginData });
+  const res = await api.post(`${USER_API_URL}/login`, loginData);
 
-  if (res.status !== 200) {
+  if (res.status !== 201) {
     throw new Error('Error while logging in user');
   }
   return res.data;

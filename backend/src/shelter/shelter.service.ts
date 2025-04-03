@@ -20,7 +20,7 @@ export class ShelterService {
    */
   private updateShelterHandleAddress(
     buildAttributeNamesList: string[],
-    buildAttributeValuesList: (string | number)[],
+    buildAttributeValuesList: (string | number | boolean)[],
     desiredUpdates: ShelterUpdateModel
   ) {
     const addressFields = ['city', 'country', 'state', 'street', 'zipCode'];
@@ -29,6 +29,42 @@ export class ShelterService {
       if (desiredUpdates.address[field]) {
         buildAttributeNamesList.push(`address.${field}`);
         buildAttributeValuesList.push(desiredUpdates.address[field]);
+      }
+    }
+  }
+
+  /**
+   * Handles what values to push given the key within updateShelter is of type 'tags'
+   * @param buildAttributeNamesList Reference type
+   * @param buildAttributeValuesList Reference type
+   */
+  private updateShelterHandleTags(
+    buildAttributeNamesList: string[],
+    buildAttributeValuesList: (string | number | boolean)[],
+    desiredUpdates: ShelterUpdateModel
+  ) {
+    const tagFields = [
+      'wheelchair_accessible',
+      'pet_friendly',
+      'family_friendly',
+      'legal_aid',
+      'lgbtq_focused',
+      'mental_health_resources',
+      'overnight_stay',
+      'food_resources',
+      'clothing_resources',
+      'transportation_resources',
+      'hygiene_facilities',
+      'job_assistance',
+      'medical_resources',
+      'educational_programs',
+      'substance_abuse_support',
+    ];
+    //within the address key, adding each field specified
+    for (const field of tagFields) {
+      if (desiredUpdates.tags[field]) {
+        buildAttributeNamesList.push(`tags.${field}`);
+        buildAttributeValuesList.push(desiredUpdates.tags[field]);
       }
     }
   }
@@ -55,7 +91,7 @@ export class ShelterService {
     desiredUpdates: ShelterUpdateModel
   ) {
     let buildAttributeNamesList: string[] = []; //names of the fields
-    let buildAttributeValuesList: (string | number)[] = []; //desired values to update
+    let buildAttributeValuesList: (string | number | boolean)[] = []; //desired values to update
     let hoursMap: false | HoursUpdateModel = false;
 
     for (let key in desiredUpdates) {
@@ -71,6 +107,13 @@ export class ShelterService {
       } else if (key === 'hours') {
         //checking the top level key
         hoursMap = desiredUpdates.hours;
+      } else if (key === 'tags') {
+        //checking the top level key
+        this.updateShelterHandleTags(
+          buildAttributeNamesList,
+          buildAttributeValuesList,
+          desiredUpdates
+        );
       } else {
         // top level keys with no nesting
         buildAttributeNamesList.push(key);
@@ -183,6 +226,7 @@ export class ShelterService {
   public async getShelters(): Promise<ShelterModel[]> {
     try {
       const data = await this.dynamoDbService.scanTable(this.tableName);
+
       return data.map((item) => this.shelterModelToOutput(item));
     } catch (e) {
       throw new Error('Unable to get shelters: ' + e);
@@ -293,6 +337,35 @@ export class ShelterService {
         },
       },
       picture: { L: input.picture.map((url) => ({ S: url })) }, // Convert list of URLs to DynamoDB format
+      tags: {
+        M: {
+          wheelchair_accessible: {
+            BOOL: input.tags?.wheelchair_accessible ?? false,
+          },
+          pet_friendly: { BOOL: input.tags?.pet_friendly ?? false },
+          family_friendly: { BOOL: input.tags?.family_friendly ?? false },
+          legal_aid: { BOOL: input.tags?.legal_aid ?? false },
+          lgbtq_focused: { BOOL: input.tags?.lgbtq_focused ?? false },
+          mental_health_resources: {
+            BOOL: input.tags?.mental_health_resources ?? false,
+          },
+          overnight_stay: { BOOL: input.tags?.overnight_stay ?? false },
+          food_resources: { BOOL: input.tags?.food_resources ?? false },
+          clothing_resources: { BOOL: input.tags?.clothing_resources ?? false },
+          transportation_resources: {
+            BOOL: input.tags?.transportation_resources ?? false,
+          },
+          hygiene_facilities: { BOOL: input.tags?.hygiene_facilities ?? false },
+          job_assistance: { BOOL: input.tags?.job_assistance ?? false },
+          medical_resources: { BOOL: input.tags?.medical_resources ?? false },
+          educational_programs: {
+            BOOL: input.tags?.educational_programs ?? false,
+          },
+          substance_abuse_support: {
+            BOOL: input.tags?.substance_abuse_support ?? false,
+          },
+        },
+      },
     };
 
     if (input.rating !== undefined) {
@@ -388,6 +461,26 @@ export class ShelterService {
 
     if (input.expanded_name !== undefined) {
       newShelterModel.expanded_name = input.expanded_name.S;
+    }
+
+    if (input.tags !== undefined) {
+      newShelterModel.tags = {
+        wheelchair_accessible: input.tags.M.wheelchair_accessible.BOOL,
+        pet_friendly: input.tags.M.pet_friendly.BOOL,
+        family_friendly: input.tags.M.family_friendly.BOOL,
+        legal_aid: input.tags.M.legal_aid.BOOL,
+        lgbtq_focused: input.tags.M.lgbtq_focused.BOOL,
+        mental_health_resources: input.tags.M.mental_health_resources.BOOL,
+        overnight_stay: input.tags.M.overnight_stay.BOOL,
+        food_resources: input.tags.M.food_resources.BOOL,
+        clothing_resources: input.tags.M.clothing_resources.BOOL,
+        transportation_resources: input.tags.M.transportation_resources.BOOL,
+        hygiene_facilities: input.tags.M.hygiene_facilities.BOOL,
+        job_assistance: input.tags.M.job_assistance.BOOL,
+        medical_resources: input.tags.M.medical_resources.BOOL,
+        educational_programs: input.tags.M.educational_programs.BOOL,
+        substance_abuse_support: input.tags.M.substance_abuse_support.BOOL,
+      };
     }
 
     return newShelterModel;

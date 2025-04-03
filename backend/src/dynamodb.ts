@@ -150,7 +150,7 @@ export class DynamoDbService {
     tableName: string,
     shelterId: string,
     attributeNames: string[],
-    attributeValues: (string | number)[]
+    attributeValues: (string | number | boolean)[]
   ) {
     if (attributeNames.length !== attributeValues.length) {
       const err = `Error updating attributes of shelter ${shelterId} to table ${tableName}: 
@@ -184,7 +184,7 @@ export class DynamoDbService {
     ExpressionAttributeNames,
     ExpressionAttributeValues,
     attributeNames: string[],
-    attributeValues: (string | number)[]
+    attributeValues: (string | number | boolean)[]
   ): string {
     let currVal = attributeValues[i] as string;
 
@@ -216,10 +216,17 @@ export class DynamoDbService {
         names
       );
     } else {
-      //Non-list case, still includes nested values
-      ExpressionAttributeValues[`:${names[names.length - 1]}`] = {
-        S: attributeValues[i],
-      };
+      if (attributeValues[i] === 'true' || attributeValues[i] === 'false') {
+        // Boolean case
+        ExpressionAttributeValues[`:${names[names.length - 1]}`] = {
+          BOOL: attributeValues[i] === 'true',
+        };
+      } else {
+        //Non-list case, still includes nested values
+        ExpressionAttributeValues[`:${names[names.length - 1]}`] = {
+          S: attributeValues[i],
+        };
+      }
     }
 
     return UpdateExpression;
@@ -291,7 +298,7 @@ export class DynamoDbService {
     tableName: string,
     shelterId: string,
     attributeNames: string[],
-    attributeValues: (string | number)[],
+    attributeValues: (string | number | boolean)[],
     hoursMap: boolean | HoursUpdateModel
   ) {
     const Key = { shelterId: { S: shelterId + '' } };
