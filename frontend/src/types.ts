@@ -17,17 +17,7 @@ export type User = {
   last_name: string;
   email: string;
   created_at: string;
-};
-
-/**
- * Represents the model schema of a user in DynamoDB.
- */
-export type DynamoDBUser = {
-  userId: { S: string };
-  first_name: { S: string };
-  last_name: { S: string };
-  email: { S: string };
-  created_at: { S: string };
+  role: string;
 };
 
 /**

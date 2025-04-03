@@ -18,17 +18,13 @@ import { Shelter, User } from '../types';
 import { AuthProvider, useAuth } from '../hooks/AuthContext';
 
 import SignUpScreen from '../components/SignUpScreen';
-import SignInScreen from '../components/SignInScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import {
   backgroundColor,
-  bodyFont,
-  bodyFontSize,
   containerColor,
   darkMainColor,
   gradientColor1,
-  header1FontSize,
   header2FontSize,
   headerFont,
 } from 'frontend/constants';
@@ -119,8 +115,6 @@ function BottomTabsNavigator() {
                         fillColor={containerColor}
                         style={{ marginRight: 15 }}
                         onPress={() => {
-                          // Handle settings icon press
-                          console.log('Settings icon pressed');
                           // Navigate to Profile Settings screen
                           navigation.navigate('Profile Settings', { user });
                         }}
@@ -155,7 +149,7 @@ function AuthenticatedStack() {
         <Stack.Screen
           name="Profile Settings"
           component={ProfileSettingsPage}
-          options={({ route }) => ({
+          options={({ navigation, route }) => ({
             headerStyle: {
               backgroundColor: gradientColor1,
               paddingTop: 40, // Added padding to the top of the header
@@ -214,12 +208,7 @@ function UnauthenticatedStack() {
  * Decides which stack to render based on whether user is logged in.
  */
 function MainNavigator() {
-  const { user, loading, logout } = useAuth();
-
-  // useEffect(() => {
-  //   // Force logout (for testing purposes)
-  //   logout();
-  // }, []);
+  const { user, loading } = useAuth();
 
   if (loading) {
     // Loading screen while fetching user data

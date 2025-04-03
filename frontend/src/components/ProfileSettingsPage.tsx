@@ -1,5 +1,5 @@
 import React from 'react';
-import { DynamoDBUser } from '../types';
+import { User } from '../types';
 import {
   View,
   Text,
@@ -8,7 +8,10 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 import {
   bodyFont,
   bodyFontSize,
@@ -20,18 +23,26 @@ import {
   gradientColor2,
   header1FontSize,
   header2FontSize,
+  header3FontSize,
 } from 'frontend/constants';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useAuth } from '../hooks/AuthContext';
+import { useNavigation } from '@react-navigation/native';
 
 type RootStackParamList = {
-  'Profile Settings': { user: DynamoDBUser };
+  'Log In': undefined;
+  'Profile Settings': { user: User };
 };
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Profile Settings'>;
 
-export const ProfileSettingsPage: React.FC<Props> = ({ route }) => {
+export const ProfileSettingsPage: React.FC<Props> = ({ navigation, route }) => {
   const { user } = route.params;
-  console.log('User in ProfileSettingsPage:', user.email.S);
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+  };
 
   return (
     <LinearGradient
@@ -44,19 +55,23 @@ export const ProfileSettingsPage: React.FC<Props> = ({ route }) => {
           style={styles.safeArea}
         >
           <View>
-            <Text style={styles.infoText}>
-              Welcome, {user.first_name.S} {user.last_name.S}
+            <Text style={styles.welcomeText}>
+              Welcome, {user.first_name} {user.last_name}
             </Text>
 
+            <Text style={styles.headerText}>Your Profile Information</Text>
+
+            <Text style={styles.infoText}>First Name: {user.first_name}</Text>
+            <Text style={styles.infoText}>Last Name: {user.last_name}</Text>
+            <Text style={styles.infoText}>Email: {user.email}</Text>
+            <Text style={styles.infoText}>Password: ********</Text>
             <Text style={styles.infoText}>
-              Your Profile Information Email: {user.email.S}
+              Joined: {new Date(user.created_at).toLocaleDateString()}
             </Text>
           </View>
+
           <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.button}
-              //   onPress={() => console.log('Edit Profile Pressed')}
-            >
+            <TouchableOpacity style={styles.button} onPress={handleLogout}>
               <Text style={styles.buttonText}>Log Out</Text>
             </TouchableOpacity>
           </View>
@@ -93,11 +108,29 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 35,
   },
-  infoText: {
+  welcomeText: {
     fontFamily: bodyFont,
     fontSize: header1FontSize,
+    marginTop: 20,
     textAlign: 'center',
     padding: 20,
+    fontWeight: 'bold',
+    color: darkMainColor,
+  },
+  headerText: {
+    fontFamily: bodyFont,
+    fontSize: header3FontSize,
+    textAlign: 'center',
+    marginTop: 20,
+    padding: 20,
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  infoText: {
+    fontFamily: bodyFont,
+    fontSize: bodyFontSize,
+    textAlign: 'center',
+    padding: 10,
     fontWeight: 'bold',
     color: 'black',
   },

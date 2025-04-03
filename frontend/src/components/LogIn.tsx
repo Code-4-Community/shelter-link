@@ -70,7 +70,7 @@ export const LogIn = () => {
         // set user in context
         login(user);
         // navigate to map view
-        navigation.navigate('Map View');
+        navigation.navigate('Main');
       } catch (error) {
         console.error('Login failed:', error);
         setErrors({
@@ -144,7 +144,7 @@ export const LogIn = () => {
 
         <TouchableOpacity
           style={styles.skipLogin}
-          onPress={() => navigation.navigate('Map View')}
+          onPress={() => navigation.navigate('Main')}
         >
           <Text style={styles.skipLoginText}>Skip login for now</Text>
         </TouchableOpacity>
