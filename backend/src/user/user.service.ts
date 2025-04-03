@@ -192,7 +192,9 @@ export class UserService {
       throw new Error('User not found');
     }
 
-    const user = queryResult[0] as UserModel;
+    let user = queryResult[0];
+    user = this.userModelToOutput(user);
+
     return user;
   }
 }
