@@ -6,11 +6,12 @@ import React, {
   useState,
 } from 'react';
 import { Dimensions, SafeAreaView, StyleSheet, View, Text, ScrollView } from 'react-native';
-import { backgroundColor, darkMainColor } from '../../constants';
+import { backgroundColor, darkMainColor, gradientColor1, gradientColor2 } from '../../constants';
 import getEvents from '../services/eventService';
 import { Event } from '../types';
 import { useFonts } from 'expo-font';
 import EventInfoPanel from './EventInfoPanel';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export const AllEventsViewer = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -40,16 +41,21 @@ export const AllEventsViewer = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.resultsContainer}>
+      <LinearGradient
+        colors={[gradientColor1, gradientColor2]}
+        style={styles.safeArea}
+      >
+        <ScrollView contentContainerStyle={styles.resultsContainer}>
 
-            {events.length > 0 ? (
-              events.map((e: Event) => (
-                <EventInfoPanel key={e.eventId} event={e} style={styles.itemContainer} />
-              ))
-            ) : (
-              <Text style={styles.noResultsText}>No results found</Text>
-            )}
-      </ScrollView >
+          {events.length > 0 ? (
+            events.map((e: Event) => (
+              <EventInfoPanel key={e.eventId} event={e} style={styles.itemContainer} />
+            ))
+          ) : (
+            <Text style={styles.noResultsText}>No results found</Text>
+          )}
+        </ScrollView >
+      </LinearGradient>
     </SafeAreaView>
   );
 };
@@ -71,7 +77,7 @@ const styles = StyleSheet.create({
   },
   resultsContainer: {
     alignItems: 'center',
-    paddingBottom: screenHeight/10,
+    paddingBottom: screenHeight / 10,
   },
   noResultsText: {
     paddingTop: '20%',
