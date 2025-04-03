@@ -3,15 +3,18 @@ import React, { useEffect } from 'react';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from '@react-navigation/native-stack';
 
 import Logo from '../components/Logo';
 import { LogIn } from '../components/LogIn';
 import CompleteMap from '../components/CompleteMap';
 import { DetailedShelterView } from '../components/DetailedShelterView';
 
-import { Shelter } from '../types';
+import { Shelter, User } from '../types';
 import { AuthProvider, useAuth } from '../hooks/AuthContext';
 
 import SignUpScreen from '../components/SignUpScreen';
@@ -20,10 +23,17 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import {
   backgroundColor,
+  bodyFont,
+  bodyFontSize,
   containerColor,
   darkMainColor,
+  gradientColor1,
+  header1FontSize,
+  header2FontSize,
+  headerFont,
 } from 'frontend/constants';
 import { ProfilePage } from '../components/ProfilePage';
+import { ProfileSettingsPage } from '../components/ProfileSettingsPage';
 
 // defines type for nav stack
 export type RootStackParamList = {
@@ -33,6 +43,8 @@ export type RootStackParamList = {
   'Detailed Shelter View': { shelter: Shelter };
   Profile: undefined;
   Map: undefined;
+  'Profile Settings': { user: User };
+  Main: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -69,6 +81,10 @@ function MapStackNavigator() {
 }
 
 function BottomTabsNavigator() {
+  const { user } = useAuth();
+  type AppNavigationProp = NativeStackNavigationProp<RootStackParamList>;
+  const navigation = useNavigation<AppNavigationProp>();
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -86,11 +102,38 @@ function BottomTabsNavigator() {
       <Tab.Screen name="Map" component={MapStackNavigator} />
       <Tab.Screen
         name="Profile"
-        component={ProfilePage}
-        options={{
-          headerShown: true,
-          header: () => <Logo headerText="ShelterLink" navigateTo="Map" />,
-        }}
+        component={user ? ProfilePage : LogIn}
+        options={
+          user
+            ? {
+                headerShown: true,
+                header: () => (
+                  <Logo
+                    headerText="ShelterLink"
+                    navigateTo="Map"
+                    rightIcon={
+                      <Ionicons
+                        name="settings-outline"
+                        size={24}
+                        color={darkMainColor}
+                        fillColor={containerColor}
+                        style={{ marginRight: 15 }}
+                        onPress={() => {
+                          // Handle settings icon press
+                          console.log('Settings icon pressed');
+                          // Navigate to Profile Settings screen
+                          navigation.navigate('Profile Settings', { user });
+                        }}
+                      />
+                    }
+                  />
+                ),
+              }
+            : {
+                headerShown: true,
+                header: () => <Logo navigateTo="Map" />,
+              }
+        }
       />
     </Tab.Navigator>
   );
@@ -105,9 +148,27 @@ function AuthenticatedStack() {
       <Stack.Navigator>
         {/* BottomTabsNavigator manages everything, including MapStack */}
         <Stack.Screen
-          name="Map View"
+          name="Main"
           component={BottomTabsNavigator}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Profile Settings"
+          component={ProfileSettingsPage}
+          options={({ route }) => ({
+            headerStyle: {
+              backgroundColor: gradientColor1,
+              paddingTop: 40, // Added padding to the top of the header
+            },
+            headerTintColor: darkMainColor,
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              fontSize: header2FontSize,
+              color: darkMainColor,
+              fontFamily: headerFont,
+            },
+            headerTitle: 'Settings',
+          })}
         />
       </Stack.Navigator>
     </SafeAreaView>
@@ -140,7 +201,7 @@ function UnauthenticatedStack() {
           }}
         />
         <Stack.Screen
-          name="Map View"
+          name="Main"
           component={BottomTabsNavigator}
           options={{ headerShown: false }}
         />
@@ -155,10 +216,10 @@ function UnauthenticatedStack() {
 function MainNavigator() {
   const { user, loading, logout } = useAuth();
 
-  useEffect(() => {
-    // Force logout (for testing purposes)
-    logout();
-  }, []);
+  // useEffect(() => {
+  //   // Force logout (for testing purposes)
+  //   logout();
+  // }, []);
 
   if (loading) {
     // Loading screen while fetching user data
@@ -168,6 +229,8 @@ function MainNavigator() {
       </View>
     );
   }
+
+  console.log('User:', user);
 
   return user ? <AuthenticatedStack /> : <UnauthenticatedStack />;
 }
