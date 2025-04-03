@@ -54,3 +54,14 @@ export type Shelter = {
   };
   picture: string[]; // Array of S3 URLs
 };
+
+
+/**
+ * Enum representing different categories to filter by
+ */
+export enum FilterCategory {
+  RATING = 'rating',
+  HOURS = 'hours',
+  DISTANCE = 'distance',
+  ADDITIONAL = 'additional',
+}

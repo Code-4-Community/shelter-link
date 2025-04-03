@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
     maxWidth: 320,
     height: '80%',
     maxHeight: 600,
-    backgroundColor: 'white',
+    backgroundColor: '#E2D8F0',
     borderRadius: 12,
     shadowColor: '#000',
     shadowOffset: {
@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
   },
   buttonOpen: {
     backgroundColor: 'white',
-    width: 130,
+    width: 72,
     height: 35,
     borderRadius: 4,
     borderWidth: 1,
@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
   selectedTextStyle: {
     fontFamily: bodyFont,
     fontSize: dynamicTabletSizes.dropdownFontSize,
-    color: darkMainColor,
+    color: '#6225B0',
   },
   closeButton: {
     position: 'absolute',
@@ -387,14 +387,14 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   closeButtonText: {
-    fontSize: 18,
-    color: '#BD2B34',
+    fontSize: 35,
+    color: '#6225B094',
   },
   modalTitle: {
-    fontSize: 96,
-    fontWeight: '500',
-    color: '#BD2B34',
-    fontFamily: 'Jomhuria',
+    fontSize: 36,
+    fontWeight: '700',
+    color: '#6225B0',
+    fontFamily: 'Avenir Next',
   },
   scrollView: {
     paddingHorizontal: 20,
@@ -403,11 +403,11 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   filterHeader: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#BD2B34',
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#6225B0',
     marginBottom: 10,
-    fontFamily: 'Istok Web',
+    fontFamily: 'Inter',
   },
   filterOptions: {
     flexDirection: 'row',
@@ -419,7 +419,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: '#D0D0D0',
+    borderColor: 'black',
     backgroundColor: 'white',
     minWidth: 60,
     alignItems: 'center',
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: '#D0D0D0',
+    borderColor: 'black',
     backgroundColor: 'white',
     minWidth: 100, // Increase minimum width
     alignItems: 'center',
@@ -437,20 +437,20 @@ const styles = StyleSheet.create({
     overflow: 'visible',
   },
   selectedFilterButton: {
-    backgroundColor: '#BD2B34',
-    borderColor: '#BD2B34',
+    backgroundColor: '#6225B0',
+    borderColor: 'black',
   },
   filterButtonText: {
     fontSize: 12,
-    color: '#BD2B34',
+    color: '#6225B0',
     fontFamily: 'Istok Web',
   },
   openButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold', // Make it bolder
-    color: '#BD2B34',
-    fontFamily: 'Istok Web',
-    textAlign: 'center', // Ensure it's centered
+    fontSize: 12,
+    fontWeight: '400',
+    color: '#6225B0',
+    fontFamily: 'Inter',
+    textAlign: 'center', 
     width: '100%',
   },
   selectedFilterButtonText: {
@@ -466,11 +466,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: '#D0D0D0',
+    borderColor: 'black',
     backgroundColor: 'white',
     minWidth: '48%',
     alignItems: 'center',
   },
+  applyButton: {
+  position: 'absolute',
+  right: 15,
+  padding: 5,
+},
+applyButtonText: {
+  fontSize: 18,
+  fontWeight: '600',
+  color: '#6225B0',
+  fontFamily: 'Inter',
+},
 });
 
 export default DropdownComponent;
