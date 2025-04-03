@@ -57,6 +57,12 @@ const EventInfoPanel = ({ event, style }: EventInfoPanelProps) => {
           <View style={styles.eventImage} />}
         </View>
       </View>
+      <View style={styles.bookmarkContainer}>
+         <Image
+           style={styles.bookmarkImage}
+           source={require('../../assets/bookmark.png')}
+         />
+       </View>
       <Text style={styles.eventName}>{event.event_name}</Text>
         <View style={{ height: 10 }} />
       <Text style={{ ...styles.eventLocationDistance, alignItems: 'center' }}>
@@ -130,6 +136,16 @@ const styles = StyleSheet.create({
     paddingVertical: panelHeight * 0.037,
     paddingLeft: panelWidth * 0.045,
     flexDirection: 'row',
+  },
+  bookmarkContainer: {
+    position: 'absolute',
+    top: panelHeight * 0.037,
+    right: panelWidth * 0.033,
+  },
+  bookmarkImage: {
+    tintColor: darkMainColor,
+    width: panelWidth * 0.06,
+    height: panelWidth * 0.06 * (27 / 20),
   },
   eventImage: {
     width: panelWidth * 0.284,

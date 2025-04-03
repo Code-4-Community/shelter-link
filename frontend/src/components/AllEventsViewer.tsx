@@ -5,12 +5,8 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Dimensions, SafeAreaView, StyleSheet, View, Text } from 'react-native';
-import SearchBar from '../components/SearchBar';
+import { Dimensions, SafeAreaView, StyleSheet, View, Text, ScrollView } from 'react-native';
 import Header from '../components/Header';
-//import Logo from '../components/Logo'; ToRecoverIcon: uncomment this line
-import FiltersDropdown from '../components/FiltersDropdown';
-import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { backgroundColor, darkMainColor } from '../../constants';
 import getEvents from '../services/eventService';
 import { Event } from '../types';
@@ -18,8 +14,6 @@ import { useFonts } from 'expo-font';
 import EventInfoPanel from './EventInfoPanel';
 
 export const AllEventsViewer = () => {
-  const sheetRef = useRef<BottomSheet>(null);
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
   const [query, setQuery] = useState('');
 
@@ -48,31 +42,29 @@ export const AllEventsViewer = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.headerContainer}>
-        <Header title="Events"/>
+        <Header title="Events" />
       </View>
-        {selectedEvent ? (
-          <EventInfoPanel
-            event={selectedEvent}
-            style={styles.itemContainer}
-          />
-        ) : (
-          <View style={styles.noResultsContainer}>
-            <Text style={styles.noResultsText}>No results found</Text>
-          </View>
-        )}
+      <ScrollView contentContainerStyle={styles.resultsContainer}>
+
+            {events.length > 0 ? (
+              events.map((e: Event) => (
+                <EventInfoPanel key={e.eventId} event={e} style={styles.itemContainer} />
+              ))
+            ) : (
+              <Text style={styles.noResultsText}>No results found</Text>
+            )}
+      </ScrollView >
     </SafeAreaView>
   );
 };
+
+const { height: screenHeight } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: backgroundColor,
   },
-  container: {
-    flex: 1,
-  },
-
   itemContainer: {
     marginTop: 29,
   },
@@ -81,16 +73,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: '10%',
     paddingBottom: '7%',
   },
-  noResultsContainer: {
-    flex: 1,
-    paddingTop: '20%',
+  resultsContainer: {
     alignItems: 'center',
+    paddingBottom: screenHeight/10,
   },
   noResultsText: {
+    paddingTop: '20%',
     fontSize: 20,
     color: darkMainColor,
   },
 });
 
 export default AllEventsViewer;
-
