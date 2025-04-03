@@ -70,7 +70,7 @@ const ShelterInfoPanel = ({ shelter, style }: ShelterInfoPanelProps) => {
           style={styles.starIcon}
           source={require('../../assets/starIcon.png')}
         ></Image>{' '}
-        | {formatAddress(shelter.address)}
+        | {formatAddress(shelter.address)} | # mi
       </Text>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity

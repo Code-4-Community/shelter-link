@@ -24,6 +24,7 @@ import {
   darkMainColor,
 } from 'frontend/constants';
 import { ProfilePage } from '../components/ProfilePage';
+import AllEventsViewer from '../components/AllEventsViewer';
 
 // defines type for nav stack
 export type RootStackParamList = {
@@ -74,8 +75,18 @@ function BottomTabsNavigator() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
-          const iconName =
-            route.name === 'Map' ? 'map-outline' : 'person-outline';
+          let iconName: 'map-outline' | 'person-outline' | 'calendar';
+          switch(route.name) {
+            case 'Map':
+              iconName = 'map-outline'
+            case 'Profile':
+              iconName = 'person-outline';
+            case 'Events':
+              iconName = 'calendar';
+            default:
+              Error(`Route ${route.name} is unrecognized`);
+              iconName = 'map-outline';
+          }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: darkMainColor,
@@ -91,6 +102,14 @@ function BottomTabsNavigator() {
         options={{
           headerShown: true,
           header: () => <Logo headerText="ShelterLink" navigateTo="Map" />,
+        }}
+      />
+      <Tab.Screen 
+        name="Events" 
+        component={AllEventsViewer}
+        options={{
+          headerShown: true,
+          header: () => <Logo headerText="Events" navigateTo="Map" />,
         }}
       />
     </Tab.Navigator>

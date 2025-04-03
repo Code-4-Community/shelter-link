@@ -66,7 +66,7 @@ const EventInfoPanel = ({ event, style }: EventInfoPanelProps) => {
       <Text style={styles.eventName}>{event.event_name}</Text>
         <View style={{ height: 10 }} />
       <Text style={{ ...styles.eventLocationDistance, alignItems: 'center' }}>
-        {formatAddress(event.location)}
+        {formatAddress(event.location)} | # mi
       </Text>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity

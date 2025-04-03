@@ -6,7 +6,6 @@ import React, {
   useState,
 } from 'react';
 import { Dimensions, SafeAreaView, StyleSheet, View, Text, ScrollView } from 'react-native';
-import Header from '../components/Header';
 import { backgroundColor, darkMainColor } from '../../constants';
 import getEvents from '../services/eventService';
 import { Event } from '../types';
@@ -41,9 +40,6 @@ export const AllEventsViewer = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.headerContainer}>
-        <Header title="Events" />
-      </View>
       <ScrollView contentContainerStyle={styles.resultsContainer}>
 
             {events.length > 0 ? (
