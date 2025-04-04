@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -13,6 +13,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Event } from '../types';
 import { useFonts } from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
+import { deleteBookmark, postBookmark } from '../services/eventService';
 
 type EventInfoPanelProps = {
   event: Event;
@@ -42,6 +43,15 @@ const EventInfoPanel = ({ event, style }: EventInfoPanelProps) => {
     return `${address.street}, ${address.city}, ${address.state}`;
   };
 
+  function toggleBookmark() {
+    setBookmarked(!bookmarked);
+    /*if (bookmarked) {
+      postBookmark();
+    } else {
+      deleteBookmark();
+    }*/
+  }
+  
   return (
     <TouchableOpacity
       style={[styles.panel, style]}
@@ -60,7 +70,8 @@ const EventInfoPanel = ({ event, style }: EventInfoPanelProps) => {
         </View>
       </View>
       <View style={styles.bookmarkContainer}>
-       <Ionicons name={bookmarked ? "bookmark" : "bookmark-outline"} size={26} color={darkMainColor} style={styles.bookmarkImage}  onClick={() => {setBookmarked(!bookmarked)}} />
+       <Ionicons name={bookmarked ? "bookmark" : "bookmark-outline"} size={26} color={darkMainColor} style={styles.bookmarkImage}  
+       onClick={toggleBookmark} />
       </View>
       <Text style={styles.eventName}>{event.event_name}</Text>
         <View style={{ height: 10 }} />

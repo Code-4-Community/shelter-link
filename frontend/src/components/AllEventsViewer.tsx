@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import { Dimensions, SafeAreaView, StyleSheet, View, Text, ScrollView } from 'react-native';
 import { backgroundColor, darkMainColor, gradientColor1, gradientColor2 } from '../../constants';
-import getEvents from '../services/eventService';
+import { getEvents } from '../services/eventService';
 import { Event } from '../types';
 import { useFonts } from 'expo-font';
 import EventInfoPanel from './EventInfoPanel';
