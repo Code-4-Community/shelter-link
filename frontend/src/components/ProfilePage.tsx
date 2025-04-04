@@ -35,7 +35,10 @@ export const ProfilePage = () => {
       style={styles.safeArea}
     >
       <SafeAreaView style={styles.safeArea}>
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flex: 1 }}>
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          style={styles.container}
+        >
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={[
@@ -44,7 +47,14 @@ export const ProfilePage = () => {
               ]}
               onPress={() => setSelectedButton('shelters')}
             >
-              <Text style={styles.buttonText}>Saved Shelters</Text>
+              <Text
+                style={[
+                  styles.buttonText,
+                  selectedButton === 'shelters' && styles.selectedButtonText,
+                ]}
+              >
+                Saved Shelters
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[
@@ -53,7 +63,14 @@ export const ProfilePage = () => {
               ]}
               onPress={() => setSelectedButton('events')}
             >
-              <Text style={styles.buttonText}>Saved Events</Text>
+              <Text
+                style={[
+                  styles.buttonText,
+                  selectedButton === 'events' && styles.selectedButtonText,
+                ]}
+              >
+                Saved Events
+              </Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -65,9 +82,11 @@ export const ProfilePage = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+    width: '100%',
   },
   container: {
     flex: 1,
+    width: '100%',
   },
   buttonText: {
     fontSize: caption1FontSize,
@@ -77,21 +96,32 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: buttonBackgroundColor,
-    padding: 10,
-    borderRadius: 5,
+    padding: 5,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
     marginVertical: 20,
+    borderWidth: 2,
+    flex: 1,
+    borderColor: darkMainColor,
   },
   selectedButton: {
-    backgroundColor: containerColor,
-    padding: 10,
-    borderRadius: 5,
+    backgroundColor: darkMainColor,
+    padding: 5,
+    flex: 1,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: darkMainColor,
+  },
+  selectedButtonText: {
+    fontSize: caption1FontSize,
+    color: buttonBackgroundColor,
+    fontFamily: bodyFont,
+    textAlign: 'center',
   },
   buttonContainer: {
     justifyContent: 'center',
     flexDirection: 'row',
-    gap: 10,
+    width: '100%',
+    alignSelf: 'stretch',
   },
 });

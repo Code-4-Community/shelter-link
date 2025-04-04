@@ -26,6 +26,7 @@ import {
   darkMainColor,
   gradientColor1,
   header2FontSize,
+  header3FontSize,
   headerFont,
 } from 'frontend/constants';
 import { ProfilePage } from '../components/ProfilePage';
@@ -64,12 +65,17 @@ function MapStackNavigator() {
         component={DetailedShelterView}
         options={({ route }) => ({
           headerShown: true,
-          header: () => (
-            <Logo
-              headerText={route.params.shelter.name}
-              navigateTo="Map View"
-            />
-          ),
+          headerStyle: {
+            backgroundColor: gradientColor1,
+          },
+          headerTintColor: darkMainColor,
+          headerTitleStyle: {
+            fontSize: header3FontSize,
+            color: darkMainColor,
+            fontFamily: headerFont,
+          },
+          headerTitle: 'Shelterlink',
+          headerBackTitle: 'Map',
         })}
       />
     </Stack.Navigator>

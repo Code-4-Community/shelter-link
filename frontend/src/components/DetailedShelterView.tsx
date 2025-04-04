@@ -19,6 +19,8 @@ import {
   containerColor,
   gradientColor1,
   gradientColor2,
+  header2FontSize,
+  header1FontSize,
 } from '../../constants';
 import { Shelter, DayOfWeek } from '../types';
 import { ImageGallery } from './ImageGallery';
@@ -27,6 +29,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useFonts } from 'expo-font';
 import { ScrollView } from 'react-native-gesture-handler';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 
 type RootStackParamList = {
   'Map View': undefined;
@@ -45,6 +48,7 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
   const [showHoursDropdown, setShowHoursDropdown] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState(0);
   const buttonRef = useRef<React.ElementRef<typeof View>>(null);
+  const [bookmarked, setBookmarked] = useState(false);
 
   useFonts({
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
@@ -137,6 +141,17 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
       <SafeAreaView style={styles.safeArea}>
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flex: 1 }}>
           <View style={styles.shelterNameContainer}>
+            <View style={styles.nameBookmarkContainer}>
+              <Text style={styles.shelterNameText}>{shelter.name}</Text>
+              <TouchableOpacity onPress={() => setBookmarked(!bookmarked)}>
+                <Ionicons
+                  name={bookmarked ? 'bookmark' : 'bookmark-outline'}
+                  size={header2FontSize}
+                  color={darkMainColor}
+                  style={styles.bookmarkOutline}
+                />
+              </TouchableOpacity>
+            </View>
             <View style={styles.quickInfoContainer}>
               {shelter.expanded_name && (
                 <Text style={styles.shelterExpandedNameText}>
@@ -286,10 +301,13 @@ const styles = StyleSheet.create({
   shelterNameText: {
     fontFamily: headerFont,
     fontSize: 36,
-    paddingTop: 5,
+    paddingTop: 20,
+    paddingBottom: 15,
     color: darkMainColor,
     alignSelf: 'center',
-    textAlign: 'center', // Ensures text is centered when it wraps
+    textAlign: 'center',
+    flex: 1,
+    paddingLeft: 40,
   },
   shelterExpandedNameText: {
     fontFamily: bodyFont,
@@ -297,7 +315,7 @@ const styles = StyleSheet.create({
     fontSize: dynamicTabletSizes.shelterNameTextSize * 0.4,
     color: descriptionFontColor,
     paddingBottom: '5%',
-    textAlign: 'center', // Ensures text is centered when it wraps
+    textAlign: 'center',
   },
   shelterDescriptionContainer: {
     alignItems: 'flex-start',
@@ -523,5 +541,17 @@ const styles = StyleSheet.create({
     borderColor: '#007AFF',
     borderWidth: 1,
     marginTop: 4,
+  },
+  nameBookmarkContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  bookmarkOutline: {
+    fontSize: header1FontSize,
+    fontFamily: bodyFont,
+    fontWeight: '500',
+    color: darkMainColor,
   },
 });

@@ -18,6 +18,7 @@ import { darkMainColor, gradientColor1 } from '../../constants';
 import getShelters from '../services/mapService';
 import { useFonts } from 'expo-font';
 import { useFocusEffect } from '@react-navigation/native';
+import { useAuth } from '../hooks/AuthContext';
 
 export const CompleteMap = () => {
   const sheetRef = useRef<BottomSheet>(null);
@@ -25,6 +26,7 @@ export const CompleteMap = () => {
   const [selectedShelter, setSelectedShelter] = useState<Shelter | null>(null);
   const [shelters, setShelters] = useState<Shelter[]>([]);
   const [query, setQuery] = useState('');
+  const { user } = useAuth();
 
   useFonts({
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Regular.otf'),
@@ -63,7 +65,11 @@ export const CompleteMap = () => {
 
   const renderItem = useCallback(
     ({ item }: { item: Shelter }) => (
-      <ShelterInfoPanel shelter={item} style={styles.itemContainer} />
+      <ShelterInfoPanel
+        shelter={item}
+        style={styles.itemContainer}
+        user={user}
+      />
     ),
     []
   );
@@ -109,6 +115,7 @@ export const CompleteMap = () => {
           <ShelterInfoPanel
             shelter={selectedShelter}
             style={styles.itemContainer}
+            user={user}
           />
         ) : filteredShelters.length > 0 ? (
           <BottomSheetFlatList
