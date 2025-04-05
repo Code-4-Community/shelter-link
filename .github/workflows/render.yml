@@ -1,0 +1,18 @@
+name: ShelterLink CI
+on:
+
+    workflow_dispatch:
+        inputs:
+          chosen-os:
+            required: true
+            type: choice
+            options:
+            - macOS
+    
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    steps:
+    - run: npm ci --legacy-peer-deps
+    - run: npx nx serve frontend
