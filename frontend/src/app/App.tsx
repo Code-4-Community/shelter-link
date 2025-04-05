@@ -203,6 +203,24 @@ function UnauthenticatedStack() {
           component={BottomTabsNavigator}
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name="Detailed Shelter View"
+          component={DetailedShelterView}
+          options={({ route }) => ({
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: gradientColor1,
+            },
+            headerTintColor: darkMainColor,
+            headerTitleStyle: {
+              fontSize: header3FontSize,
+              color: darkMainColor,
+              fontFamily: headerFont,
+            },
+            headerTitle: 'Shelterlink',
+            headerBackTitle: 'Map',
+          })}
+        />
       </Stack.Navigator>
     </SafeAreaView>
   );
