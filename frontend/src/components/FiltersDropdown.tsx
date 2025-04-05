@@ -1,3 +1,4 @@
+import { useFonts } from 'expo-font';
 import { bodyFont, darkMainColor } from '../../constants';
 import React, { useState } from 'react';
 import { Dimensions, StyleSheet, View, ScrollView } from 'react-native';
@@ -6,8 +7,13 @@ import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native';
 
 const DropdownComponent = () => {
+  useFonts({
+    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
+  });
+
+  const [selected, setSelected] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-  
+
   const [ratingFilter, setRatingFilter] = useState('Any');
   const [hoursFilter, setHoursFilter] = useState('Any');
   const [distanceFilter, setDistanceFilter] = useState('Any');
@@ -15,20 +21,24 @@ const DropdownComponent = () => {
 
   const toggleAdditionalFilter = (filter: string) => {
     if (additionalFilters.includes(filter)) {
-      setAdditionalFilters(additionalFilters.filter(item => item !== filter));
+      setAdditionalFilters(additionalFilters.filter((item) => item !== filter));
     } else {
       setAdditionalFilters([...additionalFilters, filter]);
     }
   };
 
-
   const isFilterSelected = (category: string, value: string) => {
     switch (category) {
-      case 'rating': return ratingFilter === value;
-      case 'hours': return hoursFilter === value;
-      case 'distance': return distanceFilter === value;
-      case 'additional': return additionalFilters.includes(value);
-      default: return false;
+      case 'rating':
+        return ratingFilter === value;
+      case 'hours':
+        return hoursFilter === value;
+      case 'distance':
+        return distanceFilter === value;
+      case 'additional':
+        return additionalFilters.includes(value);
+      default:
+        return false;
     }
   };
 
@@ -41,7 +51,8 @@ const DropdownComponent = () => {
           visible={modalVisible}
           onRequestClose={() => {
             setModalVisible(!modalVisible);
-          }}>
+          }}
+        >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <View style={styles.modalHeader}>
@@ -53,249 +64,377 @@ const DropdownComponent = () => {
                 </TouchableOpacity>
                 <Text style={styles.modalTitle}>Filters</Text>
               </View>
-              
+
               <ScrollView style={styles.scrollView}>
                 {/* Rating Section */}
                 <View style={styles.filterSection}>
                   <Text style={styles.filterHeader}>Rating</Text>
                   <View style={styles.filterOptions}>
-                    <TouchableOpacity 
+                    <TouchableOpacity
                       style={[
-                        styles.filterButton, 
-                        isFilterSelected('rating', 'Any') && styles.selectedFilterButton
+                        styles.filterButton,
+                        isFilterSelected('rating', 'Any') &&
+                          styles.selectedFilterButton,
                       ]}
                       onPress={() => setRatingFilter('Any')}
                     >
-                      <Text style={[
-                        styles.filterButtonText, 
-                        isFilterSelected('rating', 'Any') && styles.selectedFilterButtonText
-                      ]}>Any</Text>
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected('rating', 'Any') &&
+                            styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        Any
+                      </Text>
                     </TouchableOpacity>
-                    
-                    <TouchableOpacity 
+
+                    <TouchableOpacity
                       style={[
-                        styles.filterButton, 
-                        isFilterSelected('rating', '3.5+') && styles.selectedFilterButton
+                        styles.filterButton,
+                        isFilterSelected('rating', '3.5+') &&
+                          styles.selectedFilterButton,
                       ]}
                       onPress={() => setRatingFilter('3.5+')}
                     >
-                      <Text style={[
-                        styles.filterButtonText, 
-                        isFilterSelected('rating', '3.5+') && styles.selectedFilterButtonText
-                      ]}>3.5+</Text>
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected('rating', '3.5+') &&
+                            styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        3.5+
+                      </Text>
                     </TouchableOpacity>
-                    
-                    <TouchableOpacity 
+
+                    <TouchableOpacity
                       style={[
-                        styles.filterButton, 
-                        isFilterSelected('rating', '4.0+') && styles.selectedFilterButton
+                        styles.filterButton,
+                        isFilterSelected('rating', '4.0+') &&
+                          styles.selectedFilterButton,
                       ]}
                       onPress={() => setRatingFilter('4.0+')}
                     >
-                      <Text style={[
-                        styles.filterButtonText, 
-                        isFilterSelected('rating', '4.0+') && styles.selectedFilterButtonText
-                      ]}>4.0+</Text>
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected('rating', '4.0+') &&
+                            styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        4.0+
+                      </Text>
                     </TouchableOpacity>
-                    
-                    <TouchableOpacity 
+
+                    <TouchableOpacity
                       style={[
-                        styles.filterButton, 
-                        isFilterSelected('rating', '4.5+') && styles.selectedFilterButton
+                        styles.filterButton,
+                        isFilterSelected('rating', '4.5+') &&
+                          styles.selectedFilterButton,
                       ]}
                       onPress={() => setRatingFilter('4.5+')}
                     >
-                      <Text style={[
-                        styles.filterButtonText, 
-                        isFilterSelected('rating', '4.5+') && styles.selectedFilterButtonText
-                      ]}>4.5+</Text>
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected('rating', '4.5+') &&
+                            styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        4.5+
+                      </Text>
                     </TouchableOpacity>
                   </View>
                 </View>
-                
+
                 {/* Hours Section */}
                 <View style={styles.filterSection}>
                   <Text style={styles.filterHeader}>Hours</Text>
                   <View style={styles.filterOptions}>
-                    <TouchableOpacity 
+                    <TouchableOpacity
                       style={[
-                        styles.filterButton, 
-                        isFilterSelected('hours', 'Any') && styles.selectedFilterButton
+                        styles.filterButton,
+                        isFilterSelected('hours', 'Any') &&
+                          styles.selectedFilterButton,
                       ]}
                       onPress={() => setHoursFilter('Any')}
                     >
-                      <Text style={[
-                        styles.filterButtonText, 
-                        isFilterSelected('hours', 'Any') && styles.selectedFilterButtonText
-                      ]}>Any</Text>
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected('hours', 'Any') &&
+                            styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        Any
+                      </Text>
                     </TouchableOpacity>
-                    
-                    <TouchableOpacity 
+
+                    <TouchableOpacity
                       style={[
-                        styles.filterButton, 
-                        isFilterSelected('hours', 'Open now') && styles.selectedFilterButton
+                        styles.filterButton,
+                        isFilterSelected('hours', 'Open now') &&
+                          styles.selectedFilterButton,
                       ]}
                       onPress={() => setHoursFilter('Open now')}
                     >
-                      <Text style={[
-                        styles.filterButtonText, 
-                        isFilterSelected('hours', 'Open now') && styles.selectedFilterButtonText
-                      ]}>Open now</Text>
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected('hours', 'Open now') &&
+                            styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        Open now
+                      </Text>
                     </TouchableOpacity>
-                    
-                    <TouchableOpacity 
+
+                    <TouchableOpacity
                       style={[
-                        styles.filterButton, 
-                        isFilterSelected('hours', 'Custom') && styles.selectedFilterButton
+                        styles.filterButton,
+                        isFilterSelected('hours', 'Custom') &&
+                          styles.selectedFilterButton,
                       ]}
                       onPress={() => setHoursFilter('Custom')}
                     >
-                      <Text style={[
-                        styles.filterButtonText, 
-                        isFilterSelected('hours', 'Custom') && styles.selectedFilterButtonText
-                      ]}>Custom</Text>
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected('hours', 'Custom') &&
+                            styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        Custom
+                      </Text>
                     </TouchableOpacity>
                   </View>
                 </View>
-                
+
                 {/* Distance Section */}
                 <View style={styles.filterSection}>
                   <Text style={styles.filterHeader}>Distance</Text>
                   <View style={styles.filterOptions}>
-                    <TouchableOpacity 
+                    <TouchableOpacity
                       style={[
-                        styles.filterButton, 
-                        isFilterSelected('distance', 'Any') && styles.selectedFilterButton
+                        styles.filterButton,
+                        isFilterSelected('distance', 'Any') &&
+                          styles.selectedFilterButton,
                       ]}
                       onPress={() => setDistanceFilter('Any')}
                     >
-                      <Text style={[
-                        styles.filterButtonText, 
-                        isFilterSelected('distance', 'Any') && styles.selectedFilterButtonText
-                      ]}>Any</Text>
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected('distance', 'Any') &&
+                            styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        Any
+                      </Text>
                     </TouchableOpacity>
-                    
-                    <TouchableOpacity 
+
+                    <TouchableOpacity
                       style={[
-                        styles.filterButton, 
-                        isFilterSelected('distance', '>5 mi') && styles.selectedFilterButton
+                        styles.filterButton,
+                        isFilterSelected('distance', '>5 mi') &&
+                          styles.selectedFilterButton,
                       ]}
                       onPress={() => setDistanceFilter('>5 mi')}
                     >
-                      <Text style={[
-                        styles.filterButtonText, 
-                        isFilterSelected('distance', '>5 mi') && styles.selectedFilterButtonText
-                      ]}>{'<5 mi'}</Text>
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected('distance', '>5 mi') &&
+                            styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        {'<5 mi'}
+                      </Text>
                     </TouchableOpacity>
-                    
-                    <TouchableOpacity 
+
+                    <TouchableOpacity
                       style={[
-                        styles.filterButton, 
-                        isFilterSelected('distance', '>15 mi') && styles.selectedFilterButton
+                        styles.filterButton,
+                        isFilterSelected('distance', '>15 mi') &&
+                          styles.selectedFilterButton,
                       ]}
                       onPress={() => setDistanceFilter('>15 mi')}
                     >
-                      <Text style={[
-                        styles.filterButtonText, 
-                        isFilterSelected('distance', '>15 mi') && styles.selectedFilterButtonText
-                      ]}>{'<15 mi'}</Text>
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected('distance', '>15 mi') &&
+                            styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        {'<15 mi'}
+                      </Text>
                     </TouchableOpacity>
-                    
-                    <TouchableOpacity 
+
+                    <TouchableOpacity
                       style={[
-                        styles.filterButton, 
-                        isFilterSelected('distance', '>30 mi') && styles.selectedFilterButton
+                        styles.filterButton,
+                        isFilterSelected('distance', '>30 mi') &&
+                          styles.selectedFilterButton,
                       ]}
                       onPress={() => setDistanceFilter('>30 mi')}
                     >
-                      <Text style={[
-                        styles.filterButtonText, 
-                        isFilterSelected('distance', '>30 mi') && styles.selectedFilterButtonText
-                      ]}>{'<30 mi'}</Text>
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected('distance', '>30 mi') &&
+                            styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        {'<30 mi'}
+                      </Text>
                     </TouchableOpacity>
                   </View>
                 </View>
-                
+
                 {/* More Filters Section */}
                 <View style={styles.filterSection}>
                   <Text style={styles.filterHeader}>More filters</Text>
                   <View style={styles.additionalFiltersGrid}>
-                    <TouchableOpacity 
+                    <TouchableOpacity
                       style={[
-                        styles.additionalFilterButton, 
-                        isFilterSelected('additional', 'Wheelchair accessible') && styles.selectedFilterButton
+                        styles.additionalFilterButton,
+                        isFilterSelected(
+                          'additional',
+                          'Wheelchair accessible'
+                        ) && styles.selectedFilterButton,
                       ]}
-                      onPress={() => toggleAdditionalFilter('Wheelchair accessible')}
+                      onPress={() =>
+                        toggleAdditionalFilter('Wheelchair accessible')
+                      }
                     >
-                      <Text style={[
-                        styles.filterButtonText, 
-                        isFilterSelected('additional', 'Wheelchair accessible') && styles.selectedFilterButtonText
-                      ]}>Wheelchair accessible</Text>
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected(
+                            'additional',
+                            'Wheelchair accessible'
+                          ) && styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        Wheelchair accessible
+                      </Text>
                     </TouchableOpacity>
-                    
-                    <TouchableOpacity 
+
+                    <TouchableOpacity
                       style={[
-                        styles.additionalFilterButton, 
-                        isFilterSelected('additional', 'Legal aids available') && styles.selectedFilterButton
+                        styles.additionalFilterButton,
+                        isFilterSelected(
+                          'additional',
+                          'Legal aids available'
+                        ) && styles.selectedFilterButton,
                       ]}
-                      onPress={() => toggleAdditionalFilter('Legal aids available')}
+                      onPress={() =>
+                        toggleAdditionalFilter('Legal aids available')
+                      }
                     >
-                      <Text style={[
-                        styles.filterButtonText, 
-                        isFilterSelected('additional', 'Legal aids available') && styles.selectedFilterButtonText
-                      ]}>Legal aids available</Text>
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected(
+                            'additional',
+                            'Legal aids available'
+                          ) && styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        Legal aids available
+                      </Text>
                     </TouchableOpacity>
-                    
-                    <TouchableOpacity 
+
+                    <TouchableOpacity
                       style={[
-                        styles.additionalFilterButton, 
-                        isFilterSelected('additional', 'Free or financial support available') && styles.selectedFilterButton
+                        styles.additionalFilterButton,
+                        isFilterSelected(
+                          'additional',
+                          'Free or financial support available'
+                        ) && styles.selectedFilterButton,
                       ]}
-                      onPress={() => toggleAdditionalFilter('Free or financial support available')}
+                      onPress={() =>
+                        toggleAdditionalFilter(
+                          'Free or financial support available'
+                        )
+                      }
                     >
-                      <Text style={[
-                        styles.filterButtonText, 
-                        isFilterSelected('additional', 'Free or financial support available') && styles.selectedFilterButtonText
-                      ]}>Free or financial support available</Text>
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected(
+                            'additional',
+                            'Free or financial support available'
+                          ) && styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        Free or financial support available
+                      </Text>
                     </TouchableOpacity>
-                    
-                    <TouchableOpacity 
+
+                    <TouchableOpacity
                       style={[
-                        styles.additionalFilterButton, 
-                        isFilterSelected('additional', 'Overnight stay') && styles.selectedFilterButton
+                        styles.additionalFilterButton,
+                        isFilterSelected('additional', 'Overnight stay') &&
+                          styles.selectedFilterButton,
                       ]}
                       onPress={() => toggleAdditionalFilter('Overnight stay')}
                     >
-                      <Text style={[
-                        styles.filterButtonText, 
-                        isFilterSelected('additional', 'Overnight stay') && styles.selectedFilterButtonText
-                      ]}>Overnight stay</Text>
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected('additional', 'Overnight stay') &&
+                            styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        Overnight stay
+                      </Text>
                     </TouchableOpacity>
-                    
-                    <TouchableOpacity 
+
+                    <TouchableOpacity
                       style={[
-                        styles.additionalFilterButton, 
-                        isFilterSelected('additional', 'Specializes in Trans support') && styles.selectedFilterButton
+                        styles.additionalFilterButton,
+                        isFilterSelected(
+                          'additional',
+                          'Specializes in Trans support'
+                        ) && styles.selectedFilterButton,
                       ]}
-                      onPress={() => toggleAdditionalFilter('Specializes in Trans support')}
+                      onPress={() =>
+                        toggleAdditionalFilter('Specializes in Trans support')
+                      }
                     >
-                      <Text style={[
-                        styles.filterButtonText, 
-                        isFilterSelected('additional', 'Specializes in Trans support') && styles.selectedFilterButtonText
-                      ]}>Specializes in Trans support</Text>
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected(
+                            'additional',
+                            'Specializes in Trans support'
+                          ) && styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        Specializes in Trans support
+                      </Text>
                     </TouchableOpacity>
-                    
-                    <TouchableOpacity 
+
+                    <TouchableOpacity
                       style={[
-                        styles.additionalFilterButton, 
-                        isFilterSelected('additional', 'LGBTQ+ focus') && styles.selectedFilterButton
+                        styles.additionalFilterButton,
+                        isFilterSelected('additional', 'LGBTQ+ focus') &&
+                          styles.selectedFilterButton,
                       ]}
                       onPress={() => toggleAdditionalFilter('LGBTQ+ focus')}
                     >
-                      <Text style={[
-                        styles.filterButtonText, 
-                        isFilterSelected('additional', 'LGBTQ+ focus') && styles.selectedFilterButtonText
-                      ]}>LGBTQ+ focus</Text>
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected('additional', 'LGBTQ+ focus') &&
+                            styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        LGBTQ+ focus
+                      </Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -305,7 +444,8 @@ const DropdownComponent = () => {
         </Modal>
         <Pressable
           style={[styles.button, styles.buttonOpen]}
-          onPress={() => setModalVisible(true)}>
+          onPress={() => setModalVisible(true)}
+        >
           <Text style={styles.selectedTextStyle}>Filters</Text>
         </Pressable>
       </SafeAreaView>
@@ -315,17 +455,17 @@ const DropdownComponent = () => {
 
 const { width: screenWidth } = Dimensions.get('window');
 const dynamicTabletSizes: Record<string, number> = {};
-dynamicTabletSizes["dropdownWidth"] = 87;
-dynamicTabletSizes["dropdownHeight"] = 28;
-dynamicTabletSizes["dropdownBorderWidth"] = 1;
-dynamicTabletSizes["dropdownFontSize"] = 13;
-dynamicTabletSizes["customIconWidth"] = 10;
-dynamicTabletSizes["iconWidth"] = 20;
+dynamicTabletSizes['dropdownWidth'] = 87;
+dynamicTabletSizes['dropdownHeight'] = 28;
+dynamicTabletSizes['dropdownBorderWidth'] = 1;
+dynamicTabletSizes['dropdownFontSize'] = 13;
+dynamicTabletSizes['customIconWidth'] = 10;
+dynamicTabletSizes['iconWidth'] = 20;
 
 if (screenWidth > 500) {
-  const widthRatio = screenWidth/500;
+  const widthRatio = screenWidth / 500;
   for (const key in dynamicTabletSizes) {
-    dynamicTabletSizes[key] = (dynamicTabletSizes[key]*widthRatio)
+    dynamicTabletSizes[key] = dynamicTabletSizes[key] * widthRatio;
   }
 }
 
@@ -378,7 +518,7 @@ const styles = StyleSheet.create({
   },
   selectedTextStyle: {
     fontFamily: bodyFont,
-    fontSize: dynamicTabletSizes.dropdownFontSize,
+    fontSize: dropdownFontSize,
     color: darkMainColor,
   },
   closeButton: {
