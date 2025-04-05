@@ -1,5 +1,14 @@
 import { useFonts } from 'expo-font';
-import { bodyFont, darkMainColor } from '../../constants';
+import {
+  bodyFont,
+  bodyFontSize,
+  caption1FontSize,
+  containerColor,
+  darkMainColor,
+  header1FontSize,
+  header2FontSize,
+  header3FontSize,
+} from '../../constants';
 import React, { useState } from 'react';
 import { Dimensions, StyleSheet, View, ScrollView } from 'react-native';
 import { Modal, Text, Pressable } from 'react-native';
@@ -442,12 +451,18 @@ const DropdownComponent = () => {
             </View>
           </View>
         </Modal>
-        <Pressable
-          style={[styles.button, styles.buttonOpen]}
+
+        <TouchableOpacity
+          style={styles.mainFilterButton}
           onPress={() => setModalVisible(true)}
         >
-          <Text style={styles.selectedTextStyle}>Filters</Text>
-        </Pressable>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={styles.selectedTextStyle}>Filters</Text>
+            <Text style={{ marginLeft: 5, fontSize: 12, color: darkMainColor }}>
+              ▼
+            </Text>
+          </View>
+        </TouchableOpacity>
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -482,7 +497,6 @@ const styles = StyleSheet.create({
     maxHeight: 600,
     backgroundColor: 'white',
     borderRadius: 12,
-    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -497,13 +511,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: containerColor,
     position: 'relative',
   },
   button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
+    borderRadius: 10,
   },
   buttonOpen: {
     backgroundColor: 'white',
@@ -518,7 +530,7 @@ const styles = StyleSheet.create({
   },
   selectedTextStyle: {
     fontFamily: bodyFont,
-    fontSize: dropdownFontSize,
+    fontSize: dynamicTabletSizes['dropdownFontSize'],
     color: darkMainColor,
   },
   closeButton: {
@@ -528,13 +540,12 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     fontSize: 18,
-    color: '#BD2B34',
+    color: darkMainColor,
   },
   modalTitle: {
-    fontSize: 96,
-    fontWeight: '500',
-    color: '#BD2B34',
-    fontFamily: 'Jomhuria',
+    fontSize: header2FontSize,
+    fontWeight: 'bold',
+    color: darkMainColor,
   },
   scrollView: {
     paddingHorizontal: 20,
@@ -543,11 +554,10 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   filterHeader: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#BD2B34',
+    fontSize: header3FontSize,
+    color: 'black',
+    fontWeight: 'bold',
     marginBottom: 10,
-    fontFamily: 'Istok Web',
   },
   filterOptions: {
     flexDirection: 'row',
@@ -559,7 +569,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: '#D0D0D0',
+    borderColor: darkMainColor,
     backgroundColor: 'white',
     minWidth: 60,
     alignItems: 'center',
@@ -569,7 +579,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: '#D0D0D0',
+    borderColor: darkMainColor,
     backgroundColor: 'white',
     minWidth: 100, // Increase minimum width
     alignItems: 'center',
@@ -577,19 +587,16 @@ const styles = StyleSheet.create({
     overflow: 'visible',
   },
   selectedFilterButton: {
-    backgroundColor: '#BD2B34',
-    borderColor: '#BD2B34',
+    backgroundColor: darkMainColor,
   },
   filterButtonText: {
-    fontSize: 12,
-    color: '#BD2B34',
-    fontFamily: 'Istok Web',
+    fontSize: caption1FontSize,
+    color: darkMainColor,
   },
   openButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold', // Make it bolder
-    color: '#BD2B34',
-    fontFamily: 'Istok Web',
+    fontSize: bodyFontSize,
+    fontWeight: 'bold',
+    color: darkMainColor,
     textAlign: 'center', // Ensure it's centered
     width: '100%',
   },
@@ -606,10 +613,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: '#D0D0D0',
+    borderColor: darkMainColor,
     backgroundColor: 'white',
     minWidth: '48%',
     alignItems: 'center',
+  },
+  mainFilterButton: {
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingHorizontal: 20,
+    backgroundColor: 'white',
+    borderRadius: 6,
+    borderWidth: 1,
   },
 });
 
