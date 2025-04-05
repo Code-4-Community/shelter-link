@@ -69,9 +69,50 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
 
     // for now, this gives the option to confirm if you want to call the shelter number
     // figure out how number/email maybe should be displayed?
-    const handleContact = () => {
-        Linking.openURL(`tel:${event.phone_number}`);
+    const handleRegister = () => {
+        if (event.registration_link ) {
+            Linking.openURL(event.registration_link);
+        }
     };
+
+    // based off of https://bobbyhadz.com/blog/typescript-date-format
+    function padTo2Digits(num: number) {
+        return num.toString().padStart(2, '0');
+    }
+  
+    function formatDate() {
+        const date = new Date(event.date);
+        let monthMap = new Map<number, string>([
+            [1, "January"],
+            [2, "February"],
+            [3, "March"],
+            [4, "April"],
+            [5, "May"],
+            [6, "June"],
+            [7, "July"],
+            [8, "August"],
+            [9, "September"],
+            [10, "October"],
+            [10, "November"],
+            [10, "December"],
+            ]);
+        return (
+            `${monthMap.get(date.getMonth() + 1)} ${date.getDate()}, ${date.getFullYear()}`
+    );
+    }
+
+    function formatTime() {
+        const date = new Date(event.date);
+        return [
+            date.getHours() % 12,
+            padTo2Digits(date.getMinutes()),
+          ].join(':')  + ((date.getHours() - 12 > 0) ? ' PM' : ' AM')
+    }
+    // 👇️ format as "YYYY-MM-DD hh:mm:ss"
+    // You can tweak the format easily
+    function formatDateTime() {
+        return formatDate() + ' at ' + formatTime()
+    }
 
     return (
         <LinearGradient
@@ -81,22 +122,24 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
             <SafeAreaView style={styles.safeArea}>
                 <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flex: 1 }}>
                     <View style={styles.shelterNameContainer}>
-                        <View style={styles.quickInfoContainer}>
-                            <Text style={styles.shelterExpandedNameText}>
-                                {event.event_name}
-                            </Text>
-                        </View>
-                    </View>
+                                <View style={styles.quickInfoContainer}>
+                                    <View style={styles.ratingContainer}>
+                                      <Text style={styles.quickInfoText}>
+                                        {formatDateTime()}
+                                      </Text>
+                                    </View>
+                                </View>
+                              </View>
                     <View style={styles.buttonsContainer}>
-                    {event.location && 
-                        <TouchableOpacity
+                    {event.location && event.location.street !== "" &&
+                        (<TouchableOpacity
                             style={[styles.button, event.website && styles.smallButton]}
                             onPress={handleDirections}
                         >
                             <Text style={styles.buttonText}>Directions</Text>
-                        </TouchableOpacity>}
+                        </TouchableOpacity>)}
 
-                        {event.website && (
+                        {event.website && event.website !== "" && (
                             <TouchableOpacity
                                 style={styles.websiteButton}
                                 onPress={handleWebsite}
@@ -105,12 +148,13 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
                             </TouchableOpacity>
                         )}
 
-                        <TouchableOpacity
+                        {event.registration_link && event.registration_link !== "" &&
+                        (<TouchableOpacity
                             style={[styles.button, event.website && styles.smallButton]}
-                            onPress={handleContact}
+                            onPress={handleRegister}
                         >
-                            <Text style={styles.buttonText}>Contact</Text>
-                        </TouchableOpacity>
+                            <Text style={styles.buttonText}>Register</Text>
+                        </TouchableOpacity>)}
                     </View>
 
                     <View style={styles.bottomContainer}>
@@ -121,16 +165,23 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
                         }
                         <View style={styles.shelterDescriptionContainer}>
                             <Text style={styles.shelterDescriptionHeader}>
-                                About {event.event_name}
+                                About
                             </Text>
                             <Text style={styles.shelterDescriptionText}>
                                 {event.description}
                             </Text>
                         </View>
 
-                        <View style={styles.shelterTagMainContainer}>
+                        <View style={styles.shelterDescriptionContainer}>
                             <Text style={styles.shelterDescriptionHeader}>
-                                Features and Resources
+                                Additional Information
+                            </Text>
+                            <Text style={styles.shelterDescriptionText}>
+                                {event.host_name && `Name of Host: ${event.host_name}\n\n`}
+                                {event.phone_number && `Host Contact: ${event.phone_number}\n\n`}
+                                Date: {formatDate()}
+                                {`\n\n`}
+                                Time: {formatTime()}
                             </Text>
                         </View>
                     </View>

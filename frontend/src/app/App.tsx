@@ -11,7 +11,7 @@ import { LogIn } from '../components/LogIn';
 import CompleteMap from '../components/CompleteMap';
 import DetailedShelterView from '../components/DetailedShelterView';
 
-import { Shelter } from '../types';
+import { Shelter, Event } from '../types';
 import { AuthProvider, useAuth } from '../hooks/AuthContext';
 
 import SignUpScreen from '../components/SignUpScreen';
@@ -25,6 +25,7 @@ import {
 } from 'frontend/constants';
 import { ProfilePage } from '../components/ProfilePage';
 import AllEventsViewer from '../components/AllEventsViewer';
+import DetailedEventView from '../components/DetailedEventView';
 
 // defines type for nav stack
 export type RootStackParamList = {
@@ -33,6 +34,7 @@ export type RootStackParamList = {
   'Map View': undefined;
   'All Events View': undefined;
   'Detailed Shelter View': { shelter: Shelter };
+  'Detailed Event View': { event: Event };
   Profile: undefined;
   Map: undefined;
 };
@@ -69,6 +71,37 @@ function MapStackNavigator() {
     </Stack.Navigator>
   );
 }
+
+function EventStackNavigator() {
+  return (
+    <Stack.Navigator>
+      {/* Default screen inside the tab */}
+      <Stack.Screen 
+        name="All Events View" 
+        component={AllEventsViewer}
+        options={{
+          headerShown: true,
+          header: () => <Logo headerText="Events" navigateTo="Map" />,
+        }}
+      />
+      {/* Navigates from Map to DetailedShelterView, keeping tabs visible */}
+      <Stack.Screen
+        name="Detailed Event View"
+        component={DetailedEventView}
+        options={({ route }) => ({
+          headerShown: true,
+          header: () => (
+            <Logo
+              headerText={route.params.event.event_name}
+              navigateTo="Map View"
+            />
+          ),
+        })}
+        />
+    </Stack.Navigator>
+  );
+}
+
 
 function BottomTabsNavigator() {
   return (
@@ -107,14 +140,7 @@ function BottomTabsNavigator() {
           header: () => <Logo headerText="ShelterLink" navigateTo="Map" />,
         }}
       />
-      <Tab.Screen 
-        name="Events" 
-        component={AllEventsViewer}
-        options={{
-          headerShown: true,
-          header: () => <Logo headerText="Events" navigateTo="Map" />,
-        }}
-      />
+      <Tab.Screen name="Events" component={EventStackNavigator} />
     </Tab.Navigator>
   );
 }
