@@ -8,6 +8,7 @@ import React, {
 import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
 import Fuse from 'fuse.js';
 import SearchBar from '../components/SearchBar';
+import Header from '../components/Header';
 import Map from '../components/Map';
 import FiltersDropdown from '../components/FiltersDropdown';
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
@@ -91,6 +92,9 @@ export const CompleteMap = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <View style={styles.headerContainer}>
+        <Header />
+      </View>
       <View style={styles.filtersDropdownContainer}>
         <FiltersDropdown />
         <SearchBar onSearch={setQuery} />
