@@ -1,4 +1,10 @@
-import { NewUserInput, UserModel, LoginUserRequest } from '../types';
+import {
+  NewUserInput,
+  UserModel,
+  LoginUserRequest,
+  UserShelterBookmark,
+  UserEventBookmark,
+} from '../types';
 import api from './config';
 
 const USER_API_URL = `${process.env.EXPO_PUBLIC_API_URL}/users`;
@@ -41,4 +47,106 @@ const loginUser = async (loginData: LoginUserRequest): Promise<UserModel> => {
   return res.data;
 };
 
-export { createUser, loginUser };
+/**
+ * Fetches the user's bookmarked shelters.
+ *
+ * @param userId The ID of the user.
+ * @returns The list of bookmarked shelters.
+ * @throws Error if the response status is not 200.
+ */
+const getShelterBookmarks = async (userId: string): Promise<any> => {
+  const res = await api.get(
+    `${USER_API_URL}/bookmarks/${userId}/?type=shelter`
+  );
+  if (res.status !== 200) {
+    throw new Error('Error while fetching shelter bookmarks');
+  }
+  return res.data;
+};
+
+/**
+ * Fetches the user's bookmarked events.
+ *
+ * @param userId The ID of the user.
+ * @returns The list of bookmarked events.
+ * @throws Error if the response status is not 200.
+ */
+const getEventBookmarks = async (userId: string): Promise<any> => {
+  const res = await api.get(`${USER_API_URL}/bookmarks/${userId}/?type=event`);
+  if (res.status !== 200) {
+    throw new Error('Error while fetching event bookmarks');
+  }
+  return res.data;
+};
+
+/**
+ * Post a new bookmark for a shelter or event.
+ *
+ * @param userId The ID of the user.
+ * @param bookmarkId The ID of the bookmark.
+ * @param type The type of the bookmark (shelter or event).
+ * @returns The response data from the API.
+ * @throws Error if the response status is not 200 or 201.
+ */
+
+const postBookmark = async (
+  userId: string,
+  bookmarkId: string,
+  type: 'shelter' | 'event'
+): Promise<UserShelterBookmark | UserEventBookmark> => {
+  try {
+    const res = await api.post(`${USER_API_URL}/bookmarks/${type}`, {
+      body: {
+        userId: userId,
+        bookmarkId: bookmarkId,
+      },
+    });
+    if (res.status !== 200 && res.status !== 201) {
+      throw new Error('Error while creating bookmark');
+    }
+    return res.data;
+  } catch (e) {
+    throw new Error('Error creating bookmark');
+  }
+};
+
+/**
+ * Deletes a bookmark for a shelter or event.
+ *
+ * @param userId The ID of the user.
+ * @param bookmarkId The ID of the bookmark.
+ * @param type The type of the bookmark (shelter or event).
+ * @returns The response data from the API.
+ * @throws Error if the response status is not 200 or 201.
+ */
+const deleteBookmark = async (
+  userId: string,
+  bookmarkId: string,
+  type: 'shelter' | 'event'
+): Promise<any> => {
+  try {
+    const res = await api.delete(`${USER_API_URL}/bookmarks/${type}`, {
+      data: {
+        body: {
+          userId: userId,
+          bookmarkId: bookmarkId,
+        },
+      },
+    });
+    if (res.status !== 200 && res.status !== 201) {
+      throw new Error('Error while deleting bookmark');
+    }
+    return res.data;
+  } catch (e) {
+    throw new Error('Error deleting bookmark');
+  }
+};
+
+export {
+  createUser,
+  loginUser,
+  getShelterBookmarks,
+  getEventBookmarks,
+  deleteBookmark,
+  postBookmark,
+};

@@ -3,7 +3,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Shelter } from '../types';
 import { useEffect, useState } from 'react';
-import getShelters from '../services/mapService';
+import { getShelters } from '../services/mapService';
 
 const Map = ({
   onMarkerPress,

@@ -19,10 +19,20 @@ import { RootStackParamList } from '../app/App';
 
 type AppNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-const Logo: React.FC<{
+/**
+ * Logo component that displays a logo image and an optional header text, as well as an optional icon on the far right.
+ *
+ * @param {string} [headerText] - The text to display below the logo.
+ * @param {keyof RootStackParamList} navigateTo - The screen to navigate to when the logo is pressed.
+ * @param {React.ReactNode} [rightIcon] - An optional icon to display on the right side of the logo.
+ */
+interface LogoProps {
   headerText?: string;
   navigateTo: keyof RootStackParamList;
-}> = ({ headerText, navigateTo }) => {
+  rightIcon?: React.ReactNode;
+}
+
+const Logo: React.FC<LogoProps> = ({ headerText, navigateTo, rightIcon }) => {
   const navigation = useNavigation<AppNavigationProp>();
 
   return (
@@ -42,6 +52,11 @@ const Logo: React.FC<{
         />
       </TouchableOpacity>
       {headerText && <Text style={styles.headerText}>{headerText}</Text>}
+      {rightIcon && (
+        <TouchableOpacity style={styles.iconContainer}>
+          {rightIcon}
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -83,6 +98,10 @@ const styles = StyleSheet.create({
     color: darkMainColor,
     alignSelf: 'center',
     textAlign: 'center',
+  },
+  iconContainer: {
+    position: 'absolute',
+    right: 5,
   },
 });
 

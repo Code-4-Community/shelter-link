@@ -5,12 +5,11 @@ import {
   bodyFontSize,
   buttonBackgroundColor,
   caption1FontSize,
-  containerColor,
   darkMainColor,
   gradientColor1,
   gradientColor2,
 } from 'frontend/constants';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -18,16 +17,53 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
+  FlatList,
 } from 'react-native';
+import { useAuth } from '../hooks/AuthContext';
+import { Shelter, UserShelterBookmark } from '../types';
+import {
+  getEventBookmarks,
+  getShelterBookmarks,
+} from '../services/userService';
+import { getShelter } from '../services/mapService';
+import ShelterInfoPanel from './ShelterInfoPanel';
+import { useBookmarks } from '../hooks/BookmarkContext';
 
 export const ProfilePage = () => {
   const [selectedButton, setSelectedButton] = useState<'shelters' | 'events'>(
     'shelters'
   );
+  const { user } = useAuth();
+  const [shelters, setShelters] = useState<Shelter[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
+  const {
+    shelterBookmarks,
+    toggleShelterBookmark,
+    eventBookmarks,
+    toggleEventBookmark,
+  } = useBookmarks();
 
   useFonts({
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Regular.otf'),
   });
+
+  useEffect(() => {
+    const fetchSavedItems = async () => {
+      try {
+        const savedShelters = await Promise.all(
+          shelterBookmarks.map((id: string) => getShelter(id))
+        );
+        setShelters(savedShelters);
+
+        // const savedEvents = await getEventBookmarks(user?.userId);
+        // setEvents(savedEvents);
+      } catch (error) {
+        console.error('Error fetching saved items:', error);
+      }
+    };
+
+    fetchSavedItems();
+  }, [user, shelterBookmarks]);
 
   return (
     <LinearGradient
@@ -35,28 +71,60 @@ export const ProfilePage = () => {
       style={styles.safeArea}
     >
       <SafeAreaView style={styles.safeArea}>
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flex: 1 }}>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={[
+              styles.button,
+              selectedButton === 'shelters' && styles.selectedButton,
+            ]}
+            onPress={() => setSelectedButton('shelters')}
+          >
+            <Text
               style={[
-                styles.button,
-                selectedButton === 'shelters' && styles.selectedButton,
+                styles.buttonText,
+                selectedButton === 'shelters' && styles.selectedButtonText,
               ]}
-              onPress={() => setSelectedButton('shelters')}
             >
-              <Text style={styles.buttonText}>Saved Shelters</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+              Saved Shelters
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.button,
+              selectedButton === 'events' && styles.selectedButton,
+            ]}
+            onPress={() => setSelectedButton('events')}
+          >
+            <Text
               style={[
-                styles.button,
-                selectedButton === 'events' && styles.selectedButton,
+                styles.buttonText,
+                selectedButton === 'events' && styles.selectedButtonText,
               ]}
-              onPress={() => setSelectedButton('events')}
             >
-              <Text style={styles.buttonText}>Saved Events</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
+              Saved Events
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {selectedButton === 'shelters' ? (
+          <FlatList
+            data={shelters}
+            keyExtractor={(item) => item.shelterId}
+            renderItem={({ item }) => (
+              <ShelterInfoPanel
+                shelter={item}
+                user={user}
+                style={{ marginTop: 20 }}
+              />
+            )}
+            contentContainerStyle={styles.contentContainer}
+            style={styles.bookmarkContainer}
+          />
+        ) : (
+          <Text style={{ fontSize: bodyFontSize, color: darkMainColor }}>
+            List of saved events
+          </Text>
+        )}
       </SafeAreaView>
     </LinearGradient>
   );
@@ -65,9 +133,11 @@ export const ProfilePage = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+    width: '100%',
   },
   container: {
     flex: 1,
+    width: '100%',
   },
   buttonText: {
     fontSize: caption1FontSize,
@@ -77,21 +147,42 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: buttonBackgroundColor,
-    padding: 10,
-    borderRadius: 5,
-    marginVertical: 20,
+    padding: 5,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderWidth: 2,
+    flex: 1,
+    borderColor: darkMainColor,
+    marginTop: 20,
   },
   selectedButton: {
-    backgroundColor: containerColor,
-    padding: 10,
-    borderRadius: 5,
+    backgroundColor: darkMainColor,
+    padding: 5,
+    flex: 1,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: darkMainColor,
+  },
+  selectedButtonText: {
+    fontSize: caption1FontSize,
+    color: buttonBackgroundColor,
+    fontFamily: bodyFont,
+    textAlign: 'center',
   },
   buttonContainer: {
     justifyContent: 'center',
     flexDirection: 'row',
-    gap: 10,
+    alignSelf: 'stretch',
+  },
+  bookmarkContainer: {
+    width: '100%',
+    flex: 1,
+    backgroundColor: 'white',
+    alignContent: 'center',
+  },
+  contentContainer: {
+    paddingBottom: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

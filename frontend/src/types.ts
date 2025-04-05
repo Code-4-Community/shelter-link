@@ -16,6 +16,8 @@ export type User = {
   first_name: string;
   last_name: string;
   email: string;
+  created_at: string;
+  role: string;
 };
 
 /**
@@ -104,4 +106,16 @@ export type LoginUserRequest = {
     email: string;
     password: string;
   };
+};
+
+export type UserShelterBookmark = {
+  userId: string;
+  shelterId: string;
+  created_at: string;
+};
+
+export type UserEventBookmark = {
+  userId: string;
+  eventId: string;
+  created_at: string;
 };
