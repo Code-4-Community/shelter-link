@@ -95,7 +95,7 @@ export const CompleteMap = () => {
       <View style={styles.headerContainer}>
         <Header />
       </View>
-      <View style={styles.filtersDropdownContainer}>
+      <View style={styles.searchFilterRow}>
         <FiltersDropdown />
         <SearchBar onSearch={setQuery} />
       </View>
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: '10%',
     paddingBottom: '7%',
   },
-  filtersDropdownContainer: {
+  searchFilterRow: {
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -161,6 +161,7 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderBottomWidth: 4,
     borderColor: darkMainColor,
+    gap: 10,
   },
   map: {
     width: '100%',
