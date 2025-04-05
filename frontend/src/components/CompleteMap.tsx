@@ -15,7 +15,7 @@ import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import ShelterInfoPanel from '../components/ShelterInfoPanel';
 import { Shelter } from '../types';
 import { darkMainColor, gradientColor1 } from '../../constants';
-import getShelters from '../services/mapService';
+import { getShelters } from '../services/mapService';
 import { useFonts } from 'expo-font';
 import { useFocusEffect } from '@react-navigation/native';
 import { useAuth } from '../hooks/AuthContext';
@@ -32,6 +32,10 @@ export const CompleteMap = () => {
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Regular.otf'),
   });
 
+  useFonts({
+    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
+  });
+
   const fetchShelters = async () => {
     try {
       const data = await getShelters(); // Use mapService to fetch shelters
@@ -41,10 +45,6 @@ export const CompleteMap = () => {
     } finally {
     }
   };
-
-  useFonts({
-    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
-  });
 
   useFocusEffect(
     useCallback(() => {
@@ -76,7 +76,7 @@ export const CompleteMap = () => {
 
   const filteredShelters = useMemo(() => {
     if (query === '') {
-      return [...shelters];
+      return shelters;
     } else {
       const fuseOptions = {
         findAllMatches: true,
@@ -121,9 +121,7 @@ export const CompleteMap = () => {
           <BottomSheetFlatList
             data={filteredShelters}
             extraData={[query, shelters]}
-            keyExtractor={(item) =>
-              `${item.name}-${item.address.street}`.replace(/\s+/g, '')
-            } // creating a unique id
+            keyExtractor={(item) => item.shelterId}
             renderItem={renderItem}
           />
         ) : (

@@ -31,6 +31,7 @@ import {
 } from 'frontend/constants';
 import { ProfilePage } from '../components/ProfilePage';
 import { ProfileSettingsPage } from '../components/ProfileSettingsPage';
+import { BookmarkProvider } from '../hooks/BookmarkContext';
 
 // defines type for nav stack
 export type RootStackParamList = {
@@ -59,25 +60,6 @@ function MapStackNavigator() {
           header: () => <Logo headerText="ShelterLink" navigateTo="Map View" />,
         }}
       />
-      {/* Navigates from Map to DetailedShelterView, keeping tabs visible */}
-      <Stack.Screen
-        name="Detailed Shelter View"
-        component={DetailedShelterView}
-        options={({ route }) => ({
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: gradientColor1,
-          },
-          headerTintColor: darkMainColor,
-          headerTitleStyle: {
-            fontSize: header3FontSize,
-            color: darkMainColor,
-            fontFamily: headerFont,
-          },
-          headerTitle: 'Shelterlink',
-          headerBackTitle: 'Map',
-        })}
-      />
     </Stack.Navigator>
   );
 }
@@ -100,7 +82,6 @@ function BottomTabsNavigator() {
         headerShown: false,
       })}
     >
-      {/* Use MapStackNavigator instead of defining Map View multiple times */}
       <Tab.Screen name="Map" component={MapStackNavigator} />
       <Tab.Screen
         name="Profile"
@@ -146,7 +127,6 @@ function AuthenticatedStack() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <Stack.Navigator>
-        {/* BottomTabsNavigator manages everything, including MapStack */}
         <Stack.Screen
           name="Main"
           component={BottomTabsNavigator}
@@ -158,7 +138,7 @@ function AuthenticatedStack() {
           options={({ navigation, route }) => ({
             headerStyle: {
               backgroundColor: gradientColor1,
-              paddingTop: 40, // Added padding to the top of the header
+              paddingTop: 40,
             },
             headerTintColor: darkMainColor,
             headerTitleStyle: {
@@ -168,6 +148,24 @@ function AuthenticatedStack() {
               fontFamily: headerFont,
             },
             headerTitle: 'Settings',
+          })}
+        />
+        <Stack.Screen
+          name="Detailed Shelter View"
+          component={DetailedShelterView}
+          options={({ route }) => ({
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: gradientColor1,
+            },
+            headerTintColor: darkMainColor,
+            headerTitleStyle: {
+              fontSize: header3FontSize,
+              color: darkMainColor,
+              fontFamily: headerFont,
+            },
+            headerTitle: 'Shelterlink',
+            headerBackTitle: 'Map',
           })}
         />
       </Stack.Navigator>
@@ -240,13 +238,15 @@ export const App = () => {
   return (
     // Provide the AuthContext to the entire app
     <AuthProvider>
-      <NavigationContainer>
-        <View style={{ flex: 1 }}>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <MainNavigator />
-          </GestureHandlerRootView>
-        </View>
-      </NavigationContainer>
+      <BookmarkProvider>
+        <NavigationContainer>
+          <View style={{ flex: 1 }}>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <MainNavigator />
+            </GestureHandlerRootView>
+          </View>
+        </NavigationContainer>
+      </BookmarkProvider>
     </AuthProvider>
   );
 };

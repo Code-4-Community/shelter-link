@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -19,6 +19,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Shelter, User } from '../types';
 import { useFonts } from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
+import { useBookmarks } from '../hooks/BookmarkContext';
 
 type ShelterInfoPanelProps = {
   shelter: Shelter;
@@ -39,17 +40,38 @@ const ShelterInfoPanel = ({ shelter, style, user }: ShelterInfoPanelProps) => {
   useFonts({
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
-
-  const navigation = useNavigation<NavigationProp>();
   useFonts({
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Regular.otf'),
   });
+  const {
+    shelterBookmarks,
+    toggleShelterBookmark,
+    eventBookmarks,
+    toggleEventBookmark,
+  } = useBookmarks();
+
+  const [bookmarked, setBookmarked] = useState(
+    shelterBookmarks.includes(shelter.shelterId)
+  );
+
+  const navigation = useNavigation<NavigationProp>();
 
   const formatAddress = (address: any) => {
     return `${address.street}, ${address.city}, ${address.state}`;
   };
 
-  const [bookmarked, setBookmarked] = React.useState(false);
+  const handleBookmark = async (shelterId: string) => {
+    if (user) {
+      toggleShelterBookmark(shelterId);
+      setBookmarked(!bookmarked);
+    } else {
+      alert('Please log in to bookmark shelters.');
+    }
+  };
+
+  useEffect(() => {
+    setBookmarked(shelterBookmarks.includes(shelter.shelterId));
+  }, [shelterBookmarks, shelter.shelterId]);
 
   return (
     <TouchableOpacity
@@ -75,14 +97,16 @@ const ShelterInfoPanel = ({ shelter, style, user }: ShelterInfoPanelProps) => {
         }}
       >
         <Text style={styles.shelterName}>{shelter.name}</Text>
-        <TouchableOpacity onPress={() => setBookmarked(!bookmarked)}>
-          <Ionicons
-            name={bookmarked ? 'bookmark' : 'bookmark-outline'}
-            size={header2FontSize}
-            color={darkMainColor}
-            style={styles.bookmarkOutline}
-          />
-        </TouchableOpacity>
+        {user && (
+          <TouchableOpacity onPress={() => handleBookmark(shelter.shelterId)}>
+            <Ionicons
+              name={bookmarked ? 'bookmark' : 'bookmark-outline'}
+              size={header2FontSize}
+              color={darkMainColor}
+              style={styles.bookmarkOutline}
+            />
+          </TouchableOpacity>
+        )}
       </View>
       {shelter.expanded_name ? (
         <Text style={styles.shelterNameExpansion}>{shelter.expanded_name}</Text>

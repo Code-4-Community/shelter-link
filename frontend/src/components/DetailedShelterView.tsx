@@ -30,6 +30,8 @@ import { useFonts } from 'expo-font';
 import { ScrollView } from 'react-native-gesture-handler';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { useBookmarks } from '../hooks/BookmarkContext';
+import { useAuth } from '../hooks/AuthContext';
 
 type RootStackParamList = {
   'Map View': undefined;
@@ -45,10 +47,14 @@ type Props = NativeStackScreenProps<
 
 export const DetailedShelterView: React.FC<Props> = ({ route }) => {
   const { shelter } = route.params; // get shelter from route params
+  const { user } = useAuth();
+  const { shelterBookmarks, toggleShelterBookmark } = useBookmarks();
   const [showHoursDropdown, setShowHoursDropdown] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState(0);
   const buttonRef = useRef<React.ElementRef<typeof View>>(null);
-  const [bookmarked, setBookmarked] = useState(false);
+  const [bookmarked, setBookmarked] = useState(
+    shelterBookmarks.includes(shelter.shelterId)
+  );
 
   useFonts({
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
@@ -133,6 +139,15 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
     value: day,
   }));
 
+  const handleBookmark = async () => {
+    if (user) {
+      toggleShelterBookmark(shelter.shelterId);
+      setBookmarked(!bookmarked);
+    } else {
+      alert('Please log in to bookmark shelters.');
+    }
+  };
+
   return (
     <LinearGradient
       colors={[gradientColor1, gradientColor2]}
@@ -143,14 +158,16 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
           <View style={styles.shelterNameContainer}>
             <View style={styles.nameBookmarkContainer}>
               <Text style={styles.shelterNameText}>{shelter.name}</Text>
-              <TouchableOpacity onPress={() => setBookmarked(!bookmarked)}>
-                <Ionicons
-                  name={bookmarked ? 'bookmark' : 'bookmark-outline'}
-                  size={header2FontSize}
-                  color={darkMainColor}
-                  style={styles.bookmarkOutline}
-                />
-              </TouchableOpacity>
+              {user && (
+                <TouchableOpacity onPress={() => handleBookmark()}>
+                  <Ionicons
+                    name={bookmarked ? 'bookmark' : 'bookmark-outline'}
+                    size={header2FontSize}
+                    color={darkMainColor}
+                    style={styles.bookmarkOutline}
+                  />
+                </TouchableOpacity>
+              )}
             </View>
             <View style={styles.quickInfoContainer}>
               {shelter.expanded_name && (

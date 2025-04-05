@@ -107,3 +107,15 @@ export type LoginUserRequest = {
     password: string;
   };
 };
+
+export type UserShelterBookmark = {
+  userId: string;
+  shelterId: string;
+  created_at: string;
+};
+
+export type UserEventBookmark = {
+  userId: string;
+  eventId: string;
+  created_at: string;
+};
