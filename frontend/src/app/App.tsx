@@ -3,27 +3,35 @@ import React, { useEffect } from 'react';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from '@react-navigation/native-stack';
 
 import Logo from '../components/Logo';
 import { LogIn } from '../components/LogIn';
 import CompleteMap from '../components/CompleteMap';
 import DetailedShelterView from '../components/DetailedShelterView';
 
-import { Shelter } from '../types';
+import { Shelter, User } from '../types';
 import { AuthProvider, useAuth } from '../hooks/AuthContext';
 
 import SignUpScreen from '../components/SignUpScreen';
-import SignInScreen from '../components/SignInScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import {
   backgroundColor,
   containerColor,
   darkMainColor,
+  gradientColor1,
+  header2FontSize,
+  header3FontSize,
+  headerFont,
 } from 'frontend/constants';
 import { ProfilePage } from '../components/ProfilePage';
+import { ProfileSettingsPage } from '../components/ProfileSettingsPage';
+import { BookmarkProvider } from '../hooks/BookmarkContext';
 import AllEventsViewer from '../components/AllEventsViewer';
 
 // defines type for nav stack
@@ -35,6 +43,8 @@ export type RootStackParamList = {
   'Detailed Shelter View': { shelter: Shelter };
   Profile: undefined;
   Map: undefined;
+  'Profile Settings': { user: User };
+  Main: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -52,33 +62,23 @@ function MapStackNavigator() {
           header: () => <Logo headerText="ShelterLink" navigateTo="Map View" />,
         }}
       />
-      {/* Navigates from Map to DetailedShelterView, keeping tabs visible */}
-      <Stack.Screen
-        name="Detailed Shelter View"
-        component={DetailedShelterView}
-        options={({ route }) => ({
-          headerShown: true,
-          header: () => (
-            <Logo
-              headerText={route.params.shelter.name}
-              navigateTo="Map View"
-            />
-          ),
-        })}
-      />
     </Stack.Navigator>
   );
 }
 
 function BottomTabsNavigator() {
+  const { user } = useAuth();
+  type AppNavigationProp = NativeStackNavigationProp<RootStackParamList>;
+  const navigation = useNavigation<AppNavigationProp>();
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
           let iconName: 'map-outline' | 'person-outline' | 'calendar-outline';
-          switch(route.name) {
+          switch (route.name) {
             case 'Map':
-              iconName = 'map-outline'
+              iconName = 'map-outline';
               break;
             case 'Profile':
               iconName = 'person-outline';
@@ -97,18 +97,42 @@ function BottomTabsNavigator() {
         headerShown: false,
       })}
     >
-      {/* Use MapStackNavigator instead of defining Map View multiple times */}
       <Tab.Screen name="Map" component={MapStackNavigator} />
       <Tab.Screen
         name="Profile"
-        component={ProfilePage}
-        options={{
-          headerShown: true,
-          header: () => <Logo headerText="ShelterLink" navigateTo="Map" />,
-        }}
+        component={user ? ProfilePage : LogIn}
+        options={
+          user
+            ? {
+                headerShown: true,
+                header: () => (
+                  <Logo
+                    headerText="ShelterLink"
+                    navigateTo="Map"
+                    rightIcon={
+                      <Ionicons
+                        name="settings-outline"
+                        size={24}
+                        color={darkMainColor}
+                        fillColor={containerColor}
+                        style={{ marginRight: 15 }}
+                        onPress={() => {
+                          // Navigate to Profile Settings screen
+                          navigation.navigate('Profile Settings', { user });
+                        }}
+                      />
+                    }
+                  />
+                ),
+              }
+            : {
+                headerShown: true,
+                header: () => <Logo navigateTo="Map" />,
+              }
+        }
       />
-      <Tab.Screen 
-        name="Events" 
+      <Tab.Screen
+        name="Events"
         component={AllEventsViewer}
         options={{
           headerShown: true,
@@ -126,11 +150,46 @@ function AuthenticatedStack() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <Stack.Navigator>
-        {/* BottomTabsNavigator manages everything, including MapStack */}
         <Stack.Screen
-          name="Map View"
+          name="Main"
           component={BottomTabsNavigator}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Profile Settings"
+          component={ProfileSettingsPage}
+          options={({ navigation, route }) => ({
+            headerStyle: {
+              backgroundColor: gradientColor1,
+              paddingTop: 40,
+            },
+            headerTintColor: darkMainColor,
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              fontSize: header2FontSize,
+              color: darkMainColor,
+              fontFamily: headerFont,
+            },
+            headerTitle: 'Settings',
+          })}
+        />
+        <Stack.Screen
+          name="Detailed Shelter View"
+          component={DetailedShelterView}
+          options={({ route }) => ({
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: gradientColor1,
+            },
+            headerTintColor: darkMainColor,
+            headerTitleStyle: {
+              fontSize: header3FontSize,
+              color: darkMainColor,
+              fontFamily: headerFont,
+            },
+            headerTitle: 'Shelterlink',
+            headerBackTitle: 'Map',
+          })}
         />
       </Stack.Navigator>
     </SafeAreaView>
@@ -163,9 +222,27 @@ function UnauthenticatedStack() {
           }}
         />
         <Stack.Screen
-          name="Map View"
+          name="Main"
           component={BottomTabsNavigator}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Detailed Shelter View"
+          component={DetailedShelterView}
+          options={({ route }) => ({
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: gradientColor1,
+            },
+            headerTintColor: darkMainColor,
+            headerTitleStyle: {
+              fontSize: header3FontSize,
+              color: darkMainColor,
+              fontFamily: headerFont,
+            },
+            headerTitle: 'Shelterlink',
+            headerBackTitle: 'Map',
+          })}
         />
       </Stack.Navigator>
     </SafeAreaView>
@@ -176,12 +253,7 @@ function UnauthenticatedStack() {
  * Decides which stack to render based on whether user is logged in.
  */
 function MainNavigator() {
-  const { user, loading, logout } = useAuth();
-
-  useEffect(() => {
-    // Force logout (for testing purposes)
-    logout();
-  }, []);
+  const { user, loading } = useAuth();
 
   if (loading) {
     // Loading screen while fetching user data
@@ -191,7 +263,6 @@ function MainNavigator() {
       </View>
     );
   }
-
   return user ? <AuthenticatedStack /> : <UnauthenticatedStack />;
 }
 
@@ -205,13 +276,15 @@ export const App = () => {
   return (
     // Provide the AuthContext to the entire app
     <AuthProvider>
-      <NavigationContainer>
-        <View style={{ flex: 1 }}>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <MainNavigator />
-          </GestureHandlerRootView>
-        </View>
-      </NavigationContainer>
+      <BookmarkProvider>
+        <NavigationContainer>
+          <View style={{ flex: 1 }}>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <MainNavigator />
+            </GestureHandlerRootView>
+          </View>
+        </NavigationContainer>
+      </BookmarkProvider>
     </AuthProvider>
   );
 };
