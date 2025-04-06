@@ -99,11 +99,7 @@ const EventInfoPanel = ({ event, style }: EventInfoPanelProps) => {
 
 /*
 
-        <Image
-           style={styles.bookmarkImage}
-           source={require('../../assets/bookmark.png')}
-         />
-         */
+
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
