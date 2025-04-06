@@ -38,11 +38,9 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const ShelterInfoPanel = ({ shelter, style, user }: ShelterInfoPanelProps) => {
   useFonts({
-    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
-  });
-  useFonts({
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Regular.otf'),
   });
+  
   const {
     shelterBookmarks,
     toggleShelterBookmark,

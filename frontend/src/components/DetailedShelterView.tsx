@@ -572,3 +572,5 @@ const styles = StyleSheet.create({
     color: darkMainColor,
   },
 });
+
+export default DetailedShelterView;
