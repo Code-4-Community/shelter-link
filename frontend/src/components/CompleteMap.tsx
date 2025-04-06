@@ -27,7 +27,7 @@ export const CompleteMap = () => {
   const [query, setQuery] = useState('');
 
   useFonts({
-    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Regular.otf'),
+    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
 
   const fetchShelters = async () => {
@@ -39,10 +39,6 @@ export const CompleteMap = () => {
     } finally {
     }
   };
-
-  useFonts({
-    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
-  });
 
   useFocusEffect(
     useCallback(() => {

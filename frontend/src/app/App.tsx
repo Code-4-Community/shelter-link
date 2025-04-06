@@ -9,7 +9,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Logo from '../components/Logo';
 import { LogIn } from '../components/LogIn';
 import CompleteMap from '../components/CompleteMap';
-import { DetailedShelterView } from '../components/DetailedShelterView';
+import DetailedShelterView from '../components/DetailedShelterView';
 
 import { Shelter } from '../types';
 import { AuthProvider, useAuth } from '../hooks/AuthContext';
@@ -24,12 +24,14 @@ import {
   darkMainColor,
 } from 'frontend/constants';
 import { ProfilePage } from '../components/ProfilePage';
+import AllEventsViewer from '../components/AllEventsViewer';
 
 // defines type for nav stack
 export type RootStackParamList = {
   'Log In': undefined;
   'Sign Up': undefined;
   'Map View': undefined;
+  'All Events View': undefined;
   'Detailed Shelter View': { shelter: Shelter };
   Profile: undefined;
   Map: undefined;
@@ -73,8 +75,21 @@ function BottomTabsNavigator() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
-          const iconName =
-            route.name === 'Map' ? 'map-outline' : 'person-outline';
+          let iconName: 'map-outline' | 'person-outline' | 'calendar-outline';
+          switch(route.name) {
+            case 'Map':
+              iconName = 'map-outline'
+              break;
+            case 'Profile':
+              iconName = 'person-outline';
+              break;
+            case 'Events':
+              iconName = 'calendar-outline';
+              break;
+            default:
+              Error(`Route ${route.name} is unrecognized`);
+              iconName = 'calendar-outline';
+          }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: darkMainColor,
@@ -90,6 +105,14 @@ function BottomTabsNavigator() {
         options={{
           headerShown: true,
           header: () => <Logo headerText="ShelterLink" navigateTo="Map" />,
+        }}
+      />
+      <Tab.Screen 
+        name="Events" 
+        component={AllEventsViewer}
+        options={{
+          headerShown: true,
+          header: () => <Logo headerText="Events" navigateTo="Map" />,
         }}
       />
     </Tab.Navigator>
