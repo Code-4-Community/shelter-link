@@ -79,35 +79,30 @@ const ShelterInfoPanel = ({ shelter, style, user }: ShelterInfoPanelProps) => {
       onPress={() => navigation.navigate('Detailed Shelter View', { shelter })}
     >
       <View style={styles.topRowItems}>
-        <View style={styles.images}>
-          {shelter.picture.slice(0, 3).map((url, index) => (
-            <Image
-              key={index}
-              source={{ uri: url }}
-              style={styles.shelterImage}
-            />
-          ))}
+        <View style={styles.imageContainer}>
+          <View style={styles.images}>
+            {shelter.picture.slice(0, 3).map((url, index) => (
+              <Image
+                key={index}
+                source={{ uri: url }}
+                style={styles.shelterImage}
+              />
+            ))}
+          </View>
         </View>
-      </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        <Text style={styles.shelterName}>{shelter.name}</Text>
         {user && (
           <TouchableOpacity onPress={() => handleBookmark(shelter.shelterId)}>
             <Ionicons
               name={bookmarked ? 'bookmark' : 'bookmark-outline'}
-              size={header2FontSize}
+              size={header1FontSize}
               color={darkMainColor}
               style={styles.bookmarkOutline}
             />
           </TouchableOpacity>
         )}
       </View>
+      <Text style={styles.shelterName}>{shelter.name}</Text>
+
       {shelter.expanded_name ? (
         <Text style={styles.shelterNameExpansion}>{shelter.expanded_name}</Text>
       ) : (
@@ -191,6 +186,8 @@ const styles = StyleSheet.create({
   },
   topRowItems: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
   },
   images: {
     paddingVertical: panelHeight * 0.037,
@@ -198,7 +195,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   shelterImage: {
-    width: panelWidth * 0.284,
+    width: panelWidth * 0.26,
     height: panelWidth * 0.211,
     marginRight: panelWidth * 0.027,
     borderRadius: 11,
@@ -215,12 +212,11 @@ const styles = StyleSheet.create({
   },
   bookmarkOutline: {
     marginTop: shelterNameMarginTop,
-    paddingRight: panelWidth * 0.045,
+    paddingRight: 5,
     paddingTop: panelHeight * 0.018,
-    fontSize: header2FontSize,
+    fontSize: header2FontSize * 1.1,
     fontFamily: bodyFont,
     fontWeight: '500',
-    lineHeight: shelterNameLineHeight,
     color: darkMainColor,
   },
   shelterNameExpansion: {
@@ -242,6 +238,9 @@ const styles = StyleSheet.create({
     paddingTop: panelHeight * 0.047, // might need to change
     paddingLeft: panelWidth * 0.045,
     flexDirection: 'row',
+  },
+  imageContainer: {
+    flex: 1,
   },
   directionsButton: {
     width: panelWidth * 0.28,

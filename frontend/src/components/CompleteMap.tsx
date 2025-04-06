@@ -29,10 +29,6 @@ export const CompleteMap = () => {
   const { user } = useAuth();
 
   useFonts({
-    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Regular.otf'),
-  });
-
-  useFonts({
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
 
