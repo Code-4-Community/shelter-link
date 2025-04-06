@@ -17,8 +17,9 @@ export const AllEventsViewer = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [query, setQuery] = useState('');
 
+  
   useFonts({
-    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Regular.otf'),
+    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
 
   const fetchEvents = async () => {
@@ -31,10 +32,6 @@ export const AllEventsViewer = () => {
     } finally {
     }
   };
-
-  useFonts({
-    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
-  });
 
   useEffect(() => {
     fetchEvents();

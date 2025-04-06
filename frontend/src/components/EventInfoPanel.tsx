@@ -34,9 +34,6 @@ const EventInfoPanel = ({ event, style }: EventInfoPanelProps) => {
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
   const navigation = useNavigation<NavigationProp>();
-  useFonts({
-    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Regular.otf'),
-  });
   const [bookmarked, setBookmarked] = useState(false);
 
   const formatAddress = (address: any) => {
