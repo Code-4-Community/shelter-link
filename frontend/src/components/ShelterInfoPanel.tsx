@@ -68,7 +68,7 @@ const ShelterInfoPanel = ({ shelter, style }: ShelterInfoPanelProps) => {
           style={styles.starIcon}
           source={require('../../assets/starIcon.png')}
         ></Image>{' '}
-        | {formatAddress(shelter.address)} | # mi
+        | {formatAddress(shelter.address)}
       </Text>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity

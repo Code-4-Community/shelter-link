@@ -48,7 +48,7 @@ const EventInfoPanel = ({ event, style }: EventInfoPanelProps) => {
       deleteBookmark();
     }*/
   }
-  
+
   return (
     <TouchableOpacity
       style={[styles.panel, style]}
@@ -56,24 +56,32 @@ const EventInfoPanel = ({ event, style }: EventInfoPanelProps) => {
     >
       <View style={styles.topRowItems}>
         <View style={styles.images}>
-            {event.picture ? event.picture.slice(0, 3).map((url, index) => (
+          {event.picture ? event.picture.slice(0, 3).map((url, index) => (
             <Image
               key={index}
               source={{ uri: url }}
               style={styles.eventImage}
             />
           )) :
-          <View style={styles.eventImage} />}
+            <View style={styles.eventImage} />}
         </View>
       </View>
       <View style={styles.bookmarkContainer}>
-       <Ionicons name={bookmarked ? "bookmark" : "bookmark-outline"} size={26} color={darkMainColor} style={styles.bookmarkImage}  
-       onClick={toggleBookmark} />
+        {useAuth() &&
+          <TouchableOpacity
+            onPress={(e) => {
+              e.stopPropagation(); // don't trigger the detailed view
+            }}
+          >
+            <Ionicons name={bookmarked ? "bookmark" : "bookmark-outline"} size={26} color={darkMainColor} style={styles.bookmarkImage}
+              onClick={toggleBookmark} />
+          </TouchableOpacity>
+        }
       </View>
       <Text style={styles.eventName}>{event.event_name}</Text>
-        <View style={{ height: 10 }} />
+      <View style={{ height: 10 }} />
       <Text style={{ ...styles.eventLocationDistance, alignItems: 'center' }}>
-        {formatAddress(event.location)} | # mi
+        {formatAddress(event.location)}
       </Text>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
