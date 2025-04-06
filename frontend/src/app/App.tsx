@@ -34,7 +34,6 @@ import { ProfileSettingsPage } from '../components/ProfileSettingsPage';
 import { BookmarkProvider } from '../hooks/BookmarkContext';
 import AllEventsViewer from '../components/AllEventsViewer';
 
-
 // defines type for nav stack
 export type RootStackParamList = {
   'Log In': undefined;
@@ -77,9 +76,9 @@ function BottomTabsNavigator() {
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
           let iconName: 'map-outline' | 'person-outline' | 'calendar-outline';
-          switch(route.name) {
+          switch (route.name) {
             case 'Map':
-              iconName = 'map-outline'
+              iconName = 'map-outline';
               break;
             case 'Profile':
               iconName = 'person-outline';
@@ -132,8 +131,8 @@ function BottomTabsNavigator() {
               }
         }
       />
-      <Tab.Screen 
-        name="Events" 
+      <Tab.Screen
+        name="Events"
         component={AllEventsViewer}
         options={{
           headerShown: true,
@@ -264,9 +263,6 @@ function MainNavigator() {
       </View>
     );
   }
-
-  console.log('User:', user);
-
   return user ? <AuthenticatedStack /> : <UnauthenticatedStack />;
 }
 
