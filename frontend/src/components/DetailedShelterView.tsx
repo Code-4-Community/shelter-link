@@ -144,7 +144,7 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
       toggleShelterBookmark(shelter.shelterId);
       setBookmarked(!bookmarked);
     } else {
-      alert('Please log in to bookmark shelters.');
+      alert('Please login to bookmark shelters.');
     }
   };
 
