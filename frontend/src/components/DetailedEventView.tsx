@@ -64,7 +64,9 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
     const handleWebsite = () => {
         if (event.website) {
             Linking.openURL(event.website);
+            console.log('handleWebsite tried something');
         }
+        console.log('handlewebsite did nothing');
     };
 
     // for now, this gives the option to confirm if you want to call the shelter number
@@ -72,7 +74,9 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
     const handleRegister = () => {
         if (event.registration_link ) {
             Linking.openURL(event.registration_link);
+            console.log('handleRegister tried something');
         }
+        console.log('handleRegister did nothing');
     };
 
     // based off of https://bobbyhadz.com/blog/typescript-date-format
@@ -103,13 +107,25 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
 
     function formatTime() {
         const date = new Date(event.date);
-        return [
-            date.getHours() % 12,
-            padTo2Digits(date.getMinutes()),
-          ].join(':')  + ((date.getHours() - 12 > 0) ? ' PM' : ' AM')
+        let hours = date.getHours();
+        if (hours == 0) {
+            return [
+                12,
+                padTo2Digits(date.getMinutes())
+            ].join(':') + ' AM';
+        } else if (hours == 12) {
+            return [
+                12,
+                padTo2Digits(date.getMinutes())
+            ].join(':') + ' PM';
+        } else {
+            return [
+                date.getHours() % 12,
+                padTo2Digits(date.getMinutes()),
+              ].join(':')  + ((date.getHours() - 12 > 0) ? ' PM' : ' AM')
+        }
     }
-    // 👇️ format as "YYYY-MM-DD hh:mm:ss"
-    // You can tweak the format easily
+
     function formatDateTime() {
         return formatDate() + ' at ' + formatTime()
     }

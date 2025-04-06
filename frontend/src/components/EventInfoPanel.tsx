@@ -14,6 +14,7 @@ import { Event } from '../types';
 import { useFonts } from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 import { deleteBookmark, postBookmark } from '../services/eventService';
+import { useAuth } from '../hooks/AuthContext';
 
 type EventInfoPanelProps = {
   event: Event;
@@ -105,7 +106,6 @@ const EventInfoPanel = ({ event, style }: EventInfoPanelProps) => {
   );
 };
 
-/*
 
 
 
