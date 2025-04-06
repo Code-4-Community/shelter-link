@@ -23,7 +23,8 @@ export const AllEventsViewer = () => {
 
   const fetchEvents = async () => {
     try {
-      const data = await getEvents(); // Use mapService to fetch shelters
+      const data = await getEvents(); // Use eventService to fetch events
+
       setEvents(data);
     } catch (error) {
       console.error('Error fetching shelters:', error);
