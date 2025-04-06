@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -13,6 +13,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Event } from '../types';
 import { useFonts } from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
+import { deleteBookmark, postBookmark } from '../services/eventService';
 
 type EventInfoPanelProps = {
   event: Event;
@@ -33,14 +34,20 @@ const EventInfoPanel = ({ event, style }: EventInfoPanelProps) => {
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
   const navigation = useNavigation<NavigationProp>();
-  useFonts({
-    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Regular.otf'),
-  });
   const [bookmarked, setBookmarked] = useState(false);
 
   const formatAddress = (address: any) => {
     return `${address.street}, ${address.city}, ${address.state}`;
   };
+
+  function toggleBookmark() {
+    setBookmarked(!bookmarked);
+    /*if (bookmarked) {
+      postBookmark();
+    } else {
+      deleteBookmark();
+    }*/
+  }
 
   return (
     <TouchableOpacity
@@ -49,23 +56,32 @@ const EventInfoPanel = ({ event, style }: EventInfoPanelProps) => {
     >
       <View style={styles.topRowItems}>
         <View style={styles.images}>
-            {event.picture ? event.picture.slice(0, 3).map((url, index) => (
+          {event.picture ? event.picture.slice(0, 3).map((url, index) => (
             <Image
               key={index}
               source={{ uri: url }}
               style={styles.eventImage}
             />
           )) :
-          <View style={styles.eventImage} />}
+            <View style={styles.eventImage} />}
         </View>
       </View>
       <View style={styles.bookmarkContainer}>
-       <Ionicons name={bookmarked ? "bookmark" : "bookmark-outline"} size={26} color={darkMainColor} style={styles.bookmarkImage}  onClick={() => {setBookmarked(!bookmarked)}} />
+        {useAuth() &&
+          <TouchableOpacity
+            onPress={(e) => {
+              e.stopPropagation(); // don't trigger the detailed view
+            }}
+          >
+            <Ionicons name={bookmarked ? "bookmark" : "bookmark-outline"} size={26} color={darkMainColor} style={styles.bookmarkImage}
+              onClick={toggleBookmark} />
+          </TouchableOpacity>
+        }
       </View>
       <Text style={styles.eventName}>{event.event_name}</Text>
-        <View style={{ height: 10 }} />
+      <View style={{ height: 10 }} />
       <Text style={{ ...styles.eventLocationDistance, alignItems: 'center' }}>
-        {formatAddress(event.location)} | # mi
+        {formatAddress(event.location)}
       </Text>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
@@ -91,11 +107,7 @@ const EventInfoPanel = ({ event, style }: EventInfoPanelProps) => {
 
 /*
 
-        <Image
-           style={styles.bookmarkImage}
-           source={require('../../assets/bookmark.png')}
-         />
-         */
+
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 

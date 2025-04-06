@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import { Dimensions, SafeAreaView, StyleSheet, View, Text, ScrollView } from 'react-native';
 import { backgroundColor, darkMainColor, gradientColor1, gradientColor2 } from '../../constants';
-import getEvents from '../services/eventService';
+import { getEvents } from '../services/eventService';
 import { Event } from '../types';
 import { useFonts } from 'expo-font';
 import EventInfoPanel from './EventInfoPanel';
@@ -17,23 +17,21 @@ export const AllEventsViewer = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [query, setQuery] = useState('');
 
+  
   useFonts({
-    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Regular.otf'),
+    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
 
   const fetchEvents = async () => {
     try {
-      const data = await getEvents(); // Use mapService to fetch shelters
+      const data = await getEvents(); // Use eventService to fetch events
+
       setEvents(data);
     } catch (error) {
       console.error('Error fetching shelters:', error);
     } finally {
     }
   };
-
-  useFonts({
-    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
-  });
 
   useEffect(() => {
     fetchEvents();

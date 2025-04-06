@@ -138,3 +138,11 @@ export type Event = {
   phone_number?: string;
   picture?: string[];
 };
+
+/**
+ * bookmarkId: id of the shelter or event
+ */
+export type NewBookmarkInput = {
+  userId: string;
+  bookmarkId: string;
+}

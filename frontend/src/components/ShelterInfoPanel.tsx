@@ -30,13 +30,11 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const ShelterInfoPanel = ({ shelter, style }: ShelterInfoPanelProps) => {
   useFonts({
-    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
+    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Regular.otf'),
   });
 
   const navigation = useNavigation<NavigationProp>();
-  useFonts({
-    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Regular.otf'),
-  });
+
 
   const formatAddress = (address: any) => {
     return `${address.street}, ${address.city}, ${address.state}`;
@@ -70,7 +68,7 @@ const ShelterInfoPanel = ({ shelter, style }: ShelterInfoPanelProps) => {
           style={styles.starIcon}
           source={require('../../assets/starIcon.png')}
         ></Image>{' '}
-        | {formatAddress(shelter.address)} | # mi
+        | {formatAddress(shelter.address)}
       </Text>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity

@@ -8,6 +8,7 @@ import React, {
 import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
 import Fuse from 'fuse.js';
 import SearchBar from '../components/SearchBar';
+import Header from '../components/Header';
 import Map from '../components/Map';
 import FiltersDropdown from '../components/FiltersDropdown';
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
@@ -26,7 +27,7 @@ export const CompleteMap = () => {
   const [query, setQuery] = useState('');
 
   useFonts({
-    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Regular.otf'),
+    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
 
   const fetchShelters = async () => {
@@ -38,10 +39,6 @@ export const CompleteMap = () => {
     } finally {
     }
   };
-
-  useFonts({
-    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
-  });
 
   useFocusEffect(
     useCallback(() => {
@@ -95,7 +92,6 @@ export const CompleteMap = () => {
         <Header />
       </View>
       <View style={styles.searchFilterRow}>
-      <View style={styles.filtersDropdownContainer}>
         <FiltersDropdown />
         <SearchBar onSearch={setQuery} />
       </View>
