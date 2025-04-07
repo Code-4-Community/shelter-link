@@ -116,7 +116,7 @@ export const CompleteMap = () => {
         ) : filteredShelters.length > 0 ? (
           <BottomSheetFlatList
             data={filteredShelters}
-            extraData={[query, shelters]}
+            extraData={[query, shelters, filteredShelters]}
             keyExtractor={(item) => item.shelterId}
             renderItem={renderItem}
           />

@@ -171,6 +171,7 @@ function AuthenticatedStack() {
               fontFamily: headerFont,
             },
             headerTitle: 'Settings',
+            headerBackTitle: 'Profile',
           })}
         />
         <Stack.Screen
