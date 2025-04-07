@@ -91,11 +91,9 @@ const EventInfoPanel = ({ event, style }: EventInfoPanelProps) => {
       </View>
       <Text style={styles.eventName}>{event.event_name}</Text>
       <View style={{ height: 10 }} />
-      {event.location && (
-        <Text style={{ ...styles.eventLocationDistance, alignItems: 'center' }}>
-          {formatAddress(event.location)}
-        </Text>
-      )}
+      <Text style={{ ...styles.eventLocationDistance, alignItems: 'center' }}>
+        {event.location && formatAddress(event.location)}
+      </Text>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
           style={styles.directionsButton}
@@ -121,7 +119,7 @@ const EventInfoPanel = ({ event, style }: EventInfoPanelProps) => {
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 const panelWidth = screenWidth * 0.85;
-const panelHeight = (230 / 332) * panelWidth;
+const panelHeight = (210 / 332) * panelWidth;
 
 let panelBorderWidth = 2;
 let shelterNameFontSize = 20;
