@@ -52,8 +52,8 @@ export const HoursDropdown = ({
             styles.dropdownContainer,
             {
               position: 'absolute',
-              top: dropdownPosition, // Use the calculated position
-              left: 80, // Adjust left position as needed
+              top: dropdownPosition + 38,
+              left: 25,
             },
           ]}
         >
