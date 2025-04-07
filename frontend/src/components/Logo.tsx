@@ -2,6 +2,7 @@ import {
   backgroundColor,
   darkMainColor,
   gradientColor1,
+  header1FontSize,
   headerFont,
 } from '../../constants';
 import React from 'react';
@@ -93,7 +94,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontFamily: headerFont,
     fontWeight: 'bold',
-    fontSize: 36,
+    fontSize: 40,
     paddingTop: 5,
     color: darkMainColor,
     alignSelf: 'center',
