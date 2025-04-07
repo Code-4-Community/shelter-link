@@ -90,18 +90,17 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: bodyFontSize,
-    color: 'black',
+    color: buttonBackgroundColor,
     fontFamily: bodyFont,
     textAlign: 'center',
     fontWeight: 'bold',
   },
   button: {
-    backgroundColor: buttonBackgroundColor,
+    backgroundColor: darkMainColor,
     padding: 10,
-    borderRadius: 5,
+    width: 150,
+    borderRadius: 20,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: darkMainColor,
   },
   buttonContainer: {
     alignSelf: 'center',
