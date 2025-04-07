@@ -19,6 +19,8 @@ import {
     containerColor,
     gradientColor1,
     gradientColor2,
+    header2FontSize,
+    header1FontSize,
 } from '../../constants';
 import { Event } from '../types';
 import { ImageGallery } from './ImageGallery';
@@ -26,6 +28,10 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useFonts } from 'expo-font';
 import { ScrollView } from 'react-native-gesture-handler';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useAuth } from '../hooks/AuthContext';
+import { useBookmarks } from '../hooks/BookmarkContext';
+import { Ionicons } from '@expo/vector-icons';
+import { formatDate, formatDateTime, formatTime } from '../utils';
 
 type RootStackParamList = {
     'Map View': undefined;
@@ -39,8 +45,13 @@ type Props = NativeStackScreenProps<
     'Detailed Event View'
 >;
 
-export const DetailedShelterView: React.FC<Props> = ({ route }) => {
-    const { event } = route.params; // get shelter from route params
+export const DetailedeventView: React.FC<Props> = ({ route }) => {
+    const { event } = route.params; // get event from route params
+    const { user } = useAuth();
+    const { eventBookmarks, toggleEventBookmark } = useBookmarks();
+    const [bookmarked, setBookmarked] = useState(
+        eventBookmarks.includes(event.eventId)
+    );
 
     useFonts({
         AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
@@ -69,66 +80,27 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
         console.log('handlewebsite did nothing');
     };
 
-    // for now, this gives the option to confirm if you want to call the shelter number
+    // for now, this gives the option to confirm if you want to call the event number
     // figure out how number/email maybe should be displayed?
     const handleRegister = () => {
-        if (event.registration_link ) {
+        if (event.registration_link) {
             Linking.openURL(event.registration_link);
             console.log('handleRegister tried something');
         }
         console.log('handleRegister did nothing');
     };
 
-    // based off of https://bobbyhadz.com/blog/typescript-date-format
-    function padTo2Digits(num: number) {
-        return num.toString().padStart(2, '0');
-    }
-  
-    function formatDate() {
-        const date = new Date(event.date);
-        let monthMap = new Map<number, string>([
-            [1, "January"],
-            [2, "February"],
-            [3, "March"],
-            [4, "April"],
-            [5, "May"],
-            [6, "June"],
-            [7, "July"],
-            [8, "August"],
-            [9, "September"],
-            [10, "October"],
-            [10, "November"],
-            [10, "December"],
-            ]);
-        return (
-            `${monthMap.get(date.getMonth() + 1)} ${date.getDate()}, ${date.getFullYear()}`
-    );
-    }
 
-    function formatTime() {
-        const date = new Date(event.date);
-        let hours = date.getHours();
-        if (hours == 0) {
-            return [
-                12,
-                padTo2Digits(date.getMinutes())
-            ].join(':') + ' AM';
-        } else if (hours == 12) {
-            return [
-                12,
-                padTo2Digits(date.getMinutes())
-            ].join(':') + ' PM';
+
+
+    const handleBookmark = async () => {
+        if (user) {
+            toggleEventBookmark(event.eventId);
+            setBookmarked(!bookmarked);
         } else {
-            return [
-                date.getHours() % 12,
-                padTo2Digits(date.getMinutes()),
-              ].join(':')  + ((date.getHours() - 12 > 0) ? ' PM' : ' AM')
+            alert('Please login to bookmark events.');
         }
-    }
-
-    function formatDateTime() {
-        return formatDate() + ' at ' + formatTime()
-    }
+    };
 
     return (
         <LinearGradient
@@ -137,23 +109,36 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
         >
             <SafeAreaView style={styles.safeArea}>
                 <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flex: 1 }}>
-                    <View style={styles.shelterNameContainer}>
-                                <View style={styles.quickInfoContainer}>
-                                    <View style={styles.ratingContainer}>
-                                      <Text style={styles.quickInfoText}>
-                                        {formatDateTime()}
-                                      </Text>
-                                    </View>
-                                </View>
-                              </View>
+                    <View style={styles.eventNameContainer}>
+                        <View style={styles.nameBookmarkContainer}>
+                            <Text style={styles.eventNameText}>{event.event_name}</Text>
+                            {user && (
+                                <TouchableOpacity onPress={() => handleBookmark()}>
+                                    <Ionicons
+                                        name={bookmarked ? 'bookmark' : 'bookmark-outline'}
+                                        size={header2FontSize}
+                                        color={darkMainColor}
+                                        style={styles.bookmarkOutline}
+                                    />
+                                </TouchableOpacity>
+                            )}
+                        </View>
+                        <View style={styles.quickInfoContainer}>
+                            <View style={styles.ratingContainer}>
+                                <Text style={styles.quickInfoText}>
+                                    {formatDateTime(event.date)}
+                                </Text>
+                            </View>
+                        </View>
+                    </View>
                     <View style={styles.buttonsContainer}>
-                    {event.location && event.location.street !== "" &&
-                        (<TouchableOpacity
-                            style={[styles.button, event.website && styles.smallButton]}
-                            onPress={handleDirections}
-                        >
-                            <Text style={styles.buttonText}>Directions</Text>
-                        </TouchableOpacity>)}
+                        {event.location && event.location.street !== "" &&
+                            (<TouchableOpacity
+                                style={[styles.button, event.website && styles.smallButton]}
+                                onPress={handleDirections}
+                            >
+                                <Text style={styles.buttonText}>Directions</Text>
+                            </TouchableOpacity>)}
 
                         {event.website && event.website !== "" && (
                             <TouchableOpacity
@@ -165,12 +150,12 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
                         )}
 
                         {event.registration_link && event.registration_link !== "" &&
-                        (<TouchableOpacity
-                            style={[styles.button, event.website && styles.smallButton]}
-                            onPress={handleRegister}
-                        >
-                            <Text style={styles.buttonText}>Register</Text>
-                        </TouchableOpacity>)}
+                            (<TouchableOpacity
+                                style={[styles.button, event.website && styles.smallButton]}
+                                onPress={handleRegister}
+                            >
+                                <Text style={styles.buttonText}>Register</Text>
+                            </TouchableOpacity>)}
                     </View>
 
                     <View style={styles.bottomContainer}>
@@ -179,25 +164,25 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
                                 <ImageGallery images={event.picture} />
                             </View>
                         }
-                        <View style={styles.shelterDescriptionContainer}>
-                            <Text style={styles.shelterDescriptionHeader}>
+                        <View style={styles.eventDescriptionContainer}>
+                            <Text style={styles.eventDescriptionHeader}>
                                 About
                             </Text>
-                            <Text style={styles.shelterDescriptionText}>
+                            <Text style={styles.eventDescriptionText}>
                                 {event.description}
                             </Text>
                         </View>
 
-                        <View style={styles.shelterDescriptionContainer}>
-                            <Text style={styles.shelterDescriptionHeader}>
+                        <View style={styles.eventDescriptionContainer}>
+                            <Text style={styles.eventDescriptionHeader}>
                                 Additional Information
                             </Text>
-                            <Text style={styles.shelterDescriptionText}>
+                            <Text style={styles.eventDescriptionText}>
                                 {event.host_name && `Name of Host: ${event.host_name}\n\n`}
                                 {event.phone_number && `Host Contact: ${event.phone_number}\n\n`}
-                                Date: {formatDate()}
+                                Date: {formatDate(event.date)}
                                 {`\n\n`}
-                                Time: {formatTime()}
+                                Time: {formatTime(event.date)}
                             </Text>
                         </View>
                     </View>
@@ -209,14 +194,14 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 let dynamicTabletSizes: Record<string, number> = {};
-dynamicTabletSizes['shelterNameTextSize'] = 45;
-dynamicTabletSizes['shelterNameTextHeight'] = 50;
+dynamicTabletSizes['eventNameTextSize'] = 45;
+dynamicTabletSizes['eventNameTextHeight'] = 50;
 dynamicTabletSizes['quickInfoFontSize'] = 18;
 dynamicTabletSizes['quickInfoLineHeight'] = 21.59;
 dynamicTabletSizes['buttonFontSize'] = 15;
 dynamicTabletSizes['buttonLineHeight'] = 15.73;
-dynamicTabletSizes['shelterDescriptionFontSize'] = 15;
-dynamicTabletSizes['shelterDescriptionLineHeight'] = 21.59;
+dynamicTabletSizes['eventDescriptionFontSize'] = 15;
+dynamicTabletSizes['eventDescriptionLineHeight'] = 21.59;
 dynamicTabletSizes['dayTextFontSize'] = 15;
 dynamicTabletSizes['dayTextLineHeight'] = 21.59;
 dynamicTabletSizes['arrowFontSize'] = 18;
@@ -241,29 +226,32 @@ const styles = StyleSheet.create({
     gradientBackground: {
         flex: 1,
     },
-    shelterNameContainer: {
+    eventNameContainer: {
         alignItems: 'center',
         justifyContent: 'center',
         width: '90%',
         alignSelf: 'center',
     },
-    shelterNameText: {
+    eventNameText: {
         fontFamily: headerFont,
         fontSize: 36,
-        paddingTop: 5,
+        paddingTop: 20,
+        paddingBottom: 15,
         color: darkMainColor,
         alignSelf: 'center',
-        textAlign: 'center', // Ensures text is centered when it wraps
+        textAlign: 'center',
+        flex: 1,
+        paddingLeft: 40,
     },
-    shelterExpandedNameText: {
+    eventExpandedNameText: {
         fontFamily: bodyFont,
         fontWeight: '700',
-        fontSize: dynamicTabletSizes.shelterNameTextSize * 0.4,
+        fontSize: dynamicTabletSizes.eventNameTextSize * 0.4,
         color: descriptionFontColor,
         paddingBottom: '5%',
         textAlign: 'center', // Ensures text is centered when it wraps
     },
-    shelterDescriptionContainer: {
+    eventDescriptionContainer: {
         alignItems: 'flex-start',
         justifyContent: 'flex-start',
         paddingHorizontal: '5%',
@@ -275,7 +263,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         width: '95%',
     },
-    shelterTagMainContainer: {
+    eventTagMainContainer: {
         justifyContent: 'flex-start',
         flexDirection: 'row',
         flexWrap: 'wrap',
@@ -286,7 +274,7 @@ const styles = StyleSheet.create({
         backgroundColor: containerColor,
         width: '95%',
     },
-    shelterDescriptionHeader: {
+    eventDescriptionHeader: {
         width: 340,
         fontSize: 22,
         fontFamily: bodyFont,
@@ -295,7 +283,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         paddingBottom: 10,
     },
-    shelterDescriptionText: {
+    eventDescriptionText: {
         width: 340,
         fontSize: 18,
         fontFamily: bodyFont,
@@ -309,11 +297,6 @@ const styles = StyleSheet.create({
     ratingContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-    },
-    starIcon: {
-        marginLeft: 4,
-        marginRight: 4,
-        marginBottom: 3,
     },
     quickInfoText: {
         fontFamily: bodyFont,
@@ -383,24 +366,24 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         width: '100%',
     },
-    shelterImage: {
+    eventImage: {
         borderRadius: 10,
         borderWidth: 3,
         marginRight: 22,
         borderColor: darkMainColor,
         backgroundColor: '#D9D9D9',
     },
-    shelterDescription: {
+    eventDescription: {
         marginLeft: screenWidth / 32,
         marginRight: screenWidth / 32,
         marginTop: 19,
-        fontSize: dynamicTabletSizes.shelterDescriptionFontSize,
+        fontSize: dynamicTabletSizes.eventDescriptionFontSize,
         fontFamily: bodyFont,
         fontWeight: '400',
-        lineHeight: dynamicTabletSizes.shelterDescriptionLineHeight,
+        lineHeight: dynamicTabletSizes.eventDescriptionLineHeight,
         color: descriptionFontColor,
     },
-    shelterTagContainer: {
+    eventTagContainer: {
         borderWidth: 1,
         borderColor: descriptionFontColor,
         backgroundColor: 'white',
@@ -408,8 +391,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         margin: 5,
     },
-    shelterTags: {
-        fontSize: dynamicTabletSizes.shelterDescriptionFontSize,
+    eventTags: {
+        fontSize: dynamicTabletSizes.eventDescriptionFontSize,
         fontFamily: bodyFont,
         fontWeight: '700',
         color: descriptionFontColor,
@@ -488,6 +471,18 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginTop: 4,
     },
+    nameBookmarkContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+    },
+    bookmarkOutline: {
+        fontSize: header1FontSize,
+        fontFamily: bodyFont,
+        fontWeight: '500',
+        color: darkMainColor,
+    },
 });
 
-export default DetailedShelterView;
+export default DetailedeventView;

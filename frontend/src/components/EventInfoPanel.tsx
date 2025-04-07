@@ -7,18 +7,21 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import { bodyFont, darkMainColor } from '../../constants';
+import { bodyFont, darkMainColor, header1FontSize, header2FontSize } from '../../constants';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Event } from '../types';
+import { Event, User } from '../types';
 import { useFonts } from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 import { deleteBookmark, postBookmark } from '../services/eventService';
 import { useAuth } from '../hooks/AuthContext';
+import { formatDateTime } from '../utils';
+import { useBookmarks } from '../hooks/BookmarkContext';
 
 type EventInfoPanelProps = {
   event: Event;
   style?: any;
+  user: User | null;
 };
 
 type RootStackParamList = {
@@ -30,25 +33,38 @@ type RootStackParamList = {
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-const EventInfoPanel = ({ event, style }: EventInfoPanelProps) => {
+const EventInfoPanel = ({ event, style, user }: EventInfoPanelProps) => {
   useFonts({
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
   const navigation = useNavigation<NavigationProp>();
-  const [bookmarked, setBookmarked] = useState(false);
+
+  const {
+    eventBookmarks,
+    toggleEventBookmark,
+  } = useBookmarks();
+
+
+  const [bookmarked, setBookmarked] = useState(
+    eventBookmarks.includes(event.eventId)
+  );
 
   const formatAddress = (address: any) => {
     return `${address.street}, ${address.city}, ${address.state}`;
   };
 
-  function toggleBookmark() {
-    setBookmarked(!bookmarked);
-    /*if (bookmarked) {
-      postBookmark();
+  const handleBookmark = async (eventId: string) => {
+    if (user) {
+      toggleEventBookmark(eventId);
+      setBookmarked(!bookmarked);
     } else {
-      deleteBookmark();
-    }*/
-  }
+      alert('Please log in to bookmark shelters.');
+    }
+  };
+
+  useEffect(() => {
+    setBookmarked(eventBookmarks.includes(event.eventId));
+  }, [eventBookmarks, event.eventId]);
 
   return (
     <TouchableOpacity
@@ -71,28 +87,25 @@ const EventInfoPanel = ({ event, style }: EventInfoPanelProps) => {
             <View style={styles.eventImage} />
           )}
         </View>
-      </View>
-      <View style={styles.bookmarkContainer}>
-        {useAuth() && (
-          <TouchableOpacity
-            onPress={(e) => {
-              e.stopPropagation(); // don't trigger the detailed view
-            }}
-          >
+        {user && (
+          <TouchableOpacity onPress={() => handleBookmark(event.eventId)}>
             <Ionicons
               name={bookmarked ? 'bookmark' : 'bookmark-outline'}
-              size={26}
+              size={header1FontSize}
               color={darkMainColor}
-              style={styles.bookmarkImage}
-              onClick={toggleBookmark}
+              style={styles.bookmarkOutline}
             />
           </TouchableOpacity>
         )}
       </View>
       <Text style={styles.eventName}>{event.event_name}</Text>
-      <View style={{ height: 10 }} />
+      {event.date ? (
+        <Text style={styles.shelterNameExpansion}>{formatDateTime(event.date)}</Text>
+      ) : (
+        <View style={{ height: 10 }} />
+      )}
       <Text style={{ ...styles.eventLocationDistance, alignItems: 'center' }}>
-        {event.location && formatAddress(event.location)}
+        {event.location ? formatAddress(event.location) : 'Online Event'}
       </Text>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
@@ -119,7 +132,7 @@ const EventInfoPanel = ({ event, style }: EventInfoPanelProps) => {
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 const panelWidth = screenWidth * 0.85;
-const panelHeight = (210 / 332) * panelWidth;
+const panelHeight = (230 / 332) * panelWidth;
 
 let panelBorderWidth = 2;
 let shelterNameFontSize = 20;
@@ -227,6 +240,25 @@ const styles = StyleSheet.create({
     lineHeight: buttonTextLineHeight,
     color: darkMainColor,
   },
+  shelterNameExpansion: {
+    marginTop: shelterNameMarginTop * 0.8,
+    paddingLeft: panelWidth * 0.045,
+    fontWeight: '500',
+    fontSize: descriptionFontSize,
+  },
+  bookmarkOutline: {
+    marginTop: shelterNameMarginTop,
+    paddingRight: 5,
+    paddingTop: panelHeight * 0.018,
+    fontSize: header2FontSize * 1.1,
+    fontFamily: bodyFont,
+    fontWeight: '500',
+    color: darkMainColor,
+  },
 });
 
 export default EventInfoPanel;
+function toggleShelterBookmark(shelterId: string) {
+  throw new Error('Function not implemented.');
+}
+

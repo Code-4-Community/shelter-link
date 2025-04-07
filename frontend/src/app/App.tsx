@@ -72,28 +72,33 @@ function EventStackNavigator() {
   return (
     <Stack.Navigator>
       {/* Default screen inside the tab */}
-      <Stack.Screen 
-        name="All Events View" 
+      <Stack.Screen
+        name="All Events View"
         component={AllEventsViewer}
         options={{
           headerShown: true,
           header: () => <Logo headerText="Events" navigateTo="Map" />,
         }}
       />
-      {/* Navigates from Map to DetailedShelterView, keeping tabs visible */}
+      {/* Navigates from Map to DetailedEventView, keeping tabs visible */}
       <Stack.Screen
         name="Detailed Event View"
         component={DetailedEventView}
         options={({ route }) => ({
           headerShown: true,
-          header: () => (
-            <Logo
-              headerText={route.params.event.event_name}
-              navigateTo="Map View"
-            />
-          ),
+          headerStyle: {
+            backgroundColor: gradientColor1,
+          },
+          headerTintColor: darkMainColor,
+          headerTitleStyle: {
+            fontSize: header3FontSize,
+            color: darkMainColor,
+            fontFamily: headerFont,
+          },
+          headerTitle: 'ShelterLink',
+          headerBackTitle: 'Events',
         })}
-        />
+      />
     </Stack.Navigator>
   );
 }
@@ -131,40 +136,40 @@ function BottomTabsNavigator() {
       })}
     >
       <Tab.Screen name="Map" component={MapStackNavigator} />
+      <Tab.Screen name="Events" component={EventStackNavigator} />
       <Tab.Screen
         name="Profile"
         component={user ? ProfilePage : LogIn}
         options={
           user
             ? {
-                headerShown: true,
-                header: () => (
-                  <Logo
-                    headerText="ShelterLink"
-                    navigateTo="Map"
-                    rightIcon={
-                      <Ionicons
-                        name="settings-outline"
-                        size={24}
-                        color={darkMainColor}
-                        fillColor={containerColor}
-                        style={{ marginRight: 15 }}
-                        onPress={() => {
-                          // Navigate to Profile Settings screen
-                          navigation.navigate('Profile Settings', { user });
-                        }}
-                      />
-                    }
-                  />
-                ),
-              }
+              headerShown: true,
+              header: () => (
+                <Logo
+                  headerText="ShelterLink"
+                  navigateTo="Map"
+                  rightIcon={
+                    <Ionicons
+                      name="settings-outline"
+                      size={24}
+                      color={darkMainColor}
+                      fillColor={containerColor}
+                      style={{ marginRight: 15 }}
+                      onPress={() => {
+                        // Navigate to Profile Settings screen
+                        navigation.navigate('Profile Settings', { user });
+                      }}
+                    />
+                  }
+                />
+              ),
+            }
             : {
-                headerShown: true,
-                header: () => <Logo navigateTo="Map" />,
-              }
+              headerShown: true,
+              header: () => <Logo navigateTo="Map" />,
+            }
         }
       />
-      <Tab.Screen name="Events" component={EventStackNavigator} />
     </Tab.Navigator>
   );
 }
@@ -218,6 +223,24 @@ function AuthenticatedStack() {
             headerBackTitle: 'Map',
           })}
         />
+        <Stack.Screen
+          name="Detailed Event View"
+          component={DetailedEventView}
+          options={({ route }) => ({
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: gradientColor1,
+            },
+            headerTintColor: darkMainColor,
+            headerTitleStyle: {
+              fontSize: header3FontSize,
+              color: darkMainColor,
+              fontFamily: headerFont,
+            },
+            headerTitle: 'Shelterlink',
+            headerBackTitle: 'Events',
+          })}
+        />
       </Stack.Navigator>
     </SafeAreaView>
   );
@@ -267,8 +290,26 @@ function UnauthenticatedStack() {
               color: darkMainColor,
               fontFamily: headerFont,
             },
-            headerTitle: 'Shelterlink',
+            headerTitle: 'ShelterLink',
             headerBackTitle: 'Map',
+          })}
+        />
+                <Stack.Screen
+          name="Detailed Event View"
+          component={DetailedEventView}
+          options={({ route }) => ({
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: gradientColor1,
+            },
+            headerTintColor: darkMainColor,
+            headerTitleStyle: {
+              fontSize: header3FontSize,
+              color: darkMainColor,
+              fontFamily: headerFont,
+            },
+            headerTitle: 'Shelterlink',
+            headerBackTitle: 'Events',
           })}
         />
       </Stack.Navigator>

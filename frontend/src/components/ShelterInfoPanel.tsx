@@ -44,8 +44,6 @@ const ShelterInfoPanel = ({ shelter, style, user }: ShelterInfoPanelProps) => {
   const {
     shelterBookmarks,
     toggleShelterBookmark,
-    eventBookmarks,
-    toggleEventBookmark,
   } = useBookmarks();
 
   const [bookmarked, setBookmarked] = useState(

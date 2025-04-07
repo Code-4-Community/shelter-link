@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     textAlign: 'center',
     flex: 1,
-    paddingLeft: 40,
+    //paddingLeft: 40,
   },
   shelterExpandedNameText: {
     fontFamily: bodyFont,
