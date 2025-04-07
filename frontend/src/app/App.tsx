@@ -1,4 +1,3 @@
-// App.tsx
 import React, { useEffect } from 'react';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -13,6 +12,7 @@ import Logo from '../components/Logo';
 import { LogIn } from '../components/LogIn';
 import CompleteMap from '../components/CompleteMap';
 import DetailedShelterView from '../components/DetailedShelterView';
+import LandingPage from '../components/LandingPage';
 
 import { Shelter, User } from '../types';
 import { AuthProvider, useAuth } from '../hooks/AuthContext';
@@ -36,6 +36,7 @@ import AllEventsViewer from '../components/AllEventsViewer';
 
 // defines type for nav stack
 export type RootStackParamList = {
+  Landing: undefined;
   'Log In': undefined;
   'Sign Up': undefined;
   'Map View': undefined;
@@ -104,31 +105,31 @@ function BottomTabsNavigator() {
         options={
           user
             ? {
-                headerShown: true,
-                header: () => (
-                  <Logo
-                    headerText="ShelterLink"
-                    navigateTo="Map"
-                    rightIcon={
-                      <Ionicons
-                        name="settings-outline"
-                        size={24}
-                        color={darkMainColor}
-                        fillColor={containerColor}
-                        style={{ marginRight: 15 }}
-                        onPress={() => {
-                          // Navigate to Profile Settings screen
-                          navigation.navigate('Profile Settings', { user });
-                        }}
-                      />
-                    }
-                  />
-                ),
-              }
+              headerShown: true,
+              header: () => (
+                <Logo
+                  headerText="ShelterLink"
+                  navigateTo="Map"
+                  rightIcon={
+                    <Ionicons
+                      name="settings-outline"
+                      size={24}
+                      color={darkMainColor}
+                      fillColor={containerColor}
+                      style={{ marginRight: 15 }}
+                      onPress={() => {
+                        // Navigate to Profile Settings screen
+                        navigation.navigate('Profile Settings', { user });
+                      }}
+                    />
+                  }
+                />
+              ),
+            }
             : {
-                headerShown: true,
-                header: () => <Logo navigateTo="Map" />,
-              }
+              headerShown: true,
+              header: () => <Logo navigateTo="Map" />,
+            }
         }
       />
       <Tab.Screen
@@ -204,11 +205,16 @@ function UnauthenticatedStack() {
     <SafeAreaView style={styles.safeArea}>
       <Stack.Navigator>
         <Stack.Screen
+          name="Landing"
+          component={LandingPage}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
           name="Log In"
           component={LogIn}
           options={{
             headerShown: true,
-            header: () => <Logo navigateTo="Map View" />,
+            header: () => <Logo navigateTo="Landing" />,
           }}
         />
         <Stack.Screen
@@ -217,7 +223,7 @@ function UnauthenticatedStack() {
           options={{
             headerShown: true,
             header: () => (
-              <Logo headerText="ShelterLink" navigateTo="Map View" />
+              <Logo headerText="ShelterLink" navigateTo="Landing" />
             ),
           }}
         />
