@@ -40,8 +40,8 @@ export const ProfileSettingsPage: React.FC<Props> = ({ navigation, route }) => {
   const { user } = route.params;
   const { logout } = useAuth();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
   };
 
   return (
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     backgroundColor: darkMainColor,
     padding: 10,
     width: 150,
-    borderRadius: 20,
+    borderRadius: 10,
     alignItems: 'center',
   },
   buttonContainer: {
