@@ -23,7 +23,6 @@ import {
   header1FontSize,
 } from '../../constants';
 import { Shelter, DayOfWeek } from '../types';
-import { ImageGallery } from './ImageGallery';
 import { HoursDropdown } from './HoursDropdown';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useFonts } from 'expo-font';
@@ -32,6 +31,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useBookmarks } from '../hooks/BookmarkContext';
 import { useAuth } from '../hooks/AuthContext';
+
 
 type RootStackParamList = {
   'Map View': undefined;
@@ -237,7 +237,22 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
 
           <View style={styles.bottomContainer}>
             <View style={styles.imagesContainer}>
-              <ImageGallery images={shelter.picture} />
+              {shelter.picture.length > 1 ? (
+                <ScrollView horizontal={true} style={styles.imageScrollContainer}>    
+                    {shelter.picture.map((image, index) => (
+                      <Image
+                        key={index}
+                        source={{ uri: image }}
+                        style={styles.shelterImage}
+                      />
+                    ))}
+                  </ScrollView>
+                ) : (
+                  <Image
+                    source={{ uri: shelter.picture[0] }}
+                    style={styles.soloShelterImage}
+                  />
+                )}
             </View>
 
             <View style={styles.shelterDescriptionContainer}>
@@ -455,9 +470,19 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   shelterImage: {
+    marginRight: screenWidth / 8,
+    width: screenWidth / 1.3,
+    height: screenWidth / 1.3,
     borderRadius: 10,
-    borderWidth: 3,
-    marginRight: 22,
+    borderWidth: 1,
+    borderColor: darkMainColor,
+    backgroundColor: '#D9D9D9',
+  },
+  soloShelterImage: {
+    width: screenWidth / 1.3,
+    height: screenWidth / 1.3,
+    borderRadius: 10,
+    borderWidth: 1,
     borderColor: darkMainColor,
     backgroundColor: '#D9D9D9',
   },
@@ -571,6 +596,11 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: darkMainColor,
   },
+  imageScrollContainer: {
+    paddingLeft: screenWidth / 9, 
+    paddingRight: screenWidth / 9,
+    paddingBottom: 10
+  }
 });
 
 export default DetailedShelterView;
