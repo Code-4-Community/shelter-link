@@ -20,7 +20,7 @@ import {
   FlatList,
 } from 'react-native';
 import { useAuth } from '../hooks/AuthContext';
-import { Shelter, UserShelterBookmark } from '../types';
+import { Shelter, UserShelterBookmark, Event } from '../types';
 import {
   getEventBookmarks,
   getShelterBookmarks,
@@ -28,6 +28,8 @@ import {
 import { getShelter } from '../services/mapService';
 import ShelterInfoPanel from './ShelterInfoPanel';
 import { useBookmarks } from '../hooks/BookmarkContext';
+import EventInfoPanel from './EventInfoPanel';
+import { getEvent } from '../services/eventService';
 
 export const ProfilePage = () => {
   const [selectedButton, setSelectedButton] = useState<'shelters' | 'events'>(
@@ -55,15 +57,17 @@ export const ProfilePage = () => {
         );
         setShelters(savedShelters);
 
-        // const savedEvents = await getEventBookmarks(user?.userId);
-        // setEvents(savedEvents);
+        const savedEvents = await Promise.all(
+          eventBookmarks.map((id: string) => getEvent(id))
+        );
+        setEvents(savedEvents);
       } catch (error) {
         console.error('Error fetching saved items:', error);
       }
     };
 
     fetchSavedItems();
-  }, [user, shelterBookmarks]);
+  }, [user, shelterBookmarks, eventBookmarks]);
 
   return (
     <LinearGradient
@@ -121,9 +125,19 @@ export const ProfilePage = () => {
             style={styles.bookmarkContainer}
           />
         ) : (
-          <Text style={{ fontSize: bodyFontSize, color: darkMainColor }}>
-            List of saved events
-          </Text>
+          <FlatList
+            data={events}
+            keyExtractor={(item) => item.eventId}
+            renderItem={({ item }) => (
+              <EventInfoPanel
+                event={item}
+                user={user}
+                style={{ marginTop: 20 }}
+              />
+            )}
+            contentContainerStyle={styles.contentContainer}
+            style={styles.bookmarkContainer}
+          />
         )}
       </SafeAreaView>
     </LinearGradient>

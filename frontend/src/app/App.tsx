@@ -14,7 +14,7 @@ import { LogIn } from '../components/LogIn';
 import CompleteMap from '../components/CompleteMap';
 import DetailedShelterView from '../components/DetailedShelterView';
 
-import { Shelter, User } from '../types';
+import { Shelter, Event, User } from '../types';
 import { AuthProvider, useAuth } from '../hooks/AuthContext';
 
 import SignUpScreen from '../components/SignUpScreen';
@@ -33,6 +33,7 @@ import { ProfilePage } from '../components/ProfilePage';
 import { ProfileSettingsPage } from '../components/ProfileSettingsPage';
 import { BookmarkProvider } from '../hooks/BookmarkContext';
 import AllEventsViewer from '../components/AllEventsViewer';
+import DetailedEventView from '../components/DetailedEventView';
 
 // defines type for nav stack
 export type RootStackParamList = {
@@ -41,6 +42,7 @@ export type RootStackParamList = {
   'Map View': undefined;
   'All Events View': undefined;
   'Detailed Shelter View': { shelter: Shelter };
+  'Detailed Event View': { event: Event };
   Profile: undefined;
   Map: undefined;
   'Profile Settings': { user: User };
@@ -65,6 +67,42 @@ function MapStackNavigator() {
     </Stack.Navigator>
   );
 }
+
+function EventStackNavigator() {
+  return (
+    <Stack.Navigator>
+      {/* Default screen inside the tab */}
+      <Stack.Screen
+        name="All Events View"
+        component={AllEventsViewer}
+        options={{
+          headerShown: true,
+          header: () => <Logo headerText="Events" navigateTo="Map" />,
+        }}
+      />
+      {/* Navigates from Map to DetailedEventView, keeping tabs visible */}
+      <Stack.Screen
+        name="Detailed Event View"
+        component={DetailedEventView}
+        options={({ route }) => ({
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: gradientColor1,
+          },
+          headerTintColor: darkMainColor,
+          headerTitleStyle: {
+            fontSize: header3FontSize,
+            color: darkMainColor,
+            fontFamily: headerFont,
+          },
+          headerTitle: 'ShelterLink',
+          headerBackTitle: 'Events',
+        })}
+      />
+    </Stack.Navigator>
+  );
+}
+
 
 function BottomTabsNavigator() {
   const { user } = useAuth();
@@ -98,46 +136,39 @@ function BottomTabsNavigator() {
       })}
     >
       <Tab.Screen name="Map" component={MapStackNavigator} />
+      <Tab.Screen name="Events" component={EventStackNavigator} />
       <Tab.Screen
         name="Profile"
         component={user ? ProfilePage : LogIn}
         options={
           user
             ? {
-                headerShown: true,
-                header: () => (
-                  <Logo
-                    headerText="ShelterLink"
-                    navigateTo="Map"
-                    rightIcon={
-                      <Ionicons
-                        name="settings-outline"
-                        size={24}
-                        color={darkMainColor}
-                        fillColor={containerColor}
-                        style={{ marginRight: 15 }}
-                        onPress={() => {
-                          // Navigate to Profile Settings screen
-                          navigation.navigate('Profile Settings', { user });
-                        }}
-                      />
-                    }
-                  />
-                ),
-              }
+              headerShown: true,
+              header: () => (
+                <Logo
+                  headerText="ShelterLink"
+                  navigateTo="Map"
+                  rightIcon={
+                    <Ionicons
+                      name="settings-outline"
+                      size={24}
+                      color={darkMainColor}
+                      fillColor={containerColor}
+                      style={{ marginRight: 15 }}
+                      onPress={() => {
+                        // Navigate to Profile Settings screen
+                        navigation.navigate('Profile Settings', { user });
+                      }}
+                    />
+                  }
+                />
+              ),
+            }
             : {
-                headerShown: true,
-                header: () => <Logo navigateTo="Map" />,
-              }
+              headerShown: true,
+              header: () => <Logo navigateTo="Map" />,
+            }
         }
-      />
-      <Tab.Screen
-        name="Events"
-        component={AllEventsViewer}
-        options={{
-          headerShown: true,
-          header: () => <Logo headerText="Events" navigateTo="Map" />,
-        }}
       />
     </Tab.Navigator>
   );
@@ -192,6 +223,24 @@ function AuthenticatedStack() {
             headerBackTitle: 'Map',
           })}
         />
+        <Stack.Screen
+          name="Detailed Event View"
+          component={DetailedEventView}
+          options={({ route }) => ({
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: gradientColor1,
+            },
+            headerTintColor: darkMainColor,
+            headerTitleStyle: {
+              fontSize: header3FontSize,
+              color: darkMainColor,
+              fontFamily: headerFont,
+            },
+            headerTitle: 'Shelterlink',
+            headerBackTitle: 'Events',
+          })}
+        />
       </Stack.Navigator>
     </SafeAreaView>
   );
@@ -241,8 +290,26 @@ function UnauthenticatedStack() {
               color: darkMainColor,
               fontFamily: headerFont,
             },
-            headerTitle: 'Shelterlink',
+            headerTitle: 'ShelterLink',
             headerBackTitle: 'Map',
+          })}
+        />
+                <Stack.Screen
+          name="Detailed Event View"
+          component={DetailedEventView}
+          options={({ route }) => ({
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: gradientColor1,
+            },
+            headerTintColor: darkMainColor,
+            headerTitleStyle: {
+              fontSize: header3FontSize,
+              color: darkMainColor,
+              fontFamily: headerFont,
+            },
+            headerTitle: 'Shelterlink',
+            headerBackTitle: 'Events',
           })}
         />
       </Stack.Navigator>

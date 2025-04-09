@@ -44,8 +44,6 @@ const ShelterInfoPanel = ({ shelter, style, user }: ShelterInfoPanelProps) => {
   const {
     shelterBookmarks,
     toggleShelterBookmark,
-    eventBookmarks,
-    toggleEventBookmark,
   } = useBookmarks();
 
   const [bookmarked, setBookmarked] = useState(
@@ -63,7 +61,7 @@ const ShelterInfoPanel = ({ shelter, style, user }: ShelterInfoPanelProps) => {
       toggleShelterBookmark(shelterId);
       setBookmarked(!bookmarked);
     } else {
-      alert('Please log in to bookmark shelters.');
+      alert('Please login to bookmark shelters.');
     }
   };
 
