@@ -23,7 +23,6 @@ import {
     header1FontSize,
 } from '../../constants';
 import { Event } from '../types';
-import { ImageGallery } from './ImageGallery';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useFonts } from 'expo-font';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -161,7 +160,22 @@ export const DetailedeventView: React.FC<Props> = ({ route }) => {
                     <View style={styles.bottomContainer}>
                         {event.picture &&
                             <View style={styles.imagesContainer}>
-                                <ImageGallery images={event.picture} />
+                                {event.picture.length > 1 ? (
+                                    <ScrollView horizontal={true} style={styles.imageScrollContainer}>
+                                        {event.picture.map((image, index) => (
+                                            <Image
+                                                key={index}
+                                                source={{ uri: image }}
+                                                style={styles.eventImage}
+                                            />
+                                        ))}
+                                    </ScrollView>
+                                ) : (
+                                    <Image
+                                        source={{ uri: event.picture[0] }}
+                                        style={styles.soloEventImage}
+                                    />
+                                )}
                             </View>
                         }
                         <View style={styles.eventDescriptionContainer}>
@@ -367,9 +381,11 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     eventImage: {
+        marginRight: screenWidth / 8,
+        width: screenWidth / 1.3,
+        height: screenWidth / 1.3,
         borderRadius: 10,
-        borderWidth: 3,
-        marginRight: 22,
+        borderWidth: 1,
         borderColor: darkMainColor,
         backgroundColor: '#D9D9D9',
     },
@@ -482,6 +498,19 @@ const styles = StyleSheet.create({
         fontFamily: bodyFont,
         fontWeight: '500',
         color: darkMainColor,
+    },
+    imageScrollContainer: {
+        paddingLeft: screenWidth / 9,
+        paddingRight: screenWidth / 9,
+        paddingBottom: 10
+    },
+    soloEventImage: {
+        width: screenWidth / 1.3,
+        height: screenWidth / 1.3,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: darkMainColor,
+        backgroundColor: '#D9D9D9',
     },
 });
 
