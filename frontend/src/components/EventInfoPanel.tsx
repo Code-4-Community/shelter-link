@@ -37,18 +37,18 @@ const EventInfoPanel = ({ event, style, user }: EventInfoPanelProps) => {
   useFonts({
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
-  const navigation = useNavigation<NavigationProp>();
 
   const {
     eventBookmarks,
     toggleEventBookmark,
   } = useBookmarks();
 
-
   const [bookmarked, setBookmarked] = useState(
     eventBookmarks.includes(event.eventId)
   );
 
+  const navigation = useNavigation<NavigationProp>();
+  
   const formatAddress = (address: any) => {
     return `${address.street}, ${address.city}, ${address.state}`;
   };
@@ -58,7 +58,7 @@ const EventInfoPanel = ({ event, style, user }: EventInfoPanelProps) => {
       toggleEventBookmark(eventId);
       setBookmarked(!bookmarked);
     } else {
-      alert('Please log in to bookmark shelters.');
+      alert('Please login to bookmark shelters.');
     }
   };
 
@@ -71,7 +71,7 @@ const EventInfoPanel = ({ event, style, user }: EventInfoPanelProps) => {
       style={[styles.panel, style]}
       onPress={() => navigation.navigate('Detailed Event View', { event })}
     >
-      <View style={styles.topRowItems}>
+      <View style={styles.topRowItems}>        
         <View style={styles.images}>
           {event.picture ? (
             event.picture
@@ -170,21 +170,13 @@ const styles = StyleSheet.create({
   },
   topRowItems: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
   },
   images: {
     paddingVertical: panelHeight * 0.037,
     paddingLeft: panelWidth * 0.045,
     flexDirection: 'row',
-  },
-  bookmarkContainer: {
-    position: 'absolute',
-    top: panelHeight * 0.037,
-    right: panelWidth * 0.033,
-  },
-  bookmarkImage: {
-    tintColor: darkMainColor,
-    width: panelWidth * 0.06,
-    height: panelWidth * 0.06 * (27 / 20),
   },
   eventImage: {
     width: panelWidth * 0.284,

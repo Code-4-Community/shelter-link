@@ -12,10 +12,12 @@ import { Event } from '../types';
 import { useFonts } from 'expo-font';
 import EventInfoPanel from './EventInfoPanel';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useAuth } from '../hooks/AuthContext';
 
 export const AllEventsViewer = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [query, setQuery] = useState('');
+  const { user } = useAuth();
 
   
   useFonts({
@@ -47,7 +49,7 @@ export const AllEventsViewer = () => {
 
           {events.length > 0 ? (
             events.map((e: Event) => (
-              <EventInfoPanel key={e.eventId} event={e} style={styles.itemContainer} />
+              <EventInfoPanel key={e.eventId} event={e} style={styles.itemContainer} user={user} />
             ))
           ) : (
             <Text style={styles.noResultsText}>No results found</Text>

@@ -18,6 +18,20 @@ const getEvents = async (): Promise<[Event]> => {
   return res.data;
 };
 
+/**
+ * Gets the event with the specified ID from the database.
+ *
+ * @throws Error Throws an error if the request fails or the response status is not 200.
+ */
+const getEvent = async (eventId: string): Promise<Event> => {
+  const res = await api.get(`${SHELTER_API_URL}/${eventId}`);
+  if (res.status !== 200) {
+    throw new Error('Error while fetching event');
+  }
+  return res.data;
+};
+
+
 const postBookmark = async (userId: string, eventId: string) => {
   const body: NewBookmarkInput = {
     userId,
@@ -41,4 +55,4 @@ const deleteBookmark = async (userId: string, eventId: string) => {
 }
 
 
-export { getEvents, postBookmark, deleteBookmark };
+export { getEvents, getEvent, postBookmark, deleteBookmark };
