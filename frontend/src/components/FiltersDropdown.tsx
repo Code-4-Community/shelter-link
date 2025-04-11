@@ -21,6 +21,11 @@ const DropdownComponent = () => {
     }
   };
 
+  const applyFilters = () => {
+    console.log('Filters applied:', { ratingFilter, hoursFilter, distanceFilter, additionalFilters });
+    setModalVisible(false);
+  };
+
 
   const isFilterSelected = (category: string, value: string) => {
     switch (category) {
@@ -50,6 +55,8 @@ const DropdownComponent = () => {
                   style={styles.closeButton}
                 >
                   <Text style={styles.closeButtonText}>✕</Text>
+                  
+
                 </TouchableOpacity>
                 <Text style={styles.modalTitle}>Filters</Text>
               </View>
@@ -297,6 +304,12 @@ const DropdownComponent = () => {
                         isFilterSelected('additional', 'LGBTQ+ focus') && styles.selectedFilterButtonText
                       ]}>LGBTQ+ focus</Text>
                     </TouchableOpacity>
+                    <TouchableOpacity 
+                    style={styles.applyButton}
+                    onPress={() => applyFilters()}
+                  >
+                    <Text style={styles.applyButtonText}>Apply</Text>
+                  </TouchableOpacity>
                   </View>
                 </View>
               </ScrollView>
@@ -473,13 +486,23 @@ const styles = StyleSheet.create({
   },
   applyButton: {
   position: 'absolute',
-  right: 15,
   padding: 5,
+  backgroundColor: '#6225B0',
+  width: 65,
+  height: 35,
+  borderRadius: 20,
+  borderWidth: 1,
+  marginBottom: 20,
+  borderColor: '#000000',
+  alignItems: 'center',
+  justifyContent: 'center',
+  left: 215,
+  top: 170,
 },
 applyButtonText: {
-  fontSize: 18,
+
   fontWeight: '600',
-  color: '#6225B0',
+  color: 'white',
   fontFamily: 'Inter',
 },
 });
