@@ -14,9 +14,12 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.frontend"
     },
     "android": {
       "adaptiveIcon": {
@@ -32,13 +35,7 @@
       [
         "expo-font",
         {
-          "fonts": [
-            "./assets/fonts/IstokWebBold.ttf",
-            "./assets/fonts/IstokWebBoldItalic.ttf",
-            "./assets/fonts/IstokWebItalic.ttf",
-            "./assets/fonts/IstokWebRegular.ttf",
-            "./assets/fonts/JomhuriaRegular.ttf"
-          ]
+          "fonts": ["./assets/fonts/AvenirNext.ttf"]
         }
       ]
     ]

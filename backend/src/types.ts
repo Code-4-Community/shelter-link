@@ -1,3 +1,5 @@
+import { Request } from 'express';
+
 /**
  * Enum representing days of the week.
  */
@@ -9,4 +11,38 @@ export enum DayOfWeek {
   THURSDAY = 'Thursday',
   FRIDAY = 'Friday',
   SATURDAY = 'Saturday',
+}
+
+/**
+ * Interface extending the request body when logging in an existing user, which contains:
+ * - email - The email of the user.
+ * - password - The password of the user.
+ */
+export interface LoginUserRequest extends Request {
+  body: {
+    email: string;
+    password: string;
+  };
+}
+
+/**
+ * Enum representing user roles.
+ * - USER - Regular user role.
+ * - ADMIN - Administrator role.
+ */
+export enum UserRole {
+  USER = 'USER',
+  ADMIN = 'ADMIN',
+}
+
+/**
+ * Interface extending the request body when logging in an existing user, which contains:
+ * - userId - The ID of the user.
+ * - bookmarkId - The ID of the bookmark.
+ */
+export interface BookmarkRequest extends Request {
+  body: {
+    userId: string;
+    bookmarkId: string;
+  };
 }

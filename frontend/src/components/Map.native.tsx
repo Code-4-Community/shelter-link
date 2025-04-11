@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { Shelter } from '../types';
-import getShelters from '../services/mapService';
+import { getShelters } from '../services/mapService';
+import CustomMarker from './CustomMarker'; // Import the custom marker component
 
 const Map = ({
   onMarkerPress,
@@ -17,8 +18,6 @@ const Map = ({
       setShelters(data);
     } catch (error) {
       console.error('Error fetching shelters:', error);
-    } finally {
-      // setLoading(false);
     }
   };
 
@@ -45,8 +44,9 @@ const Map = ({
               longitude: shelter.longitude,
             }}
             onPress={() => onMarkerPress(shelter)}
+            tracksViewChanges={false}
           >
-            {/* <Text style={styles.customMarker}>{shelter.emoji}</Text> */}
+            <CustomMarker />
           </Marker>
         ))}
       </MapView>
@@ -62,12 +62,6 @@ const styles = StyleSheet.create({
     borderRadius: 1,
     width: '100%',
     height: '100%',
-  },
-  customMarker: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 15,
-    fontSize: 30,
   },
 });
 

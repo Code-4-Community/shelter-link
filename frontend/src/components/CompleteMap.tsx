@@ -5,19 +5,20 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Dimensions, SafeAreaView, StyleSheet, View, Text } from 'react-native';
+import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
 import Fuse from 'fuse.js';
 import SearchBar from '../components/SearchBar';
 import Header from '../components/Header';
-//import Logo from '../components/Logo'; ToRecoverIcon: uncomment this line
 import Map from '../components/Map';
 import FiltersDropdown from '../components/FiltersDropdown';
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import ShelterInfoPanel from '../components/ShelterInfoPanel';
 import { Shelter } from '../types';
-import { darkMainColor } from '../../constants';
-import getShelters from '../services/mapService';
+import { darkMainColor, gradientColor1 } from '../../constants';
+import { getShelters } from '../services/mapService';
 import { useFonts } from 'expo-font';
+import { useFocusEffect } from '@react-navigation/native';
+import { useAuth } from '../hooks/AuthContext';
 
 export const CompleteMap = () => {
   const sheetRef = useRef<BottomSheet>(null);
@@ -25,25 +26,33 @@ export const CompleteMap = () => {
   const [selectedShelter, setSelectedShelter] = useState<Shelter | null>(null);
   const [shelters, setShelters] = useState<Shelter[]>([]);
   const [query, setQuery] = useState('');
+  const { user } = useAuth();
 
   useFonts({
-    IstokWebRegular: require('../../assets/fonts/IstokWebRegular.ttf'),
-    JomhuriaRegular: require('../../assets/fonts/JomhuriaRegular.ttf'),
+    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
 
   const fetchShelters = async () => {
     try {
       const data = await getShelters(); // Use mapService to fetch shelters
-      setShelters(data);
+      setShelters([...data]);
     } catch (error) {
       console.error('Error fetching shelters:', error);
     } finally {
     }
   };
 
-  useEffect(() => {
-    fetchShelters();
-  }, [query]);
+  useFocusEffect(
+    useCallback(() => {
+      console.log('Screen focused');
+      fetchShelters();
+
+      // Cleanup function
+      return () => {
+        console.log('Screen unfocused');
+      };
+    }, [])
+  );
 
   const handleMarkerPress = useCallback((shelter: Shelter) => {
     setSelectedShelter(shelter);
@@ -52,7 +61,11 @@ export const CompleteMap = () => {
 
   const renderItem = useCallback(
     ({ item }: { item: Shelter }) => (
-      <ShelterInfoPanel shelter={item} style={styles.itemContainer} />
+      <ShelterInfoPanel
+        shelter={item}
+        style={styles.itemContainer}
+        user={user}
+      />
     ),
     []
   );
@@ -81,14 +94,12 @@ export const CompleteMap = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.searchBarContainer}>
-        <SearchBar onSearch={setQuery} />
-      </View>
       <View style={styles.headerContainer}>
         <Header />
       </View>
-      <View style={styles.filtersDropdownContainer}>
+      <View style={styles.searchFilterRow}>
         <FiltersDropdown />
+        <SearchBar onSearch={setQuery} />
       </View>
       <Map onMarkerPress={handleMarkerPress} />
       <BottomSheet
@@ -100,13 +111,13 @@ export const CompleteMap = () => {
           <ShelterInfoPanel
             shelter={selectedShelter}
             style={styles.itemContainer}
+            user={user}
           />
         ) : filteredShelters.length > 0 ? (
           <BottomSheetFlatList
             data={filteredShelters}
-            keyExtractor={(item) =>
-              `${item.name}-${item.address.street}`.replace(/\s+/g, '')
-            } // creating a unique id
+            extraData={[query, shelters, filteredShelters]}
+            keyExtractor={(item) => item.shelterId}
             renderItem={renderItem}
           />
         ) : (
@@ -122,7 +133,7 @@ export const CompleteMap = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#E2E2F0',
+    backgroundColor: gradientColor1,
   },
   container: {
     flex: 1,
@@ -140,15 +151,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: '10%',
     paddingBottom: '7%',
-    paddingTop: '3%',
   },
-  filtersDropdownContainer: {
-    alignItems: 'flex-start',
+  searchFilterRow: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingHorizontal: '3%',
-    paddingBottom: '3%',
+    paddingBottom: '6%',
     borderStyle: 'solid',
     borderBottomWidth: 4,
     borderColor: darkMainColor,
+    gap: 10,
   },
   map: {
     width: '100%',
