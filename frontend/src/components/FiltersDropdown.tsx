@@ -14,38 +14,33 @@ import { Dimensions, StyleSheet, View, ScrollView } from 'react-native';
 import { Modal, Text, Pressable } from 'react-native';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native';
+import { useFilters } from '../hooks/FilterContext';
 
 const DropdownComponent = () => {
   useFonts({
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
 
-  const [selected, setSelected] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-
-  const [ratingFilter, setRatingFilter] = useState('Any');
-  const [hoursFilter, setHoursFilter] = useState('Any');
-  const [distanceFilter, setDistanceFilter] = useState('Any');
-  const [additionalFilters, setAdditionalFilters] = useState<string[]>([]);
-
-  const toggleAdditionalFilter = (filter: string) => {
-    if (additionalFilters.includes(filter)) {
-      setAdditionalFilters(additionalFilters.filter((item) => item !== filter));
-    } else {
-      setAdditionalFilters([...additionalFilters, filter]);
-    }
-  };
+  
+  const { 
+    filters, 
+    setRatingFilter, 
+    setHoursFilter, 
+    setDistanceFilter, 
+    toggleAdditionalFilter 
+  } = useFilters();
 
   const isFilterSelected = (category: string, value: string) => {
     switch (category) {
       case 'rating':
-        return ratingFilter === value;
+        return filters.rating === value;
       case 'hours':
-        return hoursFilter === value;
+        return filters.hours === value;
       case 'distance':
-        return distanceFilter === value;
+        return filters.distance === value;
       case 'additional':
-        return additionalFilters.includes(value);
+        return filters.additionalFilters.includes(value);
       default:
         return false;
     }
@@ -446,11 +441,25 @@ const DropdownComponent = () => {
                       >
                         LGBTQ+ focus
                       </Text>
+                
                     </TouchableOpacity>
+                    
+                    
                   </View>
+                  <TouchableOpacity
+                        onPress={() => setModalVisible(false)}
+                        style={styles.applyButton}
+                        >
+                        <Text style={styles.applyButtonText}>Apply</Text>
+                  
+
+                      </TouchableOpacity>
                 </View>
+                
               </ScrollView>
+              
             </View>
+            
           </View>
         </Modal>
 
@@ -628,6 +637,25 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     borderWidth: 1,
   },
+  applyButton: {
+    width: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#6225B0',
+    borderRadius: 10,
+    borderWidth: 1,
+    left: 220,
+    top: 1,
+    bottom: 20,
+    height: 30,
+  },
+  applyButtonText: {
+    fontFamily: bodyFont,
+    fontSize: dynamicTabletSizes['dropdownFontSize'],
+    color: 'white'
+  },
+  
+  
 });
 
 export default DropdownComponent;
