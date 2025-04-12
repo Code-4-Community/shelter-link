@@ -30,6 +30,18 @@ const postReqSuccess: NewEventInput = {
   picture: ['', '', ''],
 };
 
+const postReqMalformedDate = {
+    event_name: postReqSuccess.event_name,
+    description: postReqSuccess.description,
+    date: '???',
+    host_name: postReqSuccess.host_name,
+    location: postReqSuccess.location,
+    website: postReqSuccess.website,
+    registration_link: postReqSuccess.registration_link,
+    phone_number: postReqSuccess.phone_number,
+    picture: postReqSuccess.picture,
+}
+
 const postDynamoDBReqBodySuccess = {
   eventId: { S: '2' },
   event_name: { S: 'Youth Pride Celebration' },
@@ -256,6 +268,14 @@ describe('EventService', () => {
         postDynamoDBReqBodySuccess
       );
     });
+
+    it('should correctly fail if the date is not formatted correctly', async () => {
+        mockDynamoDB.getHighestId.mockResolvedValue(2);
+
+        await expect(service.postEvent(postReqMalformedDate)).rejects.toThrow(
+          'Invalid date format. Please provide a valid date.'
+        );
+    })
   });
 
   describe('getEvents', () => {
