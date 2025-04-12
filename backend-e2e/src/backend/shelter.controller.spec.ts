@@ -468,7 +468,7 @@ describe('ShelterController with mock ShelterService', () => {
 
             const response = await request(app.getHttpServer())
                 .post('/shelters')
-                .send();
+                .send(postReqSuccess);
 
             expect(response.status).toBe(500);
             expect(response.body.message).toBe('Internal server error');

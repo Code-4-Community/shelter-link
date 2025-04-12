@@ -5,7 +5,7 @@ import { NewEventInput } from 'backend/src/dtos/newEventDTO';
 
 const mockDynamoDB = {
   scanTable: jest.fn(),
-  getHighestShelterId: jest.fn(),
+  getHighestId: jest.fn(),
   postItem: jest.fn(),
   getItem: jest.fn(),
   deleteItem: jest.fn(),
@@ -15,12 +15,12 @@ const mockDynamoDB = {
 const postReqSuccess: NewEventInput = {
   event_name: 'Youth Pride Celebration',
   description: 'Pride celebration for youth ages 14-18',
-  date: '???',
+  date: '2024-09-15T08:30:25',
   host_name: 'Sam',
   location: {
-    street: '360 Winter street',
+    street: '360 Winter Street',
     city: 'Waltham',
-    state: 'Massachusetts',
+    state: 'MA',
     zipCode: '02451',
     country: 'United States',
   },
@@ -31,15 +31,16 @@ const postReqSuccess: NewEventInput = {
 };
 
 const postDynamoDBReqBodySuccess = {
-  eventId: { S: '1' },
-  event_name: { S: postReqSuccess.event_name },
-  date: { S: postReqSuccess.date },
-  host_name: { S: postReqSuccess.host_name },
+  eventId: { S: '2' },
+  event_name: { S: 'Youth Pride Celebration' },
+  description: {S: 'Pride celebration for youth ages 14-18'},
+  date: { S: '2024-09-15T08:30:25' },
+  host_name: { S: 'Sam' },
   location: {
     M: {
-      street: { S: postReqSuccess.location.street },
-      city: { S: postReqSuccess.location.city },
-      state: { S: postReqSuccess.location.state },
+      street: { S: '360 Winter Street' },
+      city: { S: 'Waltham' },
+      state: { S: 'MA' },
       zipCode: { S: postReqSuccess.location.zipCode },
       country: { S: postReqSuccess.location.country },
     },
@@ -59,19 +60,19 @@ const postReturnSuccess = {
     attempts: 1,
     totalRetryDelay: 0,
   },
-  id: 1,
+  id: 2,
 };
 
 const getEventReqSuccess = {
-  eventId: '1',
+  eventId: '6',
   event_name: 'Youth Pride Celebration',
   description: 'Pride celebration for youth ages 14-18',
-  date: '???',
+  date: '2024-09-15T08:30:25',
   host_name: 'Sam',
   location: {
-    street: '360 Winter street',
+    street: '360 Winter Street',
     city: 'Waltham',
-    state: 'Massachusetts',
+    state: 'MA',
     zipCode: '02451',
     country: 'United States',
   },
@@ -82,8 +83,9 @@ const getEventReqSuccess = {
 };
 
 const getEventReqSuccessDynamoDB = [{
-  eventId: { S: '1' },
+  eventId: { S: '6' },
   event_name: { S: postReqSuccess.event_name },
+  description: { S: postReqSuccess.description },
   date: { S: postReqSuccess.date },
   host_name: { S: postReqSuccess.host_name },
   location: {
@@ -108,12 +110,12 @@ const getEventsReqSuccess = [
     eventId: '1',
     event_name: 'Youth Pride Celebration',
     description: 'Pride celebration for youth ages 14-18',
-    date: '???',
+    date: '2024-09-15T08:30:25',
     host_name: 'Sam',
     location: {
-      street: '360 Winter street',
+      street: '360 Winter Street',
       city: 'Waltham',
-      state: 'Massachusetts',
+      state: 'MA',
       zipCode: '02451',
       country: 'United States',
     },
@@ -126,12 +128,12 @@ const getEventsReqSuccess = [
     eventId: '2',
     event_name: 'Youth Pride Celebration',
     description: 'Pride celebration for youth ages 14-18',
-    date: '???',
+    date: '2024-09-15T08:30:25',
     host_name: 'Sam',
     location: {
-      street: '360 Winter street',
+      street: '360 Winter Street',
       city: 'Waltham',
-      state: 'Massachusetts',
+      state: 'MA',
       zipCode: '02451',
       country: 'United States',
     },
@@ -146,6 +148,7 @@ const getEventsReqSuccessDynamoDB = [
   {
     eventId: { S: '1' },
     event_name: { S: postReqSuccess.event_name },
+    description: { S: postReqSuccess.description },
     date: { S: postReqSuccess.date },
     host_name: { S: postReqSuccess.host_name },
     location: {
@@ -168,6 +171,7 @@ const getEventsReqSuccessDynamoDB = [
     eventId: { S: '2' },
     event_name: { S: postReqSuccess.event_name },
     date: { S: postReqSuccess.date },
+    description: { S: postReqSuccess.description },
     host_name: { S: postReqSuccess.host_name },
     location: {
       M: {
@@ -187,7 +191,7 @@ const getEventsReqSuccessDynamoDB = [
   },
 ];
 
-describe('ShelterService', () => {
+describe('EventService', () => {
   let service: EventService;
 
   beforeEach(async () => {
@@ -210,35 +214,37 @@ describe('ShelterService', () => {
 
   describe('postEvent', () => {
     it('should successfully post an event', async () => {
-      mockDynamoDB.getHighestShelterId.mockResolvedValue(1);
+      mockDynamoDB.getHighestId.mockResolvedValue(1);
       mockDynamoDB.postItem.mockResolvedValue(postReturnSuccess);
 
       const response = await service.postEvent(postReqSuccess);
 
-      expect(mockDynamoDB.getHighestShelterId).toHaveBeenCalledWith(
-        'shelterlinkShelters'
+      expect(mockDynamoDB.getHighestId).toHaveBeenCalledWith(
+        'shelterlinkEvents',
+        'eventId'
       );
       expect(mockDynamoDB.postItem).toHaveBeenCalledWith(
-        'shelterlinkShelters',
+        'shelterlinkEvents',
         postDynamoDBReqBodySuccess
       );
       expect(response).toStrictEqual(postReturnSuccess);
     });
 
     it('should correctly fail if dynamoDB returns an error for getHighestId', async () => {
-      mockDynamoDB.getHighestShelterId.mockRejectedValue(
+      mockDynamoDB.getHighestId.mockRejectedValue(
         new Error('highest shelter id error')
       );
       await expect(service.postEvent(postReqSuccess)).rejects.toThrow(
         'highest shelter id error'
       );
-      expect(mockDynamoDB.getHighestShelterId).toHaveBeenCalledWith(
-        'shelterlinkShelters'
+      expect(mockDynamoDB.getHighestId).toHaveBeenCalledWith(
+        'shelterlinkEvents',
+        'eventId'
       );
     });
 
     it('should correctly fail if dynamoDB returns an error for postItem', async () => {
-      mockDynamoDB.getHighestShelterId.mockResolvedValue(1);
+      mockDynamoDB.getHighestId.mockResolvedValue(1);
       mockDynamoDB.postItem.mockRejectedValue(
         new Error('dynamodb post item error')
       );
@@ -246,7 +252,7 @@ describe('ShelterService', () => {
         'dynamodb post item error'
       );
       expect(mockDynamoDB.postItem).toHaveBeenCalledWith(
-        'shelterlinkShelters',
+        'shelterlinkEvents',
         postDynamoDBReqBodySuccess
       );
     });
@@ -269,7 +275,7 @@ describe('ShelterService', () => {
         'dynamodb scanTable error'
       );
       expect(mockDynamoDB.scanTable).toHaveBeenCalledWith(
-        'shelterlinkShelters'
+        'shelterlinkEvents'
       );
     });
   });
@@ -282,7 +288,7 @@ describe('ShelterService', () => {
       expect(mockDynamoDB.scanTable).toHaveBeenCalledWith(
         'shelterlinkEvents',
         'eventId = :eventId',
-        { ':eventId': { S: '6' } }
+        { ':eventId': { 'S': '6' } }
       );
       expect(response).toStrictEqual(getEventReqSuccess);
     });
@@ -292,12 +298,12 @@ describe('ShelterService', () => {
         new Error('dynamodb scanTable error')
       );
       await expect(service.getEvent('6')).rejects.toThrow(
-        'Unable to get shelter: Error: dynamodb scanTable error'
+        'Event with id 6 does not exist: dynamodb scanTable error'
       );
       expect(mockDynamoDB.scanTable).toHaveBeenCalledWith(
-        'shelterlinkShelters',
-        'shelterId = :shelterId',
-        { ':shelterId': { S: '6' } }
+        'shelterlinkEvents',
+        'eventId = :eventId',
+        { ':eventId': { S: '6' } }
       );
     });
   });
