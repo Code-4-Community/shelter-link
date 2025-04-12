@@ -10,7 +10,7 @@ const mockShelterService = {
     getShelters: jest.fn(),
     getShelter: jest.fn(),
     deleteShelter: jest.fn(),
-    updateShelter: jest.fn()
+    updateShelter: jest.fn(),
 };
 
 const postReqSuccess: NewShelterInput = {
@@ -88,7 +88,7 @@ const getReqSuccess = [
             "Sunday": null
         },
         "picture": [
-            "https://shelter-link-shelters.s3.us-east-2.amazonaws.com/test_photo.webp"
+            "https://shelters-link-shelters.s3.us-east-2.amazonaws.com/test_photo.webp"
         ],
         "rating": 4.5,
         "website": "https://www.bagly.org/"
@@ -183,7 +183,7 @@ const getReqSuccess = [
             "Sunday": null
         },
         "picture": [
-            "https://shelter-link-shelters.s3.us-east-2.amazonaws.com/test_photo.webp"
+            "https://shelters-link-shelters.s3.us-east-2.amazonaws.com/test_photo.webp"
         ],
         "rating": 4.2
     }
@@ -229,7 +229,7 @@ const oneShelter = {
         "Sunday": null
     },
     "picture": [
-        "https://shelter-link-shelters.s3.us-east-2.amazonaws.com/test_photo.webp"
+        "https://shelters-link-shelters.s3.us-east-2.amazonaws.com/test_photo.webp"
     ],
     "rating": 4.2
 }
@@ -456,7 +456,7 @@ describe('ShelterController with mock ShelterService', () => {
             mockShelterService.postShelter.mockResolvedValue(postReturnSuccess);
 
             const response = await request(app.getHttpServer())
-                .post('/shelter')
+                .post('/shelters')
                 .send(postReqSuccess);
 
             expect(response.status).toBe(201);
@@ -467,7 +467,7 @@ describe('ShelterController with mock ShelterService', () => {
             mockShelterService.postShelter.mockRejectedValue(new Error('Service Error'));
 
             const response = await request(app.getHttpServer())
-                .post('/shelter')
+                .post('/shelters')
                 .send();
 
             expect(response.status).toBe(500);
@@ -480,7 +480,7 @@ describe('ShelterController with mock ShelterService', () => {
             mockShelterService.getShelters.mockResolvedValue(getReqSuccess)
 
             const response = await request(app.getHttpServer())
-                .get('/shelter')
+                .get('/shelters')
                 .send();
 
             expect(response.status).toBe(200);
@@ -491,7 +491,7 @@ describe('ShelterController with mock ShelterService', () => {
             mockShelterService.getShelters.mockRejectedValue(new Error('Service Error'));
 
             const response = await request(app.getHttpServer())
-                .get('/shelter')
+                .get('/shelters')
                 .send();
 
             expect(response.status).toBe(500);
@@ -505,7 +505,7 @@ describe('ShelterController with mock ShelterService', () => {
             mockShelterService.getShelter.mockResolvedValue(oneShelter)
 
             const response = await request(app.getHttpServer())
-                .get('/shelter/3')
+                .get('/shelters/3')
                 .send();
 
             expect(response.status).toBe(200);
@@ -516,7 +516,7 @@ describe('ShelterController with mock ShelterService', () => {
             mockShelterService.getShelter.mockRejectedValue(new Error('Service Error'));
 
             const response = await request(app.getHttpServer())
-                .get('/shelter/3')
+                .get('/shelters/3')
                 .send();
 
             expect(response.status).toBe(500);
@@ -529,7 +529,7 @@ describe('ShelterController with mock ShelterService', () => {
             mockShelterService.deleteShelter.mockResolvedValue(oneShelter)
 
             const response = await request(app.getHttpServer())
-                .delete('/shelter/3')
+                .delete('/shelters/3')
                 .send();
 
             expect(response.status).toBe(200);
@@ -540,7 +540,7 @@ describe('ShelterController with mock ShelterService', () => {
             mockShelterService.deleteShelter.mockRejectedValue(new Error('Service Error'));
 
             const response = await request(app.getHttpServer())
-                .delete('/shelter/3')
+                .delete('/shelters/3')
                 .send();
 
             expect(response.status).toBe(500);
@@ -552,18 +552,18 @@ describe('ShelterController with mock ShelterService', () => {
         it('should update a specific shelter successfully', async () => {
             mockShelterService.updateShelter.mockResolvedValue(updateShelterReturnSuccess);
             const response = await request(app.getHttpServer())
-                .patch('/shelter/update')
+                .patch('/shelters/update')
                 .send(updateShelterRequestSuccess);
             
             expect(response.status).toBe(200);
-            expect(mockShelterService.updateShelter).toHaveBeenCalledWith(10, updateShelterRequestSuccess);
+            expect(mockShelterService.updateShelter).toHaveBeenCalledWith("update", updateShelterRequestSuccess);
         });
 
         it('should correctly fail if the service returns an Error', async () => {
             mockShelterService.updateShelter.mockRejectedValue(new Error('Service Error'));
 
             const response = await request(app.getHttpServer())
-                .patch('/shelter/update')
+                .patch('/shelters/update')
                 .send(updateShelterRequestSuccess);
 
             expect(response.status).toBe(500);

@@ -15,7 +15,7 @@ export class EventController {
   constructor(private readonly eventService: EventService) {}
 
   @Post()
-  public async postShelter(@Body() eventData: NewEventInput) {
+  public async postEvent(@Body() eventData: NewEventInput) {
     return await this.eventService.postEvent(eventData);
   }
 
