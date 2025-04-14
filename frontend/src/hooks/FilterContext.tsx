@@ -109,11 +109,20 @@ export const FilterProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       if (filters.additionalFilters.length > 0) {
         const filterToTagMap: Record<string, keyof Shelter['tags']> = {
           'Wheelchair accessible': 'wheelchair_accessible',
+          'Pet Friendly': 'pet_friendly',
+          'Family Friendly': 'family_friendly',
           'Legal aids available': 'legal_aid',
-          'Free or financial support available': 'legal_aid',
-          'Overnight stay': 'overnight_stay',
-          'Specializes in Trans support': 'lgbtq_focused',
           'LGBTQ+ focus': 'lgbtq_focused',
+          'Mental Health Resources': 'mental_health_resources',
+          'Overnight stay': 'overnight_stay',
+          'Food Resources': 'food_resources',
+          'Clothing Resources': 'clothing_resources',
+          'Transportation Resources': 'transportation_resources',
+          'Hygiene Facilities': 'hygiene_facilities',
+          'Job Assistance': 'job_assistance',
+          'Medical Resources': 'medical_resources',
+          'Educational Programs': 'educational_programs',
+          'Substance Abuse Support': 'substance_abuse_support',
         };
         
         for (const filter of filters.additionalFilters) {
