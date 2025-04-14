@@ -32,7 +32,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { useBookmarks } from '../hooks/BookmarkContext';
 import { useAuth } from '../hooks/AuthContext';
 
-
 type RootStackParamList = {
   'Map View': undefined;
   'Detailed Shelter View': {
@@ -157,7 +156,11 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flex: 1 }}>
           <View style={styles.shelterNameContainer}>
             <View style={styles.nameBookmarkContainer}>
-              <Text style={styles.shelterNameText}>{shelter.name}</Text>
+              <Text
+                style={[styles.shelterNameText, { paddingLeft: user ? 40 : 0 }]}
+              >
+                {shelter.name}
+              </Text>
               {user && (
                 <TouchableOpacity onPress={() => handleBookmark()}>
                   <Ionicons
@@ -238,21 +241,24 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
           <View style={styles.bottomContainer}>
             <View style={styles.imagesContainer}>
               {shelter.picture.length > 1 ? (
-                <ScrollView horizontal={true} style={styles.imageScrollContainer}>    
-                    {shelter.picture.map((image, index) => (
-                      <Image
-                        key={index}
-                        source={{ uri: image }}
-                        style={styles.shelterImage}
-                      />
-                    ))}
-                  </ScrollView>
-                ) : (
-                  <Image
-                    source={{ uri: shelter.picture[0] }}
-                    style={styles.soloShelterImage}
-                  />
-                )}
+                <ScrollView
+                  horizontal={true}
+                  style={styles.imageScrollContainer}
+                >
+                  {shelter.picture.map((image, index) => (
+                    <Image
+                      key={index}
+                      source={{ uri: image }}
+                      style={styles.shelterImage}
+                    />
+                  ))}
+                </ScrollView>
+              ) : (
+                <Image
+                  source={{ uri: shelter.picture[0] }}
+                  style={styles.soloShelterImage}
+                />
+              )}
             </View>
 
             <View style={styles.shelterDescriptionContainer}>
@@ -339,7 +345,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     textAlign: 'center',
     flex: 1,
-    //paddingLeft: 40,
   },
   shelterExpandedNameText: {
     fontFamily: bodyFont,
@@ -587,7 +592,7 @@ const styles = StyleSheet.create({
   nameBookmarkContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     width: '100%',
   },
   bookmarkOutline: {
@@ -597,10 +602,10 @@ const styles = StyleSheet.create({
     color: darkMainColor,
   },
   imageScrollContainer: {
-    paddingLeft: screenWidth / 9, 
+    paddingLeft: screenWidth / 9,
     paddingRight: screenWidth / 9,
-    paddingBottom: 10
-  }
+    paddingBottom: 10,
+  },
 });
 
 export default DetailedShelterView;
