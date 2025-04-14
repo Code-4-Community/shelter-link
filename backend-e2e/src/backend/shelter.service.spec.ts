@@ -78,19 +78,19 @@ const postSubReqZeroFailure = {
 };
 
 const postGreaterRatingFailure = {
-    name: postReqSuccess.name,
-    address: postReqSuccess.address,
-    latitude: postReqSuccess.latitude,
-    longitude: postReqSuccess.longitude,
-    description: postReqSuccess.description,
-    rating: 6,
-    phone_number: postReqSuccess.phone_number,
-    email_address: postReqSuccess.email_address,
-    website: postReqSuccess.website,
-    hours: postReqSuccess.hours,
-    picture: postReqSuccess.picture,
-    availability: postReqSuccess.availability,
-  };
+  name: postReqSuccess.name,
+  address: postReqSuccess.address,
+  latitude: postReqSuccess.latitude,
+  longitude: postReqSuccess.longitude,
+  description: postReqSuccess.description,
+  rating: 6,
+  phone_number: postReqSuccess.phone_number,
+  email_address: postReqSuccess.email_address,
+  website: postReqSuccess.website,
+  hours: postReqSuccess.hours,
+  picture: postReqSuccess.picture,
+  availability: postReqSuccess.availability,
+};
 
 const postFiveRatingSuccess = {
   name: postReqSuccess.name,
@@ -108,395 +108,488 @@ const postFiveRatingSuccess = {
 };
 
 const postReqNegOpeningHour = {
-    name: postReqSuccess.name,
-    address: postReqSuccess.address,
-    latitude: postReqSuccess.latitude,
-    longitude: postReqSuccess.longitude,
-    description: postReqSuccess.description,
-    rating: postReqSuccess.rating,
-    phone_number: postReqSuccess.phone_number,
-    email_address: postReqSuccess.email_address,
-    website: postReqSuccess.website,
-    hours: {
-        Monday: { opening_time: '-7:00', closing_time: '23:00' },
-        Tuesday: postReqSuccess.hours.Tuesday,
-        Wednesday: postReqSuccess.hours.Wednesday,
-        Thursday: postReqSuccess.hours.Tuesday,
-        Friday: postReqSuccess.hours.Friday,
-        Saturday: postReqSuccess.hours.Saturday,
-        Sunday: postReqSuccess.hours.Sunday,
-      },
-    picture: postReqSuccess.picture,
-    availability: postReqSuccess.availability,
-}
+  name: postReqSuccess.name,
+  address: postReqSuccess.address,
+  latitude: postReqSuccess.latitude,
+  longitude: postReqSuccess.longitude,
+  description: postReqSuccess.description,
+  rating: postReqSuccess.rating,
+  phone_number: postReqSuccess.phone_number,
+  email_address: postReqSuccess.email_address,
+  website: postReqSuccess.website,
+  hours: {
+    Monday: { opening_time: '-7:00', closing_time: '23:00' },
+    Tuesday: postReqSuccess.hours.Tuesday,
+    Wednesday: postReqSuccess.hours.Wednesday,
+    Thursday: postReqSuccess.hours.Thursday,
+    Friday: postReqSuccess.hours.Friday,
+    Saturday: postReqSuccess.hours.Saturday,
+    Sunday: postReqSuccess.hours.Sunday,
+  },
+  picture: postReqSuccess.picture,
+  availability: postReqSuccess.availability,
+};
 
 const postReqGreaterOpeningHour = {
-    name: postReqSuccess.name,
-    address: postReqSuccess.address,
-    latitude: postReqSuccess.latitude,
-    longitude: postReqSuccess.longitude,
-    description: postReqSuccess.description,
-    rating: postReqSuccess.rating,
-    phone_number: postReqSuccess.phone_number,
-    email_address: postReqSuccess.email_address,
-    website: postReqSuccess.website,
-    hours: {
-        Monday: { opening_time: '30:00', closing_time: '50:00' },
-        Tuesday: postReqSuccess.hours.Tuesday,
-        Wednesday: postReqSuccess.hours.Wednesday,
-        Thursday: postReqSuccess.hours.Tuesday,
-        Friday: postReqSuccess.hours.Friday,
-        Saturday: postReqSuccess.hours.Saturday,
-        Sunday: postReqSuccess.hours.Sunday,
-      },
-    picture: postReqSuccess.picture,
-    availability: postReqSuccess.availability,
-}
+  name: postReqSuccess.name,
+  address: postReqSuccess.address,
+  latitude: postReqSuccess.latitude,
+  longitude: postReqSuccess.longitude,
+  description: postReqSuccess.description,
+  rating: postReqSuccess.rating,
+  phone_number: postReqSuccess.phone_number,
+  email_address: postReqSuccess.email_address,
+  website: postReqSuccess.website,
+  hours: {
+    Monday: { opening_time: '30:00', closing_time: '50:00' },
+    Tuesday: postReqSuccess.hours.Tuesday,
+    Wednesday: postReqSuccess.hours.Wednesday,
+    Thursday: postReqSuccess.hours.Thursday,
+    Friday: postReqSuccess.hours.Friday,
+    Saturday: postReqSuccess.hours.Saturday,
+    Sunday: postReqSuccess.hours.Sunday,
+  },
+  picture: postReqSuccess.picture,
+  availability: postReqSuccess.availability,
+};
 
 const postReqNegClosingHour = {
-    name: postReqSuccess.name,
-    address: postReqSuccess.address,
-    latitude: postReqSuccess.latitude,
-    longitude: postReqSuccess.longitude,
-    description: postReqSuccess.description,
-    rating: postReqSuccess.rating,
-    phone_number: postReqSuccess.phone_number,
-    email_address: postReqSuccess.email_address,
-    website: postReqSuccess.website,
-    hours: {
-        Monday: { opening_time: '07:00', closing_time: '-7:00' },
-        Tuesday: postReqSuccess.hours.Tuesday,
-        Wednesday: postReqSuccess.hours.Wednesday,
-        Thursday: postReqSuccess.hours.Tuesday,
-        Friday: postReqSuccess.hours.Friday,
-        Saturday: postReqSuccess.hours.Saturday,
-        Sunday: postReqSuccess.hours.Sunday,
-      },
-    picture: postReqSuccess.picture,
-    availability: postReqSuccess.availability,
-}
+  name: postReqSuccess.name,
+  address: postReqSuccess.address,
+  latitude: postReqSuccess.latitude,
+  longitude: postReqSuccess.longitude,
+  description: postReqSuccess.description,
+  rating: postReqSuccess.rating,
+  phone_number: postReqSuccess.phone_number,
+  email_address: postReqSuccess.email_address,
+  website: postReqSuccess.website,
+  hours: {
+    Monday: { opening_time: '07:00', closing_time: '-7:00' },
+    Tuesday: postReqSuccess.hours.Tuesday,
+    Wednesday: postReqSuccess.hours.Wednesday,
+    Thursday: postReqSuccess.hours.Thursday,
+    Friday: postReqSuccess.hours.Friday,
+    Saturday: postReqSuccess.hours.Saturday,
+    Sunday: postReqSuccess.hours.Sunday,
+  },
+  picture: postReqSuccess.picture,
+  availability: postReqSuccess.availability,
+};
 
 const postReqGreaterClosingHour = {
-    name: postReqSuccess.name,
-    address: postReqSuccess.address,
-    latitude: postReqSuccess.latitude,
-    longitude: postReqSuccess.longitude,
-    description: postReqSuccess.description,
-    rating: postReqSuccess.rating,
-    phone_number: postReqSuccess.phone_number,
-    email_address: postReqSuccess.email_address,
-    website: postReqSuccess.website,
-    hours: {
-        Monday: { opening_time: '07:00', closing_time: '30:00' },
-        Tuesday: postReqSuccess.hours.Tuesday,
-        Wednesday: postReqSuccess.hours.Wednesday,
-        Thursday: postReqSuccess.hours.Tuesday,
-        Friday: postReqSuccess.hours.Friday,
-        Saturday: postReqSuccess.hours.Saturday,
-        Sunday: postReqSuccess.hours.Sunday,
-      },
-    picture: postReqSuccess.picture,
-    availability: postReqSuccess.availability,
-}
+  name: postReqSuccess.name,
+  address: postReqSuccess.address,
+  latitude: postReqSuccess.latitude,
+  longitude: postReqSuccess.longitude,
+  description: postReqSuccess.description,
+  rating: postReqSuccess.rating,
+  phone_number: postReqSuccess.phone_number,
+  email_address: postReqSuccess.email_address,
+  website: postReqSuccess.website,
+  hours: {
+    Monday: { opening_time: '07:00', closing_time: '30:00' },
+    Tuesday: postReqSuccess.hours.Tuesday,
+    Wednesday: postReqSuccess.hours.Wednesday,
+    Thursday: postReqSuccess.hours.Thursday,
+    Friday: postReqSuccess.hours.Friday,
+    Saturday: postReqSuccess.hours.Saturday,
+    Sunday: postReqSuccess.hours.Sunday,
+  },
+  picture: postReqSuccess.picture,
+  availability: postReqSuccess.availability,
+};
 
 const postReqNegOpeningMinute = {
-    name: postReqSuccess.name,
-    address: postReqSuccess.address,
-    latitude: postReqSuccess.latitude,
-    longitude: postReqSuccess.longitude,
-    description: postReqSuccess.description,
-    rating: postReqSuccess.rating,
-    phone_number: postReqSuccess.phone_number,
-    email_address: postReqSuccess.email_address,
-    website: postReqSuccess.website,
-    hours: {
-        Monday: { opening_time: '07:-1', closing_time: '23:00' },
-        Tuesday: postReqSuccess.hours.Tuesday,
-        Wednesday: postReqSuccess.hours.Wednesday,
-        Thursday: postReqSuccess.hours.Tuesday,
-        Friday: postReqSuccess.hours.Friday,
-        Saturday: postReqSuccess.hours.Saturday,
-        Sunday: postReqSuccess.hours.Sunday,
-      },
-    picture: postReqSuccess.picture,
-    availability: postReqSuccess.availability,
-}
+  name: postReqSuccess.name,
+  address: postReqSuccess.address,
+  latitude: postReqSuccess.latitude,
+  longitude: postReqSuccess.longitude,
+  description: postReqSuccess.description,
+  rating: postReqSuccess.rating,
+  phone_number: postReqSuccess.phone_number,
+  email_address: postReqSuccess.email_address,
+  website: postReqSuccess.website,
+  hours: {
+    Monday: { opening_time: '07:-1', closing_time: '23:00' },
+    Tuesday: postReqSuccess.hours.Tuesday,
+    Wednesday: postReqSuccess.hours.Wednesday,
+    Thursday: postReqSuccess.hours.Thursday,
+    Friday: postReqSuccess.hours.Friday,
+    Saturday: postReqSuccess.hours.Saturday,
+    Sunday: postReqSuccess.hours.Sunday,
+  },
+  picture: postReqSuccess.picture,
+  availability: postReqSuccess.availability,
+};
 
 const postReqGreaterOpeningMinute = {
-    name: postReqSuccess.name,
-    address: postReqSuccess.address,
-    latitude: postReqSuccess.latitude,
-    longitude: postReqSuccess.longitude,
-    description: postReqSuccess.description,
-    rating: postReqSuccess.rating,
-    phone_number: postReqSuccess.phone_number,
-    email_address: postReqSuccess.email_address,
-    website: postReqSuccess.website,
-    hours: {
-        Monday: { opening_time: '07:60', closing_time: '23:00' },
-        Tuesday: postReqSuccess.hours.Tuesday,
-        Wednesday: postReqSuccess.hours.Wednesday,
-        Thursday: postReqSuccess.hours.Tuesday,
-        Friday: postReqSuccess.hours.Friday,
-        Saturday: postReqSuccess.hours.Saturday,
-        Sunday: postReqSuccess.hours.Sunday,
-      },
-    picture: postReqSuccess.picture,
-    availability: postReqSuccess.availability,
-}
+  name: postReqSuccess.name,
+  address: postReqSuccess.address,
+  latitude: postReqSuccess.latitude,
+  longitude: postReqSuccess.longitude,
+  description: postReqSuccess.description,
+  rating: postReqSuccess.rating,
+  phone_number: postReqSuccess.phone_number,
+  email_address: postReqSuccess.email_address,
+  website: postReqSuccess.website,
+  hours: {
+    Monday: { opening_time: '07:60', closing_time: '23:00' },
+    Tuesday: postReqSuccess.hours.Tuesday,
+    Wednesday: postReqSuccess.hours.Wednesday,
+    Thursday: postReqSuccess.hours.Thursday,
+    Friday: postReqSuccess.hours.Friday,
+    Saturday: postReqSuccess.hours.Saturday,
+    Sunday: postReqSuccess.hours.Sunday,
+  },
+  picture: postReqSuccess.picture,
+  availability: postReqSuccess.availability,
+};
 
 const postReqNegClosingMinute = {
-    name: postReqSuccess.name,
-    address: postReqSuccess.address,
-    latitude: postReqSuccess.latitude,
-    longitude: postReqSuccess.longitude,
-    description: postReqSuccess.description,
-    rating: postReqSuccess.rating,
-    phone_number: postReqSuccess.phone_number,
-    email_address: postReqSuccess.email_address,
-    website: postReqSuccess.website,
-    hours: {
-        Monday: { opening_time: '07:00', closing_time: '23:-1' },
-        Tuesday: postReqSuccess.hours.Tuesday,
-        Wednesday: postReqSuccess.hours.Wednesday,
-        Thursday: postReqSuccess.hours.Tuesday,
-        Friday: postReqSuccess.hours.Friday,
-        Saturday: postReqSuccess.hours.Saturday,
-        Sunday: postReqSuccess.hours.Sunday,
-      },
-    picture: postReqSuccess.picture,
-    availability: postReqSuccess.availability,
-}
+  name: postReqSuccess.name,
+  address: postReqSuccess.address,
+  latitude: postReqSuccess.latitude,
+  longitude: postReqSuccess.longitude,
+  description: postReqSuccess.description,
+  rating: postReqSuccess.rating,
+  phone_number: postReqSuccess.phone_number,
+  email_address: postReqSuccess.email_address,
+  website: postReqSuccess.website,
+  hours: {
+    Monday: { opening_time: '07:00', closing_time: '23:-1' },
+    Tuesday: postReqSuccess.hours.Tuesday,
+    Wednesday: postReqSuccess.hours.Wednesday,
+    Thursday: postReqSuccess.hours.Thursday,
+    Friday: postReqSuccess.hours.Friday,
+    Saturday: postReqSuccess.hours.Saturday,
+    Sunday: postReqSuccess.hours.Sunday,
+  },
+  picture: postReqSuccess.picture,
+  availability: postReqSuccess.availability,
+};
 
 const postReqGreaterClosingMinute = {
-    name: postReqSuccess.name,
-    address: postReqSuccess.address,
-    latitude: postReqSuccess.latitude,
-    longitude: postReqSuccess.longitude,
-    description: postReqSuccess.description,
-    rating: postReqSuccess.rating,
-    phone_number: postReqSuccess.phone_number,
-    email_address: postReqSuccess.email_address,
-    website: postReqSuccess.website,
-    hours: {
-        Monday: { opening_time: '07:00', closing_time: '23:60' },
-        Tuesday: postReqSuccess.hours.Tuesday,
-        Wednesday: postReqSuccess.hours.Wednesday,
-        Thursday: postReqSuccess.hours.Tuesday,
-        Friday: postReqSuccess.hours.Friday,
-        Saturday: postReqSuccess.hours.Saturday,
-        Sunday: postReqSuccess.hours.Sunday,
-      },
-    picture: postReqSuccess.picture,
-    availability: postReqSuccess.availability,
-}
+  name: postReqSuccess.name,
+  address: postReqSuccess.address,
+  latitude: postReqSuccess.latitude,
+  longitude: postReqSuccess.longitude,
+  description: postReqSuccess.description,
+  rating: postReqSuccess.rating,
+  phone_number: postReqSuccess.phone_number,
+  email_address: postReqSuccess.email_address,
+  website: postReqSuccess.website,
+  hours: {
+    Monday: { opening_time: '07:00', closing_time: '23:60' },
+    Tuesday: postReqSuccess.hours.Tuesday,
+    Wednesday: postReqSuccess.hours.Wednesday,
+    Thursday: postReqSuccess.hours.Thursday,
+    Friday: postReqSuccess.hours.Friday,
+    Saturday: postReqSuccess.hours.Saturday,
+    Sunday: postReqSuccess.hours.Sunday,
+  },
+  picture: postReqSuccess.picture,
+  availability: postReqSuccess.availability,
+};
 
 const postReqOpeningGreaterThanClosing = {
-    name: postReqSuccess.name,
-    address: postReqSuccess.address,
-    latitude: postReqSuccess.latitude,
-    longitude: postReqSuccess.longitude,
-    description: postReqSuccess.description,
-    rating: postReqSuccess.rating,
-    phone_number: postReqSuccess.phone_number,
-    email_address: postReqSuccess.email_address,
-    website: postReqSuccess.website,
-    hours: {
-        Monday: { opening_time: '23:00', closing_time: '07:00' },
-        Tuesday: postReqSuccess.hours.Tuesday,
-        Wednesday: postReqSuccess.hours.Wednesday,
-        Thursday: postReqSuccess.hours.Tuesday,
-        Friday: postReqSuccess.hours.Friday,
-        Saturday: postReqSuccess.hours.Saturday,
-        Sunday: postReqSuccess.hours.Sunday,
-      },
-    picture: postReqSuccess.picture,
-    availability: postReqSuccess.availability,
-}
+  name: postReqSuccess.name,
+  address: postReqSuccess.address,
+  latitude: postReqSuccess.latitude,
+  longitude: postReqSuccess.longitude,
+  description: postReqSuccess.description,
+  rating: postReqSuccess.rating,
+  phone_number: postReqSuccess.phone_number,
+  email_address: postReqSuccess.email_address,
+  website: postReqSuccess.website,
+  hours: {
+    Monday: { opening_time: '23:00', closing_time: '07:00' },
+    Tuesday: postReqSuccess.hours.Tuesday,
+    Wednesday: postReqSuccess.hours.Wednesday,
+    Thursday: postReqSuccess.hours.Thursday,
+    Friday: postReqSuccess.hours.Friday,
+    Saturday: postReqSuccess.hours.Saturday,
+    Sunday: postReqSuccess.hours.Sunday,
+  },
+  picture: postReqSuccess.picture,
+  availability: postReqSuccess.availability,
+};
 
 const postReqOpeningMisplacedColon = {
-    name: postReqSuccess.name,
-    address: postReqSuccess.address,
-    latitude: postReqSuccess.latitude,
-    longitude: postReqSuccess.longitude,
-    description: postReqSuccess.description,
-    rating: postReqSuccess.rating,
-    phone_number: postReqSuccess.phone_number,
-    email_address: postReqSuccess.email_address,
-    website: postReqSuccess.website,
-    hours: {
-        Monday: { opening_time: '7:001', closing_time: '23:00' },
-        Tuesday: postReqSuccess.hours.Tuesday,
-        Wednesday: postReqSuccess.hours.Wednesday,
-        Thursday: postReqSuccess.hours.Tuesday,
-        Friday: postReqSuccess.hours.Friday,
-        Saturday: postReqSuccess.hours.Saturday,
-        Sunday: postReqSuccess.hours.Sunday,
-      },
-    picture: postReqSuccess.picture,
-    availability: postReqSuccess.availability,
-}
+  name: postReqSuccess.name,
+  address: postReqSuccess.address,
+  latitude: postReqSuccess.latitude,
+  longitude: postReqSuccess.longitude,
+  description: postReqSuccess.description,
+  rating: postReqSuccess.rating,
+  phone_number: postReqSuccess.phone_number,
+  email_address: postReqSuccess.email_address,
+  website: postReqSuccess.website,
+  hours: {
+    Monday: { opening_time: '7:001', closing_time: '23:00' },
+    Tuesday: postReqSuccess.hours.Tuesday,
+    Wednesday: postReqSuccess.hours.Wednesday,
+    Thursday: postReqSuccess.hours.Thursday,
+    Friday: postReqSuccess.hours.Friday,
+    Saturday: postReqSuccess.hours.Saturday,
+    Sunday: postReqSuccess.hours.Sunday,
+  },
+  picture: postReqSuccess.picture,
+  availability: postReqSuccess.availability,
+};
 
 const postReqClosingMisplacedColon = {
-    name: postReqSuccess.name,
-    address: postReqSuccess.address,
-    latitude: postReqSuccess.latitude,
-    longitude: postReqSuccess.longitude,
-    description: postReqSuccess.description,
-    rating: postReqSuccess.rating,
-    phone_number: postReqSuccess.phone_number,
-    email_address: postReqSuccess.email_address,
-    website: postReqSuccess.website,
-    hours: {
-        Monday: { opening_time: '05:00', closing_time: '7:001' },
-        Tuesday: postReqSuccess.hours.Tuesday,
-        Wednesday: postReqSuccess.hours.Wednesday,
-        Thursday: postReqSuccess.hours.Tuesday,
-        Friday: postReqSuccess.hours.Friday,
-        Saturday: postReqSuccess.hours.Saturday,
-        Sunday: postReqSuccess.hours.Sunday,
-      },
-    picture: postReqSuccess.picture,
-    availability: postReqSuccess.availability,
-}
+  name: postReqSuccess.name,
+  address: postReqSuccess.address,
+  latitude: postReqSuccess.latitude,
+  longitude: postReqSuccess.longitude,
+  description: postReqSuccess.description,
+  rating: postReqSuccess.rating,
+  phone_number: postReqSuccess.phone_number,
+  email_address: postReqSuccess.email_address,
+  website: postReqSuccess.website,
+  hours: {
+    Monday: { opening_time: '05:00', closing_time: '7:001' },
+    Tuesday: postReqSuccess.hours.Tuesday,
+    Wednesday: postReqSuccess.hours.Wednesday,
+    Thursday: postReqSuccess.hours.Thursday,
+    Friday: postReqSuccess.hours.Friday,
+    Saturday: postReqSuccess.hours.Saturday,
+    Sunday: postReqSuccess.hours.Sunday,
+  },
+  picture: postReqSuccess.picture,
+  availability: postReqSuccess.availability,
+};
 
 const postReqOpeningNoColon = {
-    name: postReqSuccess.name,
-    address: postReqSuccess.address,
-    latitude: postReqSuccess.latitude,
-    longitude: postReqSuccess.longitude,
-    description: postReqSuccess.description,
-    rating: postReqSuccess.rating,
-    phone_number: postReqSuccess.phone_number,
-    email_address: postReqSuccess.email_address,
-    website: postReqSuccess.website,
-    hours: {
-        Monday: { opening_time: '0007', closing_time: '23:00' },
-        Tuesday: postReqSuccess.hours.Tuesday,
-        Wednesday: postReqSuccess.hours.Wednesday,
-        Thursday: postReqSuccess.hours.Tuesday,
-        Friday: postReqSuccess.hours.Friday,
-        Saturday: postReqSuccess.hours.Saturday,
-        Sunday: postReqSuccess.hours.Sunday,
-      },
-    picture: postReqSuccess.picture,
-    availability: postReqSuccess.availability,
-}
+  name: postReqSuccess.name,
+  address: postReqSuccess.address,
+  latitude: postReqSuccess.latitude,
+  longitude: postReqSuccess.longitude,
+  description: postReqSuccess.description,
+  rating: postReqSuccess.rating,
+  phone_number: postReqSuccess.phone_number,
+  email_address: postReqSuccess.email_address,
+  website: postReqSuccess.website,
+  hours: {
+    Monday: { opening_time: '0007', closing_time: '23:00' },
+    Tuesday: postReqSuccess.hours.Tuesday,
+    Wednesday: postReqSuccess.hours.Wednesday,
+    Thursday: postReqSuccess.hours.Thursday,
+    Friday: postReqSuccess.hours.Friday,
+    Saturday: postReqSuccess.hours.Saturday,
+    Sunday: postReqSuccess.hours.Sunday,
+  },
+  picture: postReqSuccess.picture,
+  availability: postReqSuccess.availability,
+};
 
 const postReqClosingNoColon = {
-    name: postReqSuccess.name,
-    address: postReqSuccess.address,
-    latitude: postReqSuccess.latitude,
-    longitude: postReqSuccess.longitude,
-    description: postReqSuccess.description,
-    rating: postReqSuccess.rating,
-    phone_number: postReqSuccess.phone_number,
-    email_address: postReqSuccess.email_address,
-    website: postReqSuccess.website,
-    hours: {
-        Monday: { opening_time: '07:00', closing_time: '0023' },
-        Tuesday: postReqSuccess.hours.Tuesday,
-        Wednesday: postReqSuccess.hours.Wednesday,
-        Thursday: postReqSuccess.hours.Tuesday,
-        Friday: postReqSuccess.hours.Friday,
-        Saturday: postReqSuccess.hours.Saturday,
-        Sunday: postReqSuccess.hours.Sunday,
-      },
-    picture: postReqSuccess.picture,
-    availability: postReqSuccess.availability,
-}
+  name: postReqSuccess.name,
+  address: postReqSuccess.address,
+  latitude: postReqSuccess.latitude,
+  longitude: postReqSuccess.longitude,
+  description: postReqSuccess.description,
+  rating: postReqSuccess.rating,
+  phone_number: postReqSuccess.phone_number,
+  email_address: postReqSuccess.email_address,
+  website: postReqSuccess.website,
+  hours: {
+    Monday: { opening_time: '07:00', closing_time: '0023' },
+    Tuesday: postReqSuccess.hours.Tuesday,
+    Wednesday: postReqSuccess.hours.Wednesday,
+    Thursday: postReqSuccess.hours.Thursday,
+    Friday: postReqSuccess.hours.Friday,
+    Saturday: postReqSuccess.hours.Saturday,
+    Sunday: postReqSuccess.hours.Sunday,
+  },
+  picture: postReqSuccess.picture,
+  availability: postReqSuccess.availability,
+};
 
 const postReqOpeningExtraChars = {
-    name: postReqSuccess.name,
-    address: postReqSuccess.address,
-    latitude: postReqSuccess.latitude,
-    longitude: postReqSuccess.longitude,
-    description: postReqSuccess.description,
-    rating: postReqSuccess.rating,
-    phone_number: postReqSuccess.phone_number,
-    email_address: postReqSuccess.email_address,
-    website: postReqSuccess.website,
-    hours: {
-        Monday: { opening_time: '07:001', closing_time: '23:00' },
-        Tuesday: postReqSuccess.hours.Tuesday,
-        Wednesday: postReqSuccess.hours.Wednesday,
-        Thursday: postReqSuccess.hours.Tuesday,
-        Friday: postReqSuccess.hours.Friday,
-        Saturday: postReqSuccess.hours.Saturday,
-        Sunday: postReqSuccess.hours.Sunday,
-      },
-    picture: postReqSuccess.picture,
-    availability: postReqSuccess.availability,
-}
+  name: postReqSuccess.name,
+  address: postReqSuccess.address,
+  latitude: postReqSuccess.latitude,
+  longitude: postReqSuccess.longitude,
+  description: postReqSuccess.description,
+  rating: postReqSuccess.rating,
+  phone_number: postReqSuccess.phone_number,
+  email_address: postReqSuccess.email_address,
+  website: postReqSuccess.website,
+  hours: {
+    Monday: { opening_time: '07:001', closing_time: '23:00' },
+    Tuesday: postReqSuccess.hours.Tuesday,
+    Wednesday: postReqSuccess.hours.Wednesday,
+    Thursday: postReqSuccess.hours.Thursday,
+    Friday: postReqSuccess.hours.Friday,
+    Saturday: postReqSuccess.hours.Saturday,
+    Sunday: postReqSuccess.hours.Sunday,
+  },
+  picture: postReqSuccess.picture,
+  availability: postReqSuccess.availability,
+};
 
 const postReqClosingExtraChars = {
-    name: postReqSuccess.name,
-    address: postReqSuccess.address,
-    latitude: postReqSuccess.latitude,
-    longitude: postReqSuccess.longitude,
-    description: postReqSuccess.description,
-    rating: postReqSuccess.rating,
-    phone_number: postReqSuccess.phone_number,
-    email_address: postReqSuccess.email_address,
-    website: postReqSuccess.website,
-    hours: {
-        Monday: { opening_time: '07:00', closing_time: '23:001' },
-        Tuesday: postReqSuccess.hours.Tuesday,
-        Wednesday: postReqSuccess.hours.Wednesday,
-        Thursday: postReqSuccess.hours.Tuesday,
-        Friday: postReqSuccess.hours.Friday,
-        Saturday: postReqSuccess.hours.Saturday,
-        Sunday: postReqSuccess.hours.Sunday,
-      },
-    picture: postReqSuccess.picture,
-    availability: postReqSuccess.availability,
-}
+  name: postReqSuccess.name,
+  address: postReqSuccess.address,
+  latitude: postReqSuccess.latitude,
+  longitude: postReqSuccess.longitude,
+  description: postReqSuccess.description,
+  rating: postReqSuccess.rating,
+  phone_number: postReqSuccess.phone_number,
+  email_address: postReqSuccess.email_address,
+  website: postReqSuccess.website,
+  hours: {
+    Monday: { opening_time: '07:00', closing_time: '23:001' },
+    Tuesday: postReqSuccess.hours.Tuesday,
+    Wednesday: postReqSuccess.hours.Wednesday,
+    Thursday: postReqSuccess.hours.Thursday,
+    Friday: postReqSuccess.hours.Friday,
+    Saturday: postReqSuccess.hours.Saturday,
+    Sunday: postReqSuccess.hours.Sunday,
+  },
+  picture: postReqSuccess.picture,
+  availability: postReqSuccess.availability,
+};
 
 const postReqOpeningTooShort = {
-    name: postReqSuccess.name,
-    address: postReqSuccess.address,
-    latitude: postReqSuccess.latitude,
-    longitude: postReqSuccess.longitude,
-    description: postReqSuccess.description,
-    rating: postReqSuccess.rating,
-    phone_number: postReqSuccess.phone_number,
-    email_address: postReqSuccess.email_address,
-    website: postReqSuccess.website,
-    hours: {
-        Monday: { opening_time: '07:0', closing_time: '23:00' },
-        Tuesday: postReqSuccess.hours.Tuesday,
-        Wednesday: postReqSuccess.hours.Wednesday,
-        Thursday: postReqSuccess.hours.Tuesday,
-        Friday: postReqSuccess.hours.Friday,
-        Saturday: postReqSuccess.hours.Saturday,
-        Sunday: postReqSuccess.hours.Sunday,
-      },
-    picture: postReqSuccess.picture,
-    availability: postReqSuccess.availability,
-}
+  name: postReqSuccess.name,
+  address: postReqSuccess.address,
+  latitude: postReqSuccess.latitude,
+  longitude: postReqSuccess.longitude,
+  description: postReqSuccess.description,
+  rating: postReqSuccess.rating,
+  phone_number: postReqSuccess.phone_number,
+  email_address: postReqSuccess.email_address,
+  website: postReqSuccess.website,
+  hours: {
+    Monday: { opening_time: '07:0', closing_time: '23:00' },
+    Tuesday: postReqSuccess.hours.Tuesday,
+    Wednesday: postReqSuccess.hours.Wednesday,
+    Thursday: postReqSuccess.hours.Thursday,
+    Friday: postReqSuccess.hours.Friday,
+    Saturday: postReqSuccess.hours.Saturday,
+    Sunday: postReqSuccess.hours.Sunday,
+  },
+  picture: postReqSuccess.picture,
+  availability: postReqSuccess.availability,
+};
 
 const postReqClosingTooShort = {
-    name: postReqSuccess.name,
-    address: postReqSuccess.address,
-    latitude: postReqSuccess.latitude,
-    longitude: postReqSuccess.longitude,
-    description: postReqSuccess.description,
-    rating: postReqSuccess.rating,
-    phone_number: postReqSuccess.phone_number,
-    email_address: postReqSuccess.email_address,
-    website: postReqSuccess.website,
-    hours: {
-        Monday: { opening_time: '07:00', closing_time: '23:0' },
-        Tuesday: postReqSuccess.hours.Tuesday,
-        Wednesday: postReqSuccess.hours.Wednesday,
-        Thursday: postReqSuccess.hours.Tuesday,
-        Friday: postReqSuccess.hours.Friday,
-        Saturday: postReqSuccess.hours.Saturday,
-        Sunday: postReqSuccess.hours.Sunday,
-      },
-    picture: postReqSuccess.picture,
-    availability: postReqSuccess.availability,
-}
+  name: postReqSuccess.name,
+  address: postReqSuccess.address,
+  latitude: postReqSuccess.latitude,
+  longitude: postReqSuccess.longitude,
+  description: postReqSuccess.description,
+  rating: postReqSuccess.rating,
+  phone_number: postReqSuccess.phone_number,
+  email_address: postReqSuccess.email_address,
+  website: postReqSuccess.website,
+  hours: {
+    Monday: { opening_time: '07:00', closing_time: '23:0' },
+    Tuesday: postReqSuccess.hours.Tuesday,
+    Wednesday: postReqSuccess.hours.Wednesday,
+    Thursday: postReqSuccess.hours.Thursday,
+    Friday: postReqSuccess.hours.Friday,
+    Saturday: postReqSuccess.hours.Saturday,
+    Sunday: postReqSuccess.hours.Sunday,
+  },
+  picture: postReqSuccess.picture,
+  availability: postReqSuccess.availability,
+};
+
+const postReqOpeningMinute59 = {
+  name: postReqSuccess.name,
+  address: postReqSuccess.address,
+  latitude: postReqSuccess.latitude,
+  longitude: postReqSuccess.longitude,
+  description: postReqSuccess.description,
+  rating: postReqSuccess.rating,
+  phone_number: postReqSuccess.phone_number,
+  email_address: postReqSuccess.email_address,
+  website: postReqSuccess.website,
+  hours: {
+    Monday: { opening_time: '07:59', closing_time: '23:00' },
+    Tuesday: postReqSuccess.hours.Tuesday,
+    Wednesday: postReqSuccess.hours.Wednesday,
+    Thursday: postReqSuccess.hours.Thursday,
+    Friday: postReqSuccess.hours.Friday,
+    Saturday: postReqSuccess.hours.Saturday,
+    Sunday: postReqSuccess.hours.Sunday,
+  },
+  picture: postReqSuccess.picture,
+  availability: postReqSuccess.availability,
+  tags: postReqSuccess.tags,
+};
+
+const postReqClosingMinute59 = {
+  name: postReqSuccess.name,
+  address: postReqSuccess.address,
+  latitude: postReqSuccess.latitude,
+  longitude: postReqSuccess.longitude,
+  description: postReqSuccess.description,
+  rating: postReqSuccess.rating,
+  phone_number: postReqSuccess.phone_number,
+  email_address: postReqSuccess.email_address,
+  website: postReqSuccess.website,
+  hours: {
+    Monday: { opening_time: '07:00', closing_time: '23:59' },
+    Tuesday: postReqSuccess.hours.Tuesday,
+    Wednesday: postReqSuccess.hours.Wednesday,
+    Thursday: postReqSuccess.hours.Thursday,
+    Friday: postReqSuccess.hours.Friday,
+    Saturday: postReqSuccess.hours.Saturday,
+    Sunday: postReqSuccess.hours.Sunday,
+  },
+  picture: postReqSuccess.picture,
+  availability: postReqSuccess.availability,
+};
+
+const postReqOpeningHour23 = {
+  name: postReqSuccess.name,
+  address: postReqSuccess.address,
+  latitude: postReqSuccess.latitude,
+  longitude: postReqSuccess.longitude,
+  description: postReqSuccess.description,
+  rating: postReqSuccess.rating,
+  phone_number: postReqSuccess.phone_number,
+  email_address: postReqSuccess.email_address,
+  website: postReqSuccess.website,
+  hours: {
+    Monday: { opening_time: '23:00', closing_time: '23:50' },
+    Tuesday: postReqSuccess.hours.Tuesday,
+    Wednesday: postReqSuccess.hours.Wednesday,
+    Thursday: postReqSuccess.hours.Thursday,
+    Friday: postReqSuccess.hours.Friday,
+    Saturday: postReqSuccess.hours.Saturday,
+    Sunday: postReqSuccess.hours.Sunday,
+  },
+  picture: postReqSuccess.picture,
+  availability: postReqSuccess.availability,
+};
+
+const postReqClosingHour23 = {
+  name: postReqSuccess.name,
+  address: postReqSuccess.address,
+  latitude: postReqSuccess.latitude,
+  longitude: postReqSuccess.longitude,
+  description: postReqSuccess.description,
+  rating: postReqSuccess.rating,
+  phone_number: postReqSuccess.phone_number,
+  email_address: postReqSuccess.email_address,
+  website: postReqSuccess.website,
+  hours: {
+    Monday: { opening_time: '12:00', closing_time: '23:50' },
+    Tuesday: postReqSuccess.hours.Tuesday,
+    Wednesday: postReqSuccess.hours.Wednesday,
+    Thursday: postReqSuccess.hours.Thursday,
+    Friday: postReqSuccess.hours.Friday,
+    Saturday: postReqSuccess.hours.Saturday,
+    Sunday: postReqSuccess.hours.Sunday,
+  },
+  picture: postReqSuccess.picture,
+  availability: postReqSuccess.availability,
+};
 
 const postDynamoDBReqBodySuccess = {
   shelterId: { S: '2' },
@@ -627,6 +720,118 @@ const postDynamoDBReqBodySuccess = {
     },
   },
 };
+
+const postReqOpeningMinute59DynamoDB = {
+  shelterId: postDynamoDBReqBodySuccess.shelterId,
+  name: postDynamoDBReqBodySuccess.name,
+  address: postDynamoDBReqBodySuccess.address,
+  latitude: postDynamoDBReqBodySuccess.latitude,
+  longitude: postDynamoDBReqBodySuccess.longitude,
+  description: postDynamoDBReqBodySuccess.description,
+  rating: postDynamoDBReqBodySuccess.rating,
+  phone_number: postDynamoDBReqBodySuccess.phone_number,
+  email_address: postDynamoDBReqBodySuccess.email_address,
+  website: postDynamoDBReqBodySuccess.website,
+  hours: {
+    M: {
+      Monday: {
+        M: { opening_time: { S: '07:59' }, closing_time: { S: '23:00' } },
+      },
+      Tuesday: postDynamoDBReqBodySuccess.hours.M.Tuesday,
+      Wednesday: postDynamoDBReqBodySuccess.hours.M.Wednesday,
+      Thursday: postDynamoDBReqBodySuccess.hours.M.Thursday,
+      Friday: postDynamoDBReqBodySuccess.hours.M.Friday,
+      Saturday: postDynamoDBReqBodySuccess.hours.M.Saturday,
+      Sunday: postDynamoDBReqBodySuccess.hours.M.Sunday,
+    },
+  },
+  picture: postDynamoDBReqBodySuccess.picture,
+  tags: postDynamoDBReqBodySuccess.tags,
+};
+
+const postReqClosingMinute59DynamoDB = {
+    shelterId: postDynamoDBReqBodySuccess.shelterId,
+    name: postDynamoDBReqBodySuccess.name,
+    address: postDynamoDBReqBodySuccess.address,
+    latitude: postDynamoDBReqBodySuccess.latitude,
+    longitude: postDynamoDBReqBodySuccess.longitude,
+    description: postDynamoDBReqBodySuccess.description,
+    rating: postDynamoDBReqBodySuccess.rating,
+    phone_number: postDynamoDBReqBodySuccess.phone_number,
+    email_address: postDynamoDBReqBodySuccess.email_address,
+    website: postDynamoDBReqBodySuccess.website,
+    hours: {
+      M: {
+        Monday: {
+          M: { opening_time: { S: '07:00' }, closing_time: { S: '23:59' } },
+        },
+        Tuesday: postDynamoDBReqBodySuccess.hours.M.Tuesday,
+        Wednesday: postDynamoDBReqBodySuccess.hours.M.Wednesday,
+        Thursday: postDynamoDBReqBodySuccess.hours.M.Thursday,
+        Friday: postDynamoDBReqBodySuccess.hours.M.Friday,
+        Saturday: postDynamoDBReqBodySuccess.hours.M.Saturday,
+        Sunday: postDynamoDBReqBodySuccess.hours.M.Sunday,
+      },
+    },
+    picture: postDynamoDBReqBodySuccess.picture,
+    tags: postDynamoDBReqBodySuccess.tags,
+};
+
+const postReqOpeningHour23DynamoDB = {
+    shelterId: postDynamoDBReqBodySuccess.shelterId,
+    name: postDynamoDBReqBodySuccess.name,
+    address: postDynamoDBReqBodySuccess.address,
+    latitude: postDynamoDBReqBodySuccess.latitude,
+    longitude: postDynamoDBReqBodySuccess.longitude,
+    description: postDynamoDBReqBodySuccess.description,
+    rating: postDynamoDBReqBodySuccess.rating,
+    phone_number: postDynamoDBReqBodySuccess.phone_number,
+    email_address: postDynamoDBReqBodySuccess.email_address,
+    website: postDynamoDBReqBodySuccess.website,
+    hours: {
+      M: {
+        Monday: {
+          M: { opening_time: { S: '23:00' }, closing_time: { S: '23:50' } },
+        },
+        Tuesday: postDynamoDBReqBodySuccess.hours.M.Tuesday,
+        Wednesday: postDynamoDBReqBodySuccess.hours.M.Wednesday,
+        Thursday: postDynamoDBReqBodySuccess.hours.M.Thursday,
+        Friday: postDynamoDBReqBodySuccess.hours.M.Friday,
+        Saturday: postDynamoDBReqBodySuccess.hours.M.Saturday,
+        Sunday: postDynamoDBReqBodySuccess.hours.M.Sunday,
+      },
+    },
+    picture: postDynamoDBReqBodySuccess.picture,
+    tags: postDynamoDBReqBodySuccess.tags,
+};
+
+const postReqClosingHour23DynamoDB = {
+    shelterId: postDynamoDBReqBodySuccess.shelterId,
+    name: postDynamoDBReqBodySuccess.name,
+    address: postDynamoDBReqBodySuccess.address,
+    latitude: postDynamoDBReqBodySuccess.latitude,
+    longitude: postDynamoDBReqBodySuccess.longitude,
+    description: postDynamoDBReqBodySuccess.description,
+    rating: postDynamoDBReqBodySuccess.rating,
+    phone_number: postDynamoDBReqBodySuccess.phone_number,
+    email_address: postDynamoDBReqBodySuccess.email_address,
+    website: postDynamoDBReqBodySuccess.website,
+    hours: {
+      M: {
+        Monday: {
+          M: { opening_time: { S: '12:00' }, closing_time: { S: '23:50' } },
+        },
+        Tuesday: postDynamoDBReqBodySuccess.hours.M.Tuesday,
+        Wednesday: postDynamoDBReqBodySuccess.hours.M.Wednesday,
+        Thursday: postDynamoDBReqBodySuccess.hours.M.Thursday,
+        Friday: postDynamoDBReqBodySuccess.hours.M.Friday,
+        Saturday: postDynamoDBReqBodySuccess.hours.M.Saturday,
+        Sunday: postDynamoDBReqBodySuccess.hours.M.Sunday,
+      },
+    },
+    picture: postDynamoDBReqBodySuccess.picture,
+    tags: postDynamoDBReqBodySuccess.tags,
+}
 
 const postDynamoDBReqBodyFiveRatingSuccess = {
   shelterId: postDynamoDBReqBodySuccess.shelterId,
@@ -937,22 +1142,22 @@ const getSheltersReqSuccess = [
     rating: 4.5,
     website: 'https://www.bagly.org/',
     tags: {
-        clothing_resources: false,
-        educational_programs: false,
-        family_friendly: false,
-        food_resources: false,
-        hygiene_facilities: false,
-        job_assistance: false,
-        legal_aid: false,
-        lgbtq_focused: false,
-        medical_resources: false,
-        mental_health_resources: false,
-        overnight_stay: false,
-        pet_friendly: false,
-        substance_abuse_support: false,
-        transportation_resources: false,
-        wheelchair_accessible: false,
-      },  
+      clothing_resources: false,
+      educational_programs: false,
+      family_friendly: false,
+      food_resources: false,
+      hygiene_facilities: false,
+      job_assistance: false,
+      legal_aid: false,
+      lgbtq_focused: false,
+      medical_resources: false,
+      mental_health_resources: false,
+      overnight_stay: false,
+      pet_friendly: false,
+      substance_abuse_support: false,
+      transportation_resources: false,
+      wheelchair_accessible: false,
+    },
   },
 ];
 
@@ -1493,147 +1698,215 @@ describe('ShelterService', () => {
     });
 
     it('should reject an input with a rating of more than 5', async () => {
-        mockDynamoDB.getHighestId.mockResolvedValue(2);
+      mockDynamoDB.getHighestId.mockResolvedValue(2);
 
-        await expect(service.postShelter(postGreaterRatingFailure)).rejects.toThrow(
-          'Rating must be a number in the range (0, 5]'
-        );
+      await expect(
+        service.postShelter(postGreaterRatingFailure)
+      ).rejects.toThrow('Rating must be a number in the range (0, 5]');
     });
 
     it('should reject an input with a negative opening hour', async () => {
-        mockDynamoDB.getHighestId.mockResolvedValue(5);
+      mockDynamoDB.getHighestId.mockResolvedValue(5);
 
-        await expect(service.postShelter(postReqNegOpeningHour)).rejects.toThrow(
-          'Hours must be between 00:00 and 24:00 on Monday'
-        );
+      await expect(service.postShelter(postReqNegOpeningHour)).rejects.toThrow(
+        'Hours must be between 00:00 and 24:00 on Monday'
+      );
     });
 
     it('should reject an input with opening hour greater than 23', async () => {
-        mockDynamoDB.getHighestId.mockResolvedValue(5);
+      mockDynamoDB.getHighestId.mockResolvedValue(5);
 
-        await expect(service.postShelter(postReqGreaterOpeningHour)).rejects.toThrow(
-          'Hours must be between 00:00 and 24:00 on Monday'
-        );
+      await expect(
+        service.postShelter(postReqGreaterOpeningHour)
+      ).rejects.toThrow('Hours must be between 00:00 and 24:00 on Monday');
     });
 
     it('should reject an input with a negative closing hour', async () => {
-        mockDynamoDB.getHighestId.mockResolvedValue(5);
+      mockDynamoDB.getHighestId.mockResolvedValue(5);
 
-        await expect(service.postShelter(postReqNegClosingHour)).rejects.toThrow(
-          'Opening time must be before closing time on Monday'
-        );
+      await expect(service.postShelter(postReqNegClosingHour)).rejects.toThrow(
+        'Opening time must be before closing time on Monday'
+      );
     });
 
     it('should reject an input with a closing hour greater than 23', async () => {
-        mockDynamoDB.getHighestId.mockResolvedValue(5);
+      mockDynamoDB.getHighestId.mockResolvedValue(5);
 
-        await expect(service.postShelter(postReqGreaterClosingHour)).rejects.toThrow(
-          'Hours must be between 00:00 and 24:00 on Monday'
-        );
+      await expect(
+        service.postShelter(postReqGreaterClosingHour)
+      ).rejects.toThrow('Hours must be between 00:00 and 24:00 on Monday');
     });
 
     it('should reject an input with a negative opening minute', async () => {
-        mockDynamoDB.getHighestId.mockResolvedValue(5);
+      mockDynamoDB.getHighestId.mockResolvedValue(5);
 
-        await expect(service.postShelter(postReqNegOpeningMinute)).rejects.toThrow(
-          'Hours must be between 00:00 and 24:00 on Monday'
-        );
+      await expect(
+        service.postShelter(postReqNegOpeningMinute)
+      ).rejects.toThrow('Hours must be between 00:00 and 24:00 on Monday');
     });
 
     it('should reject an input with an opening minute greater than 59', async () => {
-        mockDynamoDB.getHighestId.mockResolvedValue(5);
+      mockDynamoDB.getHighestId.mockResolvedValue(5);
 
-        await expect(service.postShelter(postReqGreaterOpeningMinute)).rejects.toThrow(
-          'Hours must be between 00:00 and 24:00 on Monday'
-        );
+      await expect(
+        service.postShelter(postReqGreaterOpeningMinute)
+      ).rejects.toThrow('Hours must be between 00:00 and 24:00 on Monday');
     });
 
     it('should reject an input with a negative closing minute', async () => {
-        mockDynamoDB.getHighestId.mockResolvedValue(5);
+      mockDynamoDB.getHighestId.mockResolvedValue(5);
 
-        await expect(service.postShelter(postReqNegClosingMinute)).rejects.toThrow(
-          'Hours must be between 00:00 and 24:00 on Monday'
-        );
+      await expect(
+        service.postShelter(postReqNegClosingMinute)
+      ).rejects.toThrow('Hours must be between 00:00 and 24:00 on Monday');
     });
 
     it('should reject an input with a closing minute greater than 59', async () => {
-        mockDynamoDB.getHighestId.mockResolvedValue(5);
+      mockDynamoDB.getHighestId.mockResolvedValue(5);
 
-        await expect(service.postShelter(postReqGreaterClosingMinute)).rejects.toThrow(
-          'Hours must be between 00:00 and 24:00 on Monday'
-        );
+      await expect(
+        service.postShelter(postReqGreaterClosingMinute)
+      ).rejects.toThrow('Hours must be between 00:00 and 24:00 on Monday');
     });
 
     it('should reject an input with valid individual times if the closing time is greater than opening time', async () => {
-        mockDynamoDB.getHighestId.mockResolvedValue(5);
+      mockDynamoDB.getHighestId.mockResolvedValue(5);
 
-        await expect(service.postShelter(postReqOpeningGreaterThanClosing)).rejects.toThrow(
-          'Opening time must be before closing time on Monday'
-        );
+      await expect(
+        service.postShelter(postReqOpeningGreaterThanClosing)
+      ).rejects.toThrow('Opening time must be before closing time on Monday');
     });
 
     it('should reject a time with misplaced colon on opening time', async () => {
-        mockDynamoDB.getHighestId.mockResolvedValue(5);
+      mockDynamoDB.getHighestId.mockResolvedValue(5);
 
-        await expect(service.postShelter(postReqOpeningMisplacedColon)).rejects.toThrow(
-          'Hours must follow HH:MM format on Monday'
-        );
+      await expect(
+        service.postShelter(postReqOpeningMisplacedColon)
+      ).rejects.toThrow('Hours must follow HH:MM format on Monday');
     });
 
     it('should reject a time with misplaced colon on closing time', async () => {
-        mockDynamoDB.getHighestId.mockResolvedValue(5);
+      mockDynamoDB.getHighestId.mockResolvedValue(5);
 
-        await expect(service.postShelter(postReqClosingMisplacedColon)).rejects.toThrow(
-          'Hours must follow HH:MM format on Monday'
-        );
+      await expect(
+        service.postShelter(postReqClosingMisplacedColon)
+      ).rejects.toThrow('Hours must follow HH:MM format on Monday');
     });
 
     it('should reject a time with no colon on opening time', async () => {
-        mockDynamoDB.getHighestId.mockResolvedValue(5);
+      mockDynamoDB.getHighestId.mockResolvedValue(5);
 
-        await expect(service.postShelter(postReqOpeningNoColon)).rejects.toThrow(
-            'Hours must follow HH:MM format on Monday'
-        );
+      await expect(service.postShelter(postReqOpeningNoColon)).rejects.toThrow(
+        'Hours must follow HH:MM format on Monday'
+      );
     });
 
     it('should reject at time with no colon on closing time', async () => {
-        mockDynamoDB.getHighestId.mockResolvedValue(5);
+      mockDynamoDB.getHighestId.mockResolvedValue(5);
 
-        await expect(service.postShelter(postReqClosingNoColon)).rejects.toThrow(
-            'Hours must follow HH:MM format on Monday'
-        );
+      await expect(service.postShelter(postReqClosingNoColon)).rejects.toThrow(
+        'Hours must follow HH:MM format on Monday'
+      );
     });
 
     it('should reject an opening time that has extra characters (more than 5)', async () => {
-        mockDynamoDB.getHighestId.mockResolvedValue(5);
+      mockDynamoDB.getHighestId.mockResolvedValue(5);
 
-        await expect(service.postShelter(postReqOpeningExtraChars)).rejects.toThrow(
-            'Hours must follow HH:MM format on Monday'
-        );
+      await expect(
+        service.postShelter(postReqOpeningExtraChars)
+      ).rejects.toThrow('Hours must follow HH:MM format on Monday');
     });
-    
-    it('should reject a closing time that has extra characters (more than 5)', async () => {
-        mockDynamoDB.getHighestId.mockResolvedValue(5);
 
-        await expect(service.postShelter(postReqClosingExtraChars)).rejects.toThrow(
-            'Hours must follow HH:MM format on Monday'
-        );
+    it('should reject a closing time that has extra characters (more than 5)', async () => {
+      mockDynamoDB.getHighestId.mockResolvedValue(5);
+
+      await expect(
+        service.postShelter(postReqClosingExtraChars)
+      ).rejects.toThrow('Hours must follow HH:MM format on Monday');
     });
 
     it('should reject an opening time that is too short (less than 5)', async () => {
-        mockDynamoDB.getHighestId.mockResolvedValue(5);
+      mockDynamoDB.getHighestId.mockResolvedValue(5);
 
-        await expect(service.postShelter(postReqOpeningTooShort)).rejects.toThrow(
-            'Hours must follow HH:MM format on Monday'
-        );
+      await expect(service.postShelter(postReqOpeningTooShort)).rejects.toThrow(
+        'Hours must follow HH:MM format on Monday'
+      );
     });
 
     it('should reject a closing time that is too short (less than 5)', async () => {
-        mockDynamoDB.getHighestId.mockResolvedValue(5);
+      mockDynamoDB.getHighestId.mockResolvedValue(5);
 
-        await expect(service.postShelter(postReqClosingTooShort)).rejects.toThrow(
-            'Hours must follow HH:MM format on Monday'
-        );
+      await expect(service.postShelter(postReqClosingTooShort)).rejects.toThrow(
+        'Hours must follow HH:MM format on Monday'
+      );
+    });
+
+    it('should accept an opening minute of 59', async () => {
+      mockDynamoDB.getHighestId.mockResolvedValue(1);
+      mockDynamoDB.postItem.mockResolvedValue(postReturnSuccess);
+
+      const response = await service.postShelter(postReqOpeningMinute59);
+
+      expect(mockDynamoDB.getHighestId).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        'shelterId'
+      );
+      expect(mockDynamoDB.postItem).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        postReqOpeningMinute59DynamoDB
+      );
+      expect(response).toStrictEqual(postReturnSuccess);
+    });
+
+    it('should accept a closing minute of 59', async () => {
+        mockDynamoDB.getHighestId.mockResolvedValue(1);
+      mockDynamoDB.postItem.mockResolvedValue(postReturnSuccess);
+
+      const response = await service.postShelter(postReqClosingMinute59);
+
+      expect(mockDynamoDB.getHighestId).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        'shelterId'
+      );
+      expect(mockDynamoDB.postItem).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        postReqClosingMinute59DynamoDB
+      );
+      expect(response).toStrictEqual(postReturnSuccess);
+    });
+
+    it('should accept an opening hour of 23', async () => {
+      mockDynamoDB.getHighestId.mockResolvedValue(1);
+      mockDynamoDB.postItem.mockResolvedValue(postReturnSuccess);
+
+      const response = await service.postShelter(postReqOpeningHour23);
+
+      expect(mockDynamoDB.getHighestId).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        'shelterId'
+      );
+      expect(mockDynamoDB.postItem).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        postReqOpeningHour23DynamoDB
+      );
+      expect(response).toStrictEqual(postReturnSuccess);
+    });
+
+    it('should accept a closing hour of 23', async () => {
+        mockDynamoDB.getHighestId.mockResolvedValue(1);
+      mockDynamoDB.postItem.mockResolvedValue(postReturnSuccess);
+
+      const response = await service.postShelter(postReqClosingHour23);
+
+      expect(mockDynamoDB.getHighestId).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        'shelterId'
+      );
+      expect(mockDynamoDB.postItem).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        postReqClosingHour23DynamoDB
+      );
+      expect(response).toStrictEqual(postReturnSuccess);
     });
   });
 
