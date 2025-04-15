@@ -17,7 +17,7 @@
       "executor": "@nx/expo:export",
       "options": {
         "platform": "web",
-        "outputDir": "dist/frontend"
+        "outputDir": "dist/frontend/web-build"
       }
     }
   }
