@@ -181,7 +181,7 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
                     {shelter.rating.toFixed(1)}
                   </Text>
                   <Image
-                    source={require('frontend/assets/teenyicons_star-solid.png')}
+                    source={require('../../assets/teenyicons_star-solid.png')}
                     style={styles.starIcon}
                   />
                   <Text style={styles.quickInfoText}>

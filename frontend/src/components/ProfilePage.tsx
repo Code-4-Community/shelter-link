@@ -8,7 +8,7 @@ import {
   darkMainColor,
   gradientColor1,
   gradientColor2,
-} from 'frontend/constants';
+} from '../../constants';
 import { useCallback, useEffect, useState } from 'react';
 import {
   SafeAreaView,

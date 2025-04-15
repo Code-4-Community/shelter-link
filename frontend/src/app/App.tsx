@@ -28,7 +28,7 @@ import {
   header2FontSize,
   header3FontSize,
   headerFont,
-} from 'frontend/constants';
+} from '../../constants';
 import { ProfilePage } from '../components/ProfilePage';
 import { ProfileSettingsPage } from '../components/ProfileSettingsPage';
 import { BookmarkProvider } from '../hooks/BookmarkContext';

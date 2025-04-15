@@ -1,4 +1,4 @@
-import { mainColor } from 'frontend/constants';
+import { mainColor } from '../../constants';
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Svg, Path, Circle } from 'react-native-svg';

@@ -24,7 +24,7 @@ import {
   header1FontSize,
   header2FontSize,
   header3FontSize,
-} from 'frontend/constants';
+} from '../../constants';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '../hooks/AuthContext';
 import { useNavigation } from '@react-navigation/native';

@@ -27,7 +27,7 @@ import {
   bodyFont,
   darkMainColor,
   buttonBackgroundColor,
-} from 'frontend/constants';
+} from '../../constants';
 import { useFonts } from 'expo-font';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../app/App';
