@@ -14,38 +14,33 @@ import { Dimensions, StyleSheet, View, ScrollView } from 'react-native';
 import { Modal, Text, Pressable } from 'react-native';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native';
+import { useFilters } from '../hooks/FilterContext';
 
 const DropdownComponent = () => {
   useFonts({
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
 
-  const [selected, setSelected] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-
-  const [ratingFilter, setRatingFilter] = useState('Any');
-  const [hoursFilter, setHoursFilter] = useState('Any');
-  const [distanceFilter, setDistanceFilter] = useState('Any');
-  const [additionalFilters, setAdditionalFilters] = useState<string[]>([]);
-
-  const toggleAdditionalFilter = (filter: string) => {
-    if (additionalFilters.includes(filter)) {
-      setAdditionalFilters(additionalFilters.filter((item) => item !== filter));
-    } else {
-      setAdditionalFilters([...additionalFilters, filter]);
-    }
-  };
+  
+  const { 
+    filters, 
+    setRatingFilter, 
+    setHoursFilter, 
+    setDistanceFilter, 
+    toggleAdditionalFilter 
+  } = useFilters();
 
   const isFilterSelected = (category: string, value: string) => {
     switch (category) {
       case 'rating':
-        return ratingFilter === value;
+        return filters.rating === value;
       case 'hours':
-        return hoursFilter === value;
+        return filters.hours === value;
       case 'distance':
-        return distanceFilter === value;
+        return filters.distance === value;
       case 'additional':
-        return additionalFilters.includes(value);
+        return filters.additionalFilters.includes(value);
       default:
         return false;
     }
@@ -70,6 +65,8 @@ const DropdownComponent = () => {
                   style={styles.closeButton}
                 >
                   <Text style={styles.closeButtonText}>✕</Text>
+                  
+
                 </TouchableOpacity>
                 <Text style={styles.modalTitle}>Filters</Text>
               </View>
@@ -199,29 +196,12 @@ const DropdownComponent = () => {
                       </Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity
-                      style={[
-                        styles.filterButton,
-                        isFilterSelected('hours', 'Custom') &&
-                          styles.selectedFilterButton,
-                      ]}
-                      onPress={() => setHoursFilter('Custom')}
-                    >
-                      <Text
-                        style={[
-                          styles.filterButtonText,
-                          isFilterSelected('hours', 'Custom') &&
-                            styles.selectedFilterButtonText,
-                        ]}
-                      >
-                        Custom
-                      </Text>
-                    </TouchableOpacity>
+                    
                   </View>
                 </View>
 
                 {/* Distance Section */}
-                <View style={styles.filterSection}>
+                {/* <View style={styles.filterSection}>
                   <Text style={styles.filterHeader}>Distance</Text>
                   <View style={styles.filterOptions}>
                     <TouchableOpacity
@@ -300,7 +280,7 @@ const DropdownComponent = () => {
                       </Text>
                     </TouchableOpacity>
                   </View>
-                </View>
+                </View> */}
 
                 {/* More Filters Section */}
                 <View style={styles.filterSection}>
@@ -336,6 +316,60 @@ const DropdownComponent = () => {
                         styles.additionalFilterButton,
                         isFilterSelected(
                           'additional',
+                          'Pet Friendly'
+                        ) && styles.selectedFilterButton,
+                      ]}
+                      onPress={() =>
+                        toggleAdditionalFilter(
+                          'Pet Friendly'
+                        )
+                      }
+                    >
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected(
+                            'additional',
+                            'Pet Friendly'
+                          ) && styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        Pet Friendly
+                      </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={[
+                        styles.additionalFilterButton,
+                        isFilterSelected(
+                          'additional',
+                          'Family Friendly'
+                        ) && styles.selectedFilterButton,
+                      ]}
+                      onPress={() =>
+                        toggleAdditionalFilter(
+                          'Family Friendly'
+                        )
+                      }
+                    >
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected(
+                            'additional',
+                            'Family Friendly'
+                          ) && styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        Family Friendly
+                      </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={[
+                        styles.additionalFilterButton,
+                        isFilterSelected(
+                          'additional',
                           'Legal aids available'
                         ) && styles.selectedFilterButton,
                       ]}
@@ -359,28 +393,41 @@ const DropdownComponent = () => {
                     <TouchableOpacity
                       style={[
                         styles.additionalFilterButton,
-                        isFilterSelected(
-                          'additional',
-                          'Free or financial support available'
-                        ) && styles.selectedFilterButton,
+                        isFilterSelected('additional', 'LGBTQ+ focus') &&
+                          styles.selectedFilterButton,
                       ]}
-                      onPress={() =>
-                        toggleAdditionalFilter(
-                          'Free or financial support available'
-                        )
-                      }
+                      onPress={() => toggleAdditionalFilter('LGBTQ+ focus')}
                     >
                       <Text
                         style={[
                           styles.filterButtonText,
-                          isFilterSelected(
-                            'additional',
-                            'Free or financial support available'
-                          ) && styles.selectedFilterButtonText,
+                          isFilterSelected('additional', 'LGBTQ+ focus') &&
+                            styles.selectedFilterButtonText,
                         ]}
                       >
-                        Free or financial support available
+                        LGBTQ+ focus
                       </Text>
+                
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={[
+                        styles.additionalFilterButton,
+                        isFilterSelected('additional', 'Mental Health Resources') &&
+                          styles.selectedFilterButton,
+                      ]}
+                      onPress={() => toggleAdditionalFilter('Mental Health Resources')}
+                    >
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected('additional', 'Mental Health Resources') &&
+                            styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        Mental Health Resources
+                      </Text>
+                
                     </TouchableOpacity>
 
                     <TouchableOpacity
@@ -405,50 +452,175 @@ const DropdownComponent = () => {
                     <TouchableOpacity
                       style={[
                         styles.additionalFilterButton,
-                        isFilterSelected(
-                          'additional',
-                          'Specializes in Trans support'
-                        ) && styles.selectedFilterButton,
+                        isFilterSelected('additional', 'Food Resources') &&
+                          styles.selectedFilterButton,
                       ]}
-                      onPress={() =>
-                        toggleAdditionalFilter('Specializes in Trans support')
-                      }
+                      onPress={() => toggleAdditionalFilter('Food Resources')}
                     >
                       <Text
                         style={[
                           styles.filterButtonText,
-                          isFilterSelected(
-                            'additional',
-                            'Specializes in Trans support'
-                          ) && styles.selectedFilterButtonText,
+                          isFilterSelected('additional', 'Food Resources') &&
+                            styles.selectedFilterButtonText,
                         ]}
                       >
-                        Specializes in Trans support
+                        Food Resources
                       </Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
                       style={[
                         styles.additionalFilterButton,
-                        isFilterSelected('additional', 'LGBTQ+ focus') &&
+                        isFilterSelected('additional', 'Clothing Resources') &&
                           styles.selectedFilterButton,
                       ]}
-                      onPress={() => toggleAdditionalFilter('LGBTQ+ focus')}
+                      onPress={() => toggleAdditionalFilter('Clothing Resources')}
                     >
                       <Text
                         style={[
                           styles.filterButtonText,
-                          isFilterSelected('additional', 'LGBTQ+ focus') &&
+                          isFilterSelected('additional', 'Clothing Resources') &&
                             styles.selectedFilterButtonText,
                         ]}
                       >
-                        LGBTQ+ focus
+                        Clothing Resources
                       </Text>
                     </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={[
+                        styles.additionalFilterButton,
+                        isFilterSelected('additional', 'Transportation Resources') &&
+                          styles.selectedFilterButton,
+                      ]}
+                      onPress={() => toggleAdditionalFilter('Transportation Resources')}
+                    >
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected('additional', 'Transportation Resources') &&
+                            styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        Transportation Resources
+                      </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={[
+                        styles.additionalFilterButton,
+                        isFilterSelected('additional', 'Hygiene Facilities') &&
+                          styles.selectedFilterButton,
+                      ]}
+                      onPress={() => toggleAdditionalFilter('Hygiene Facilities')}
+                    >
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected('additional', 'Hygiene Facilities') &&
+                            styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        Hygiene Facilities
+                      </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={[
+                        styles.additionalFilterButton,
+                        isFilterSelected('additional', 'Job Assistance') &&
+                          styles.selectedFilterButton,
+                      ]}
+                      onPress={() => toggleAdditionalFilter('Job Assistance')}
+                    >
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected('additional', 'Job Assistance') &&
+                            styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        Job Assistance
+                      </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={[
+                        styles.additionalFilterButton,
+                        isFilterSelected('additional', 'Medical Resources') &&
+                          styles.selectedFilterButton,
+                      ]}
+                      onPress={() => toggleAdditionalFilter('Medical Resources')}
+                    >
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected('additional', 'Medical Resources') &&
+                            styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        Medical Resources
+                      </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={[
+                        styles.additionalFilterButton,
+                        isFilterSelected('additional', 'Educational Programs') &&
+                          styles.selectedFilterButton,
+                      ]}
+                      onPress={() => toggleAdditionalFilter('Educational Programs')}
+                    >
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected('additional', 'Educational Programs') &&
+                            styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        Educational Programs
+                      </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={[
+                        styles.additionalFilterButton,
+                        isFilterSelected('additional', 'Substance Abuse Support') &&
+                          styles.selectedFilterButton,
+                      ]}
+                      onPress={() => toggleAdditionalFilter('Substance Abuse Support')}
+                    >
+                      <Text
+                        style={[
+                          styles.filterButtonText,
+                          isFilterSelected('additional', 'Substance Abuse Support') &&
+                            styles.selectedFilterButtonText,
+                        ]}
+                      >
+                        Substance Abuse Support
+                      </Text>
+                    </TouchableOpacity>
+
+                    
+
+                    
+                    
+                    
                   </View>
+                  <TouchableOpacity
+                        onPress={() => setModalVisible(false)}
+                        style={styles.applyButton}
+                        >
+                        <Text style={styles.applyButtonText}>Apply</Text>
+                  
+
+                      </TouchableOpacity>
                 </View>
+                
               </ScrollView>
+              
             </View>
+            
           </View>
         </Modal>
 
@@ -495,7 +667,7 @@ const styles = StyleSheet.create({
     maxWidth: 320,
     height: '80%',
     maxHeight: 600,
-    backgroundColor: 'white',
+    backgroundColor: '#E2D8F0',
     borderRadius: 12,
     shadowOffset: {
       width: 0,
@@ -519,7 +691,7 @@ const styles = StyleSheet.create({
   },
   buttonOpen: {
     backgroundColor: 'white',
-    width: 130,
+    width: 72,
     height: 35,
     borderRadius: 4,
     borderWidth: 1,
@@ -626,6 +798,25 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     borderWidth: 1,
   },
+  applyButton: {
+    width: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#6225B0',
+    borderRadius: 10,
+    borderWidth: 1,
+    left: 220,
+    top: 1,
+    bottom: 20,
+    height: 30,
+  },
+  applyButtonText: {
+    fontFamily: bodyFont,
+    fontSize: dynamicTabletSizes['dropdownFontSize'],
+    color: 'white'
+  },
+  
+  
 });
 
 export default DropdownComponent;

@@ -161,3 +161,14 @@ export type NewBookmarkInput = {
   bookmarkId: string;
 }
 
+
+
+/**
+ * Enum representing different categories to filter by
+ */
+export enum FilterCategory {
+  RATING = 'rating',
+  HOURS = 'hours',
+  DISTANCE = 'distance',
+  ADDITIONAL = 'additional',
+}

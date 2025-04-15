@@ -19,6 +19,7 @@ import { getShelters } from '../services/mapService';
 import { useFonts } from 'expo-font';
 import { useFocusEffect } from '@react-navigation/native';
 import { useAuth } from '../hooks/AuthContext';
+import { useFilters } from '../hooks/FilterContext';
 
 export const CompleteMap = () => {
   const sheetRef = useRef<BottomSheet>(null);
@@ -27,6 +28,7 @@ export const CompleteMap = () => {
   const [shelters, setShelters] = useState<Shelter[]>([]);
   const [query, setQuery] = useState('');
   const { user } = useAuth();
+  const { applyFilters } = useFilters();
 
   useFonts({
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
@@ -38,7 +40,6 @@ export const CompleteMap = () => {
       setShelters([...data]);
     } catch (error) {
       console.error('Error fetching shelters:', error);
-    } finally {
     }
   };
 
@@ -70,7 +71,8 @@ export const CompleteMap = () => {
     []
   );
 
-  const filteredShelters = useMemo(() => {
+  // First apply text search filter
+  const searchFilteredShelters = useMemo(() => {
     if (query === '') {
       return shelters;
     } else {
@@ -91,6 +93,11 @@ export const CompleteMap = () => {
       return searchResults.map((result) => result.item);
     }
   }, [query, shelters]);
+
+  // Then apply the filter context filters
+  const filteredShelters = useMemo(() => {
+    return applyFilters(searchFilteredShelters);
+  }, [searchFilteredShelters, applyFilters]);
 
   return (
     <SafeAreaView style={styles.safeArea}>

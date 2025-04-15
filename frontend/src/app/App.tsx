@@ -16,6 +16,7 @@ import LandingPage from '../components/LandingPage';
 
 import { Shelter, Event, User } from '../types';
 import { AuthProvider, useAuth } from '../hooks/AuthContext';
+import { FilterProvider } from '../hooks/FilterContext';
 
 import SignUpScreen from '../components/SignUpScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -28,7 +29,7 @@ import {
   header2FontSize,
   header3FontSize,
   headerFont,
-} from 'frontend/constants';
+} from '../../constants';
 import { ProfilePage } from '../components/ProfilePage';
 import { ProfileSettingsPage } from '../components/ProfileSettingsPage';
 import { BookmarkProvider } from '../hooks/BookmarkContext';
@@ -351,13 +352,15 @@ export const App = () => {
     // Provide the AuthContext to the entire app
     <AuthProvider>
       <BookmarkProvider>
-        <NavigationContainer>
-          <View style={{ flex: 1 }}>
-            <GestureHandlerRootView style={{ flex: 1 }}>
-              <MainNavigator />
-            </GestureHandlerRootView>
-          </View>
-        </NavigationContainer>
+        <FilterProvider>
+          <NavigationContainer>
+            <View style={{ flex: 1 }}>
+              <GestureHandlerRootView style={{ flex: 1 }}>
+                <MainNavigator />
+              </GestureHandlerRootView>
+            </View>
+          </NavigationContainer>
+        </FilterProvider>
       </BookmarkProvider>
     </AuthProvider>
   );
