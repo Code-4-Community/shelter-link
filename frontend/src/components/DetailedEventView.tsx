@@ -371,6 +371,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     paddingBottom: 15,
+    paddingTop: 10,
   },
   imagesContainer: {
     paddingTop: screenHeight / 28,

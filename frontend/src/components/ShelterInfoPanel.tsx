@@ -120,9 +120,9 @@ const ShelterInfoPanel = ({ shelter, style, user }: ShelterInfoPanelProps) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.learnMoreButton}
-          onPress={(e) => {
-            e.stopPropagation(); // don't trigger the detailed view
-          }}
+          onPress={() =>
+            navigation.navigate('Detailed Shelter View', { shelter })
+          }
         >
           <Text style={styles.buttonText}>Learn More</Text>
         </TouchableOpacity>

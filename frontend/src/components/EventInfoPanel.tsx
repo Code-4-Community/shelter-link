@@ -107,18 +107,20 @@ const EventInfoPanel = ({ event, style, user }: EventInfoPanelProps) => {
         {event.location ? formatAddress(event.location) : 'Online Event'}
       </Text>
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity
-          style={styles.directionsButton}
-          onPress={(e) => {
-            e.stopPropagation(); // don't trigger the detailed view
-          }}
-        >
-          <Text style={styles.buttonText}>Directions</Text>
-        </TouchableOpacity>
+        {event.location && (
+          <TouchableOpacity
+            style={styles.directionsButton}
+            onPress={(e) => {
+              e.stopPropagation(); // don't trigger the detailed view
+            }}
+          >
+            <Text style={styles.buttonText}>Directions</Text>
+          </TouchableOpacity>
+        )}
         <TouchableOpacity
           style={styles.learnMoreButton}
           onPress={(e) => {
-            e.stopPropagation(); // don't trigger the detailed view
+            navigation.navigate('Detailed Event View', { event });
           }}
         >
           <Text style={styles.buttonText}>Learn More</Text>
@@ -214,6 +216,7 @@ const styles = StyleSheet.create({
     borderWidth: buttonBorderWidth,
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: 12,
   },
   learnMoreButton: {
     width: panelWidth * 0.301,
@@ -222,7 +225,6 @@ const styles = StyleSheet.create({
     borderWidth: buttonBorderWidth,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 12,
   },
   buttonText: {
     fontSize: buttonFontSize,
