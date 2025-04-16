@@ -93,7 +93,6 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontFamily: headerFont,
-    fontWeight: 'bold',
     fontSize: 40,
     paddingTop: 5,
     color: darkMainColor,
