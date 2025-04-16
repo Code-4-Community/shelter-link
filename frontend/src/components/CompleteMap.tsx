@@ -126,6 +126,10 @@ export const CompleteMap = () => {
             extraData={[query, shelters, filteredShelters]}
             keyExtractor={(item) => item.shelterId}
             renderItem={renderItem}
+            contentContainerStyle={{
+              paddingBottom: 50,
+              paddingTop: 10,
+            }}
           />
         ) : (
           <View style={styles.noResultsContainer}>

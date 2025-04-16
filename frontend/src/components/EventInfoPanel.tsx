@@ -7,14 +7,17 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import { bodyFont, darkMainColor, header1FontSize, header2FontSize } from '../../constants';
+import {
+  bodyFont,
+  darkMainColor,
+  header1FontSize,
+  header2FontSize,
+} from '../../constants';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Event, User } from '../types';
 import { useFonts } from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
-import { deleteBookmark, postBookmark } from '../services/eventService';
-import { useAuth } from '../hooks/AuthContext';
 import { formatDateTime } from '../utils';
 import { useBookmarks } from '../hooks/BookmarkContext';
 
@@ -38,17 +41,14 @@ const EventInfoPanel = ({ event, style, user }: EventInfoPanelProps) => {
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
 
-  const {
-    eventBookmarks,
-    toggleEventBookmark,
-  } = useBookmarks();
+  const { eventBookmarks, toggleEventBookmark } = useBookmarks();
 
   const [bookmarked, setBookmarked] = useState(
     eventBookmarks.includes(event.eventId)
   );
 
   const navigation = useNavigation<NavigationProp>();
-  
+
   const formatAddress = (address: any) => {
     return `${address.street}, ${address.city}, ${address.state}`;
   };
@@ -71,9 +71,9 @@ const EventInfoPanel = ({ event, style, user }: EventInfoPanelProps) => {
       style={[styles.panel, style]}
       onPress={() => navigation.navigate('Detailed Event View', { event })}
     >
-      <View style={styles.topRowItems}>        
-        <View style={styles.images}>
-          {event.picture ? (
+      <View style={styles.topRowItems}>
+        <View style={[styles.images, !event.picture && { paddingVertical: 0 }]}>
+          {event.picture &&
             event.picture
               .slice(0, 3)
               .map((url, index) => (
@@ -82,10 +82,7 @@ const EventInfoPanel = ({ event, style, user }: EventInfoPanelProps) => {
                   source={{ uri: url }}
                   style={styles.eventImage}
                 />
-              ))
-          ) : (
-            <View style={styles.eventImage} />
-          )}
+              ))}
         </View>
         {user && (
           <TouchableOpacity onPress={() => handleBookmark(event.eventId)}>
@@ -100,7 +97,9 @@ const EventInfoPanel = ({ event, style, user }: EventInfoPanelProps) => {
       </View>
       <Text style={styles.eventName}>{event.event_name}</Text>
       {event.date ? (
-        <Text style={styles.shelterNameExpansion}>{formatDateTime(event.date)}</Text>
+        <Text style={styles.shelterNameExpansion}>
+          {formatDateTime(event.date)}
+        </Text>
       ) : (
         <View style={{ height: 10 }} />
       )}
@@ -161,7 +160,7 @@ if (screenWidth > 500) {
 const styles = StyleSheet.create({
   panel: {
     width: panelWidth,
-    height: panelHeight,
+    paddingBottom: 10,
     borderRadius: 10,
     borderWidth: panelBorderWidth,
     borderColor: darkMainColor,
@@ -253,4 +252,3 @@ export default EventInfoPanel;
 function toggleShelterBookmark(shelterId: string) {
   throw new Error('Function not implemented.');
 }
-

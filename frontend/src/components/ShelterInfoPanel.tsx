@@ -40,11 +40,8 @@ const ShelterInfoPanel = ({ shelter, style, user }: ShelterInfoPanelProps) => {
   useFonts({
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Regular.otf'),
   });
-  
-  const {
-    shelterBookmarks,
-    toggleShelterBookmark,
-  } = useBookmarks();
+
+  const { shelterBookmarks, toggleShelterBookmark } = useBookmarks();
 
   const [bookmarked, setBookmarked] = useState(
     shelterBookmarks.includes(shelter.shelterId)
@@ -173,7 +170,7 @@ const styles = StyleSheet.create({
   },
   panel: {
     width: panelWidth,
-    height: panelHeight,
+    paddingBottom: 10,
     borderRadius: 10,
     borderWidth: panelBorderWidth,
     borderColor: darkMainColor,
