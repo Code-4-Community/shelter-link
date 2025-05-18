@@ -15,9 +15,11 @@ import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import ShelterInfoPanel from '../components/ShelterInfoPanel';
 import { Shelter } from '../types';
 import { darkMainColor, gradientColor1 } from '../../constants';
-import getShelters from '../services/mapService';
+import { getShelters } from '../services/mapService';
 import { useFonts } from 'expo-font';
 import { useFocusEffect } from '@react-navigation/native';
+import { useAuth } from '../hooks/AuthContext';
+import { useFilters } from '../hooks/FilterContext';
 
 export const CompleteMap = () => {
   const sheetRef = useRef<BottomSheet>(null);
@@ -25,9 +27,11 @@ export const CompleteMap = () => {
   const [selectedShelter, setSelectedShelter] = useState<Shelter | null>(null);
   const [shelters, setShelters] = useState<Shelter[]>([]);
   const [query, setQuery] = useState('');
+  const { user } = useAuth();
+  const { applyFilters } = useFilters();
 
   useFonts({
-    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Regular.otf'),
+    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
 
   const fetchShelters = async () => {
@@ -36,13 +40,8 @@ export const CompleteMap = () => {
       setShelters([...data]);
     } catch (error) {
       console.error('Error fetching shelters:', error);
-    } finally {
     }
   };
-
-  useFonts({
-    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
-  });
 
   useFocusEffect(
     useCallback(() => {
@@ -63,14 +62,19 @@ export const CompleteMap = () => {
 
   const renderItem = useCallback(
     ({ item }: { item: Shelter }) => (
-      <ShelterInfoPanel shelter={item} style={styles.itemContainer} />
+      <ShelterInfoPanel
+        shelter={item}
+        style={styles.itemContainer}
+        user={user}
+      />
     ),
     []
   );
 
-  const filteredShelters = useMemo(() => {
+  // First apply text search filter
+  const searchFilteredShelters = useMemo(() => {
     if (query === '') {
-      return [...shelters];
+      return shelters;
     } else {
       const fuseOptions = {
         findAllMatches: true,
@@ -90,12 +94,17 @@ export const CompleteMap = () => {
     }
   }, [query, shelters]);
 
+  // Then apply the filter context filters
+  const filteredShelters = useMemo(() => {
+    return applyFilters(searchFilteredShelters);
+  }, [searchFilteredShelters, applyFilters]);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.headerContainer}>
         <Header />
       </View>
-      <View style={styles.filtersDropdownContainer}>
+      <View style={styles.searchFilterRow}>
         <FiltersDropdown />
         <SearchBar onSearch={setQuery} />
       </View>
@@ -109,15 +118,18 @@ export const CompleteMap = () => {
           <ShelterInfoPanel
             shelter={selectedShelter}
             style={styles.itemContainer}
+            user={user}
           />
         ) : filteredShelters.length > 0 ? (
           <BottomSheetFlatList
             data={filteredShelters}
-            extraData={[query, shelters]}
-            keyExtractor={(item) =>
-              `${item.name}-${item.address.street}`.replace(/\s+/g, '')
-            } // creating a unique id
+            extraData={[query, shelters, filteredShelters]}
+            keyExtractor={(item) => item.shelterId}
             renderItem={renderItem}
+            contentContainerStyle={{
+              paddingBottom: 50,
+              paddingTop: 10,
+            }}
           />
         ) : (
           <View style={styles.noResultsContainer}>
@@ -151,7 +163,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: '10%',
     paddingBottom: '7%',
   },
-  filtersDropdownContainer: {
+  searchFilterRow: {
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -161,6 +173,7 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderBottomWidth: 4,
     borderColor: darkMainColor,
+    gap: 10,
   },
   map: {
     width: '100%',

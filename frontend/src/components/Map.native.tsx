@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { Shelter } from '../types';
-import getShelters from '../services/mapService';
+import { getShelters } from '../services/mapService';
 import CustomMarker from './CustomMarker'; // Import the custom marker component
 
 const Map = ({

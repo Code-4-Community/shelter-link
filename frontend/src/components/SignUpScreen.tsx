@@ -24,6 +24,9 @@ import {
   caption2FontSize,
   caption1FontSize,
   header2FontSize,
+  bodyFont,
+  darkMainColor,
+  buttonBackgroundColor,
 } from 'frontend/constants';
 import { useFonts } from 'expo-font';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -41,10 +44,6 @@ const SignUpScreen = () => {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   const { login } = useAuth();
-
-  useFonts({
-    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
-  });
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -404,7 +403,14 @@ const SignUpScreen = () => {
                   </View>
 
                   <TouchableOpacity
-                    style={styles.submitButton}
+                    style={[
+                      styles.submitButton,
+                      (!formData.firstName ||
+                        !formData.lastName ||
+                        !formData.email ||
+                        !formData.password) &&
+                        styles.disabledButton,
+                    ]}
                     onPress={() => {
                       const allValid = Object.values(errors).every(
                         (e) => e === ''
@@ -467,12 +473,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: header2FontSize * 1.2,
-    fontWeight: 'bold',
-    color: headerFontColor,
-    marginVertical: 20,
-    textAlign: 'center',
-    fontFamily: 'AvenirNext',
+    fontSize: header2FontSize,
+    color: darkMainColor,
+    fontWeight: 500,
+    alignSelf: 'center',
+    marginTop: 20,
+    marginBottom: 20,
   },
   inputContainer: {
     marginBottom: 10,
@@ -480,7 +486,7 @@ const styles = StyleSheet.create({
   formContainer: {
     width: '100%',
     backgroundColor: 'rgba(255,255,255, 1)',
-    borderRadius: 10,
+    borderRadius: 8,
     paddingHorizontal: 20,
     marginBottom: 20,
   },
@@ -493,7 +499,7 @@ const styles = StyleSheet.create({
   input: {
     height: 40, // Increased height for better touch targets
     backgroundColor: '#fff',
-    borderRadius: 10,
+    borderRadius: 8,
     paddingHorizontal: 12,
     marginBottom: 5,
     fontSize: bodyFontSize, // Slightly larger font
@@ -543,13 +549,13 @@ const styles = StyleSheet.create({
     color: '#e74c3c',
   },
   submitButton: {
-    backgroundColor: '#e3e3e3',
-    borderRadius: 10,
+    backgroundColor: darkMainColor,
+    borderRadius: 8,
     paddingVertical: 15, // Increased height
     alignItems: 'center',
   },
   submitButtonText: {
-    color: headerFontColor,
+    color: buttonBackgroundColor,
     fontWeight: 'bold',
     fontSize: bodyFontSize,
   },
@@ -559,4 +565,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8, // Better tap target
   },
+  disabledButton: { backgroundColor: '#A9A9A9' },
 });

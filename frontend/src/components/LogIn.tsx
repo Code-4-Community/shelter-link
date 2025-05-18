@@ -51,7 +51,7 @@ export const LogIn = () => {
   const validateAndLogin = async () => {
     const newErrors: { username?: string; password?: string } = {};
 
-    if (!username.trim()) newErrors.username = 'Username is required';
+    if (!username.trim()) newErrors.username = 'Email is required';
     if (!password.trim()) newErrors.password = 'Password is required';
 
     setErrors(newErrors);
@@ -69,11 +69,15 @@ export const LogIn = () => {
 
         // set user in context
         login(user);
+        // navigate to map view
+        navigation.navigate('Main');
       } catch (error) {
         console.error('Login failed:', error);
         setErrors({
-          username: 'Invalid username or password',
-          password: 'Invalid username or password',
+          username:
+            'Invalid email or password. Emails and passwords are case-sensitive.',
+          password:
+            'Invalid email or password. Emails and passwords are case-sensitive.',
         });
       }
     }
@@ -140,7 +144,7 @@ export const LogIn = () => {
 
         <TouchableOpacity
           style={styles.skipLogin}
-          onPress={() => navigation.navigate('Map View')}
+          onPress={() => navigation.navigate('Main')}
         >
           <Text style={styles.skipLoginText}>Skip login for now</Text>
         </TouchableOpacity>

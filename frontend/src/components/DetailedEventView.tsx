@@ -22,128 +22,76 @@ import {
   header2FontSize,
   header1FontSize,
 } from '../../constants';
-import { Shelter, DayOfWeek } from '../types';
-import { HoursDropdown } from './HoursDropdown';
+import { Event } from '../types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useFonts } from 'expo-font';
 import { ScrollView } from 'react-native-gesture-handler';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
-import { useBookmarks } from '../hooks/BookmarkContext';
 import { useAuth } from '../hooks/AuthContext';
+import { useBookmarks } from '../hooks/BookmarkContext';
+import { Ionicons } from '@expo/vector-icons';
+import { formatDate, formatDateTime, formatTime } from '../utils';
 
 type RootStackParamList = {
   'Map View': undefined;
-  'Detailed Shelter View': {
-    shelter: Shelter;
+  'Detailed Event View': {
+    event: Event;
   };
 };
 
-type Props = NativeStackScreenProps<
-  RootStackParamList,
-  'Detailed Shelter View'
->;
+type Props = NativeStackScreenProps<RootStackParamList, 'Detailed Event View'>;
 
-export const DetailedShelterView: React.FC<Props> = ({ route }) => {
-  const { shelter } = route.params; // get shelter from route params
+export const DetailedeventView: React.FC<Props> = ({ route }) => {
+  const { event } = route.params; // get event from route params
   const { user } = useAuth();
-  const { shelterBookmarks, toggleShelterBookmark } = useBookmarks();
-  const [showHoursDropdown, setShowHoursDropdown] = useState(false);
-  const [dropdownPosition, setDropdownPosition] = useState(0);
-  const buttonRef = useRef<React.ElementRef<typeof View>>(null);
+  const { eventBookmarks, toggleEventBookmark } = useBookmarks();
   const [bookmarked, setBookmarked] = useState(
-    shelterBookmarks.includes(shelter.shelterId)
+    eventBookmarks.includes(event.eventId)
   );
 
   useFonts({
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
   });
 
-  // handle hours so drop down shows when button is clicked
-  const handleHours = () => {
-    // Measure the button's position
-    buttonRef.current?.measure((_, __, ___, height, ____, pageY) => {
-      setDropdownPosition(pageY + height); // Set dropdown position below the button
-      setShowHoursDropdown(!showHoursDropdown); // Open the dropdown
-    });
-  };
-
-  // for now, this redirects to google maps based on lat and long
+  // Redirects based on address (no lat or long for events)
   const handleDirections = () => {
-    const url = `https://www.google.com/maps/dir/?api=1&destination=${shelter.latitude},${shelter.longitude}`;
-    Linking.openURL(url);
+    if (event.location) {
+      let url = `https://www.google.com/maps/dir/?api=1&destination=
+            ${event.location.street.replace(' ', '+')},
+            +${event.location.city.replace(' ', '+')},
+            +${event.location.state}+${event.location.zipCode}`;
+      if (event.location.country) {
+        url += `,+${event.location.country.replace(' ', '+')}`;
+      }
+      Linking.openURL(url);
+    }
   };
 
   // website will pop up if there is one
   const handleWebsite = () => {
-    if (shelter.website) {
-      Linking.openURL(shelter.website);
+    if (event.website) {
+      Linking.openURL(event.website);
+      console.log('handleWebsite tried something');
     }
+    console.log('handlewebsite did nothing');
   };
 
-  // for now, this gives the option to confirm if you want to call the shelter number
+  // for now, this gives the option to confirm if you want to call the event number
   // figure out how number/email maybe should be displayed?
-  const handleContact = () => {
-    Linking.openURL(`tel:${shelter.phone_number}`);
+  const handleRegister = () => {
+    if (event.registration_link) {
+      Linking.openURL(event.registration_link);
+      console.log('handleRegister tried something');
+    }
+    console.log('handleRegister did nothing');
   };
-
-  const formatTime = (time: string) => {
-    return new Date(`1970-01-01T${time}`).toLocaleTimeString([], {
-      hour: 'numeric',
-      minute: '2-digit',
-    });
-  };
-
-  const getHoursForDay = (day: DayOfWeek) => {
-    if (!shelter.hours || !shelter.hours[day]) return 'Closed';
-    const dayHours = shelter.hours[day];
-    if (!dayHours) return 'Closed';
-    return `${formatTime(dayHours.opening_time)} - ${formatTime(
-      dayHours.closing_time
-    )}`;
-  };
-
-  const getCurrentDay = () => {
-    const today = new Date().getDay();
-    const dayIndex = today === 0 ? 6 : today - 1;
-    const daysEnum: DayOfWeek[] = [
-      DayOfWeek.MONDAY,
-      DayOfWeek.TUESDAY,
-      DayOfWeek.WEDNESDAY,
-      DayOfWeek.THURSDAY,
-      DayOfWeek.FRIDAY,
-      DayOfWeek.SATURDAY,
-      DayOfWeek.SUNDAY,
-    ];
-    return daysEnum[dayIndex];
-  };
-
-  const getCurrentDayHours = () => {
-    const today = new Date().getDay();
-    const dayIndex = today === 0 ? 6 : today - 1;
-    const daysEnum: DayOfWeek[] = [
-      DayOfWeek.MONDAY,
-      DayOfWeek.TUESDAY,
-      DayOfWeek.WEDNESDAY,
-      DayOfWeek.THURSDAY,
-      DayOfWeek.FRIDAY,
-      DayOfWeek.SATURDAY,
-      DayOfWeek.SUNDAY,
-    ];
-    return getHoursForDay(daysEnum[dayIndex]);
-  };
-
-  const hoursData = Object.values(DayOfWeek).map((day) => ({
-    label: `${day}: ${getHoursForDay(day)}`,
-    value: day,
-  }));
 
   const handleBookmark = async () => {
     if (user) {
-      toggleShelterBookmark(shelter.shelterId);
+      toggleEventBookmark(event.eventId);
       setBookmarked(!bookmarked);
     } else {
-      alert('Please login to bookmark shelters.');
+      alert('Please login to bookmark events.');
     }
   };
 
@@ -154,12 +102,12 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
     >
       <SafeAreaView style={styles.safeArea}>
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flex: 1 }}>
-          <View style={styles.shelterNameContainer}>
+          <View style={styles.eventNameContainer}>
             <View style={styles.nameBookmarkContainer}>
               <Text
-                style={[styles.shelterNameText, { paddingLeft: user ? 40 : 0 }]}
+                style={[styles.eventNameText, { paddingLeft: user ? 40 : 0 }]}
               >
-                {shelter.name}
+                {event.event_name}
               </Text>
               {user && (
                 <TouchableOpacity onPress={() => handleBookmark()}>
@@ -173,47 +121,24 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
               )}
             </View>
             <View style={styles.quickInfoContainer}>
-              {shelter.expanded_name && (
-                <Text style={styles.shelterExpandedNameText}>
-                  {shelter.expanded_name}
+              <View style={styles.ratingContainer}>
+                <Text style={styles.quickInfoText}>
+                  {formatDateTime(event.date)}
                 </Text>
-              )}
-              {shelter.rating !== undefined && (
-                <View style={styles.ratingContainer}>
-                  <Text style={styles.quickInfoText}>
-                    {shelter.rating.toFixed(1)}
-                  </Text>
-                  <Image
-                    source={require('frontend/assets/teenyicons_star-solid.png')}
-                    style={styles.starIcon}
-                  />
-                  <Text style={styles.quickInfoText}>
-                    | {shelter.address.street}, {shelter.address.city},{' '}
-                    {shelter.address.state}
-                  </Text>
-                </View>
-              )}
+              </View>
             </View>
           </View>
           <View style={styles.buttonsContainer}>
-            <TouchableOpacity
-              ref={buttonRef}
-              style={[styles.button, shelter.website && styles.smallButton]}
-              onPress={handleHours}
-            >
-              <Text style={styles.buttonText}>
-                Hours <Text style={styles.arrow}>▾</Text>
-              </Text>
-            </TouchableOpacity>
+            {event.location && event.location.street !== '' && (
+              <TouchableOpacity
+                style={[styles.button, event.website && styles.smallButton]}
+                onPress={handleDirections}
+              >
+                <Text style={styles.buttonText}>Directions</Text>
+              </TouchableOpacity>
+            )}
 
-            <TouchableOpacity
-              style={[styles.button, shelter.website && styles.smallButton]}
-              onPress={handleDirections}
-            >
-              <Text style={styles.buttonText}>Directions</Text>
-            </TouchableOpacity>
-
-            {shelter.website && (
+            {event.website && event.website !== '' && (
               <TouchableOpacity
                 style={styles.websiteButton}
                 onPress={handleWebsite}
@@ -222,72 +147,59 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
               </TouchableOpacity>
             )}
 
-            <TouchableOpacity
-              style={[styles.button, shelter.website && styles.smallButton]}
-              onPress={handleContact}
-            >
-              <Text style={styles.buttonText}>Contact</Text>
-            </TouchableOpacity>
+            {event.registration_link && event.registration_link !== '' && (
+              <TouchableOpacity
+                style={[styles.button, event.website && styles.smallButton]}
+                onPress={handleRegister}
+              >
+                <Text style={styles.buttonText}>Register</Text>
+              </TouchableOpacity>
+            )}
           </View>
 
-          <HoursDropdown
-            hoursData={hoursData}
-            isOpen={showHoursDropdown}
-            setIsOpen={setShowHoursDropdown}
-            dropdownPosition={dropdownPosition}
-            currentDay={getCurrentDay()}
-          />
-
           <View style={styles.bottomContainer}>
-            <View style={styles.imagesContainer}>
-              {shelter.picture.length > 1 ? (
-                <ScrollView
-                  horizontal={true}
-                  style={styles.imageScrollContainer}
-                >
-                  {shelter.picture.map((image, index) => (
-                    <Image
-                      key={index}
-                      source={{ uri: image }}
-                      style={styles.shelterImage}
-                    />
-                  ))}
-                </ScrollView>
-              ) : (
-                <Image
-                  source={{ uri: shelter.picture[0] }}
-                  style={styles.soloShelterImage}
-                />
-              )}
+            {event.picture && (
+              <View style={styles.imagesContainer}>
+                {event.picture.length > 1 ? (
+                  <ScrollView
+                    horizontal={true}
+                    style={styles.imageScrollContainer}
+                  >
+                    {event.picture.map((image, index) => (
+                      <Image
+                        key={index}
+                        source={{ uri: image }}
+                        style={styles.eventImage}
+                      />
+                    ))}
+                  </ScrollView>
+                ) : (
+                  <Image
+                    source={{ uri: event.picture[0] }}
+                    style={styles.soloEventImage}
+                  />
+                )}
+              </View>
+            )}
+            <View style={styles.eventDescriptionContainer}>
+              <Text style={styles.eventDescriptionHeader}>About</Text>
+              <Text style={styles.eventDescriptionText}>
+                {event.description}
+              </Text>
             </View>
 
-            <View style={styles.shelterDescriptionContainer}>
-              <Text style={styles.shelterDescriptionHeader}>
-                About {shelter.name}
+            <View style={styles.eventDescriptionContainer}>
+              <Text style={styles.eventDescriptionHeader}>
+                Additional Information
               </Text>
-              <Text style={styles.shelterDescriptionText}>
-                {shelter.description}
+              <Text style={styles.eventDescriptionText}>
+                {event.host_name && `Name of Host: ${event.host_name}\n\n`}
+                {event.phone_number &&
+                  `Host Contact: ${event.phone_number}\n\n`}
+                Date: {formatDate(event.date)}
+                {`\n\n`}
+                Time: {formatTime(event.date)}
               </Text>
-            </View>
-
-            <View style={styles.shelterTagMainContainer}>
-              <Text style={styles.shelterDescriptionHeader}>
-                Features and Resources
-              </Text>
-              {Object.entries(shelter.tags).map(([key, value]) => {
-                if (value) {
-                  return (
-                    <View key={key} style={styles.shelterTagContainer}>
-                      <Text key={key} style={styles.shelterTags}>
-                        {key === 'lgbtq_focused'
-                          ? (key = 'LGBTQ+ focused')
-                          : key.replace(/_/g, ' ')}
-                      </Text>
-                    </View>
-                  );
-                }
-                return null;
-              })}
             </View>
           </View>
         </ScrollView>
@@ -298,14 +210,14 @@ export const DetailedShelterView: React.FC<Props> = ({ route }) => {
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 let dynamicTabletSizes: Record<string, number> = {};
-dynamicTabletSizes['shelterNameTextSize'] = 45;
-dynamicTabletSizes['shelterNameTextHeight'] = 50;
+dynamicTabletSizes['eventNameTextSize'] = 45;
+dynamicTabletSizes['eventNameTextHeight'] = 50;
 dynamicTabletSizes['quickInfoFontSize'] = 18;
 dynamicTabletSizes['quickInfoLineHeight'] = 21.59;
 dynamicTabletSizes['buttonFontSize'] = 15;
 dynamicTabletSizes['buttonLineHeight'] = 15.73;
-dynamicTabletSizes['shelterDescriptionFontSize'] = 15;
-dynamicTabletSizes['shelterDescriptionLineHeight'] = 21.59;
+dynamicTabletSizes['eventDescriptionFontSize'] = 15;
+dynamicTabletSizes['eventDescriptionLineHeight'] = 21.59;
 dynamicTabletSizes['dayTextFontSize'] = 15;
 dynamicTabletSizes['dayTextLineHeight'] = 21.59;
 dynamicTabletSizes['arrowFontSize'] = 18;
@@ -330,13 +242,13 @@ const styles = StyleSheet.create({
   gradientBackground: {
     flex: 1,
   },
-  shelterNameContainer: {
+  eventNameContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     width: '90%',
     alignSelf: 'center',
   },
-  shelterNameText: {
+  eventNameText: {
     fontFamily: headerFont,
     fontSize: 36,
     paddingTop: 20,
@@ -346,15 +258,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     flex: 1,
   },
-  shelterExpandedNameText: {
+  eventExpandedNameText: {
     fontFamily: bodyFont,
     fontWeight: '700',
-    fontSize: dynamicTabletSizes.shelterNameTextSize * 0.4,
+    fontSize: dynamicTabletSizes.eventNameTextSize * 0.4,
     color: descriptionFontColor,
     paddingBottom: '5%',
-    textAlign: 'center',
+    textAlign: 'center', // Ensures text is centered when it wraps
   },
-  shelterDescriptionContainer: {
+  eventDescriptionContainer: {
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
     paddingHorizontal: '5%',
@@ -366,7 +278,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     width: '95%',
   },
-  shelterTagMainContainer: {
+  eventTagMainContainer: {
     justifyContent: 'flex-start',
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -377,7 +289,7 @@ const styles = StyleSheet.create({
     backgroundColor: containerColor,
     width: '95%',
   },
-  shelterDescriptionHeader: {
+  eventDescriptionHeader: {
     width: 340,
     fontSize: 22,
     fontFamily: bodyFont,
@@ -386,7 +298,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingBottom: 10,
   },
-  shelterDescriptionText: {
+  eventDescriptionText: {
     width: 340,
     fontSize: 18,
     fontFamily: bodyFont,
@@ -400,11 +312,6 @@ const styles = StyleSheet.create({
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  starIcon: {
-    marginLeft: 4,
-    marginRight: 4,
-    marginBottom: 3,
   },
   quickInfoText: {
     fontFamily: bodyFont,
@@ -464,6 +371,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     paddingBottom: 15,
+    paddingTop: 10,
   },
   imagesContainer: {
     paddingTop: screenHeight / 28,
@@ -474,7 +382,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '100%',
   },
-  shelterImage: {
+  eventImage: {
     marginRight: screenWidth / 8,
     width: screenWidth / 1.3,
     height: screenWidth / 1.3,
@@ -483,25 +391,17 @@ const styles = StyleSheet.create({
     borderColor: darkMainColor,
     backgroundColor: '#D9D9D9',
   },
-  soloShelterImage: {
-    width: screenWidth / 1.3,
-    height: screenWidth / 1.3,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: darkMainColor,
-    backgroundColor: '#D9D9D9',
-  },
-  shelterDescription: {
+  eventDescription: {
     marginLeft: screenWidth / 32,
     marginRight: screenWidth / 32,
     marginTop: 19,
-    fontSize: dynamicTabletSizes.shelterDescriptionFontSize,
+    fontSize: dynamicTabletSizes.eventDescriptionFontSize,
     fontFamily: bodyFont,
     fontWeight: '400',
-    lineHeight: dynamicTabletSizes.shelterDescriptionLineHeight,
+    lineHeight: dynamicTabletSizes.eventDescriptionLineHeight,
     color: descriptionFontColor,
   },
-  shelterTagContainer: {
+  eventTagContainer: {
     borderWidth: 1,
     borderColor: descriptionFontColor,
     backgroundColor: 'white',
@@ -509,8 +409,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     margin: 5,
   },
-  shelterTags: {
-    fontSize: dynamicTabletSizes.shelterDescriptionFontSize,
+  eventTags: {
+    fontSize: dynamicTabletSizes.eventDescriptionFontSize,
     fontFamily: bodyFont,
     fontWeight: '700',
     color: descriptionFontColor,
@@ -606,6 +506,14 @@ const styles = StyleSheet.create({
     paddingRight: screenWidth / 9,
     paddingBottom: 10,
   },
+  soloEventImage: {
+    width: screenWidth / 1.3,
+    height: screenWidth / 1.3,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: darkMainColor,
+    backgroundColor: '#D9D9D9',
+  },
 });
 
-export default DetailedShelterView;
+export default DetailedeventView;

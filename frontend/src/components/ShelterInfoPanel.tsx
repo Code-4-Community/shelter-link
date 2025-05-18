@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -7,16 +7,24 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import { bodyFont, darkMainColor } from '../../constants';
+import {
+  bodyFont,
+  darkMainColor,
+  header1FontSize,
+  header2FontSize,
+} from '../../constants';
 import { NewShelterInput } from '../../../backend/src/dtos/newShelterDTO';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Shelter } from '../types';
+import { Shelter, User } from '../types';
 import { useFonts } from 'expo-font';
+import { Ionicons } from '@expo/vector-icons';
+import { useBookmarks } from '../hooks/BookmarkContext';
 
 type ShelterInfoPanelProps = {
   shelter: Shelter;
   style?: any;
+  user: User | null;
 };
 
 type RootStackParamList = {
@@ -28,19 +36,35 @@ type RootStackParamList = {
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-const ShelterInfoPanel = ({ shelter, style }: ShelterInfoPanelProps) => {
-  useFonts({
-    AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Bold.otf'),
-  });
-
-  const navigation = useNavigation<NavigationProp>();
+const ShelterInfoPanel = ({ shelter, style, user }: ShelterInfoPanelProps) => {
   useFonts({
     AvenirNext: require('../../assets/fonts/AvenirNextLTPro-Regular.otf'),
   });
 
+  const { shelterBookmarks, toggleShelterBookmark } = useBookmarks();
+
+  const [bookmarked, setBookmarked] = useState(
+    shelterBookmarks.includes(shelter.shelterId)
+  );
+
+  const navigation = useNavigation<NavigationProp>();
+
   const formatAddress = (address: any) => {
     return `${address.street}, ${address.city}, ${address.state}`;
   };
+
+  const handleBookmark = async (shelterId: string) => {
+    if (user) {
+      toggleShelterBookmark(shelterId);
+      setBookmarked(!bookmarked);
+    } else {
+      alert('Please login to bookmark shelters.');
+    }
+  };
+
+  useEffect(() => {
+    setBookmarked(shelterBookmarks.includes(shelter.shelterId));
+  }, [shelterBookmarks, shelter.shelterId]);
 
   return (
     <TouchableOpacity
@@ -48,17 +72,30 @@ const ShelterInfoPanel = ({ shelter, style }: ShelterInfoPanelProps) => {
       onPress={() => navigation.navigate('Detailed Shelter View', { shelter })}
     >
       <View style={styles.topRowItems}>
-        <View style={styles.images}>
-          {shelter.picture.slice(0, 3).map((url, index) => (
-            <Image
-              key={index}
-              source={{ uri: url }}
-              style={styles.shelterImage}
-            />
-          ))}
+        <View style={styles.imageContainer}>
+          <View style={styles.images}>
+            {shelter.picture.slice(0, 3).map((url, index) => (
+              <Image
+                key={index}
+                source={{ uri: url }}
+                style={styles.shelterImage}
+              />
+            ))}
+          </View>
         </View>
+        {user && (
+          <TouchableOpacity onPress={() => handleBookmark(shelter.shelterId)}>
+            <Ionicons
+              name={bookmarked ? 'bookmark' : 'bookmark-outline'}
+              size={header1FontSize}
+              color={darkMainColor}
+              style={styles.bookmarkOutline}
+            />
+          </TouchableOpacity>
+        )}
       </View>
       <Text style={styles.shelterName}>{shelter.name}</Text>
+
       {shelter.expanded_name ? (
         <Text style={styles.shelterNameExpansion}>{shelter.expanded_name}</Text>
       ) : (
@@ -83,9 +120,9 @@ const ShelterInfoPanel = ({ shelter, style }: ShelterInfoPanelProps) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.learnMoreButton}
-          onPress={(e) => {
-            e.stopPropagation(); // don't trigger the detailed view
-          }}
+          onPress={() =>
+            navigation.navigate('Detailed Shelter View', { shelter })
+          }
         >
           <Text style={styles.buttonText}>Learn More</Text>
         </TouchableOpacity>
@@ -133,7 +170,7 @@ const styles = StyleSheet.create({
   },
   panel: {
     width: panelWidth,
-    height: panelHeight,
+    paddingBottom: 10,
     borderRadius: 10,
     borderWidth: panelBorderWidth,
     borderColor: darkMainColor,
@@ -142,6 +179,8 @@ const styles = StyleSheet.create({
   },
   topRowItems: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
   },
   images: {
     paddingVertical: panelHeight * 0.037,
@@ -149,7 +188,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   shelterImage: {
-    width: panelWidth * 0.284,
+    width: panelWidth * 0.26,
     height: panelWidth * 0.211,
     marginRight: panelWidth * 0.027,
     borderRadius: 11,
@@ -162,6 +201,15 @@ const styles = StyleSheet.create({
     fontFamily: bodyFont,
     fontWeight: '500',
     lineHeight: shelterNameLineHeight,
+    color: darkMainColor,
+  },
+  bookmarkOutline: {
+    marginTop: shelterNameMarginTop,
+    paddingRight: 5,
+    paddingTop: panelHeight * 0.018,
+    fontSize: header2FontSize * 1.1,
+    fontFamily: bodyFont,
+    fontWeight: '500',
     color: darkMainColor,
   },
   shelterNameExpansion: {
@@ -183,6 +231,9 @@ const styles = StyleSheet.create({
     paddingTop: panelHeight * 0.047, // might need to change
     paddingLeft: panelWidth * 0.045,
     flexDirection: 'row',
+  },
+  imageContainer: {
+    flex: 1,
   },
   directionsButton: {
     width: panelWidth * 0.28,
