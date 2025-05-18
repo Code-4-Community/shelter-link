@@ -7,23 +7,29 @@ import {
   GetItemCommand,
   QueryCommand,
 } from '@aws-sdk/client-dynamodb';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, Optional } from '@nestjs/common';
 import { HoursUpdateModel } from './shelter/shelter.model';
 import { DayOfWeek } from './types';
-import exp from 'constants';
 
 @Injectable()
 export class DynamoDbService {
   private readonly dynamoDbClient: DynamoDBClient;
 
-  constructor() {
-    this.dynamoDbClient = new DynamoDBClient({
-      region: process.env.AWS_REGION,
-      credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-      },
-    });
+  /* This changes the constructor so that a mock can be passed in during testing.*/
+  constructor(
+    @Optional()
+    @Inject(DynamoDBClient)
+    private readonly client?: DynamoDBClient
+  ) {
+    this.dynamoDbClient =
+      client ??
+      new DynamoDBClient({
+        region: process.env.AWS_REGION,
+        credentials: {
+          accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+        },
+      });
   }
 
   public async scanTable(
@@ -483,3 +489,7 @@ export class DynamoDbService {
     }
   }
 }
+function isDefined(client: DynamoDBClient) {
+  throw new Error('Function not implemented.');
+}
+

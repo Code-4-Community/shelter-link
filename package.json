@@ -5,7 +5,8 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
-    "build-android": "npx nx build frontend --platform android"
+    "build-android": "npx nx build frontend --platform android",
+    "test:e2e": "cd backend-e2e && npx jest"
   },
   "private": true,
   "devDependencies": {
@@ -25,6 +26,8 @@
     "@nx/webpack": "19.6.5",
     "@nx/workspace": "19.6.5",
     "@react-native-community/cli": "latest",
+    "@stryker-mutator/core": "^9.0.1",
+    "@stryker-mutator/jest-runner": "^9.0.1",
     "@swc-node/register": "~1.9.1",
     "@swc/core": "~1.5.7",
     "@swc/helpers": "~0.5.11",
@@ -39,6 +42,7 @@
     "@typescript-eslint/parser": "^7.16.0",
     "babel-jest": "^29.7.0",
     "babel-preset-expo": "~12.0.0",
+    "cypress": "^14.3.2",
     "eslint": "~8.57.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "2.27.5",

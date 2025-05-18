@@ -1,7 +1,6 @@
 /* eslint-disable */
 export default {
   displayName: 'backend-e2e',
-  preset: '../jest.preset.js',
   globalSetup: '<rootDir>/src/support/global-setup.ts',
   globalTeardown: '<rootDir>/src/support/global-teardown.ts',
   setupFiles: ['<rootDir>/src/support/test-setup.ts'],
@@ -15,5 +14,8 @@ export default {
     ],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../coverage/backend-e2e',
+  testMatch: ['<rootDir>/src/backend/event.controller.spec.ts', '<rootDir>/src/backend/event.service.spec.ts',
+    '<rootDir>/src/backend/shelter.controller.spec.ts', '<rootDir>/src/backend/shelter.service.spec.ts'
+    , '<rootDir>/src/backend/dynamodb.spec.ts'
+  ],
 };

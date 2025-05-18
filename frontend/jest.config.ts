@@ -1,4 +1,4 @@
-module.exports = {
+/*module.exports = {
   displayName: 'frontend',
   resolver: '@nx/jest/plugins/resolver',
   preset: 'jest-expo',
@@ -18,4 +18,8 @@ module.exports = {
       require.resolve('jest-expo/src/preset/assetFileTransformer.js'),
   },
   coverageDirectory: '../coverage/frontend',
+};*/
+module.exports = {
+  testEnvironment: 'node',
+  testMatch: ['**/?(*.)+(spec|test).[jt]s?(x)'],
 };
