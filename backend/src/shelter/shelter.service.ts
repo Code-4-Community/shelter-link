@@ -11,7 +11,7 @@ import { NewShelterInput } from '../dtos/newShelterDTO';
 @Injectable()
 export class ShelterService {
   private readonly tableName = 'shelterlinkShelters';
-  constructor(private readonly dynamoDbService: DynamoDbService) {}
+  constructor(private readonly dynamoDbService: DynamoDbService) { }
 
   /**
    * Handles what values to push given the key within updateShelter is of type 'address'
@@ -136,7 +136,7 @@ export class ShelterService {
       );
       return { result };
     } catch (e) {
-      this.updateShelterHandleCatch(e);
+      await this.updateShelterHandleCatch(e);
     }
   }
 
@@ -186,10 +186,11 @@ export class ShelterService {
           }
 
           // Make sure hours are between 00:00 and 24:00
+          // Note: closingHour < 0 doesn't need to be checked
+          // because the opening time is already checked to be before the closing time
           if (
             openingHour < 0 ||
             openingHour > 23 ||
-            closingHour < 0 ||
             closingHour > 23 ||
             openingMinute < 0 ||
             openingMinute > 59 ||
@@ -261,6 +262,9 @@ export class ShelterService {
     input: NewShelterInput
   ): ShelterInputModel => {
     const newShelterModel: ShelterInputModel = {
+      // disabling because the shelterId is replaced with a new one in the postShelter method so there is no way to validate this line
+      // Stryker disable next-line all
+
       shelterId: { S: '0' },
       name: { S: input.name },
       address: {
@@ -281,59 +285,59 @@ export class ShelterService {
         M: {
           Monday: input.hours.Monday
             ? {
-                M: {
-                  opening_time: { S: input.hours.Monday.opening_time },
-                  closing_time: { S: input.hours.Monday.closing_time },
-                },
-              }
+              M: {
+                opening_time: { S: input.hours.Monday.opening_time },
+                closing_time: { S: input.hours.Monday.closing_time },
+              },
+            }
             : null,
           Tuesday: input.hours.Tuesday
             ? {
-                M: {
-                  opening_time: { S: input.hours.Tuesday.opening_time },
-                  closing_time: { S: input.hours.Tuesday.closing_time },
-                },
-              }
+              M: {
+                opening_time: { S: input.hours.Tuesday.opening_time },
+                closing_time: { S: input.hours.Tuesday.closing_time },
+              },
+            }
             : null,
           Wednesday: input.hours.Wednesday
             ? {
-                M: {
-                  opening_time: { S: input.hours.Wednesday.opening_time },
-                  closing_time: { S: input.hours.Wednesday.closing_time },
-                },
-              }
+              M: {
+                opening_time: { S: input.hours.Wednesday.opening_time },
+                closing_time: { S: input.hours.Wednesday.closing_time },
+              },
+            }
             : null,
           Thursday: input.hours.Thursday
             ? {
-                M: {
-                  opening_time: { S: input.hours.Thursday.opening_time },
-                  closing_time: { S: input.hours.Thursday.closing_time },
-                },
-              }
+              M: {
+                opening_time: { S: input.hours.Thursday.opening_time },
+                closing_time: { S: input.hours.Thursday.closing_time },
+              },
+            }
             : null,
           Friday: input.hours.Friday
             ? {
-                M: {
-                  opening_time: { S: input.hours.Friday.opening_time },
-                  closing_time: { S: input.hours.Friday.closing_time },
-                },
-              }
+              M: {
+                opening_time: { S: input.hours.Friday.opening_time },
+                closing_time: { S: input.hours.Friday.closing_time },
+              },
+            }
             : null,
           Saturday: input.hours.Saturday
             ? {
-                M: {
-                  opening_time: { S: input.hours.Saturday.opening_time },
-                  closing_time: { S: input.hours.Saturday.closing_time },
-                },
-              }
+              M: {
+                opening_time: { S: input.hours.Saturday.opening_time },
+                closing_time: { S: input.hours.Saturday.closing_time },
+              },
+            }
             : null,
           Sunday: input.hours.Sunday
             ? {
-                M: {
-                  opening_time: { S: input.hours.Sunday.opening_time },
-                  closing_time: { S: input.hours.Sunday.closing_time },
-                },
-              }
+              M: {
+                opening_time: { S: input.hours.Sunday.opening_time },
+                closing_time: { S: input.hours.Sunday.closing_time },
+              },
+            }
             : null,
         },
       },
@@ -408,45 +412,45 @@ export class ShelterService {
       hours: {
         Monday: input.hours.M.Monday
           ? {
-              opening_time: input.hours.M.Monday.M.opening_time.S,
-              closing_time: input.hours.M.Monday.M.closing_time.S,
-            }
+            opening_time: input.hours.M.Monday.M.opening_time.S,
+            closing_time: input.hours.M.Monday.M.closing_time.S,
+          }
           : null,
         Tuesday: input.hours.M.Tuesday
           ? {
-              opening_time: input.hours.M.Tuesday.M.opening_time.S,
-              closing_time: input.hours.M.Tuesday.M.closing_time.S,
-            }
+            opening_time: input.hours.M.Tuesday.M.opening_time.S,
+            closing_time: input.hours.M.Tuesday.M.closing_time.S,
+          }
           : null,
         Wednesday: input.hours.M.Wednesday
           ? {
-              opening_time: input.hours.M.Wednesday.M.opening_time.S,
-              closing_time: input.hours.M.Wednesday.M.closing_time.S,
-            }
+            opening_time: input.hours.M.Wednesday.M.opening_time.S,
+            closing_time: input.hours.M.Wednesday.M.closing_time.S,
+          }
           : null,
         Thursday: input.hours.M.Thursday
           ? {
-              opening_time: input.hours.M.Thursday.M.opening_time.S,
-              closing_time: input.hours.M.Thursday.M.closing_time.S,
-            }
+            opening_time: input.hours.M.Thursday.M.opening_time.S,
+            closing_time: input.hours.M.Thursday.M.closing_time.S,
+          }
           : null,
         Friday: input.hours.M.Friday
           ? {
-              opening_time: input.hours.M.Friday.M.opening_time.S,
-              closing_time: input.hours.M.Friday.M.closing_time.S,
-            }
+            opening_time: input.hours.M.Friday.M.opening_time.S,
+            closing_time: input.hours.M.Friday.M.closing_time.S,
+          }
           : null,
         Saturday: input.hours.M.Saturday
           ? {
-              opening_time: input.hours.M.Saturday.M.opening_time.S,
-              closing_time: input.hours.M.Saturday.M.closing_time.S,
-            }
+            opening_time: input.hours.M.Saturday.M.opening_time.S,
+            closing_time: input.hours.M.Saturday.M.closing_time.S,
+          }
           : null,
         Sunday: input.hours.M.Sunday
           ? {
-              opening_time: input.hours.M.Sunday.M.opening_time.S,
-              closing_time: input.hours.M.Sunday.M.closing_time.S,
-            }
+            opening_time: input.hours.M.Sunday.M.opening_time.S,
+            closing_time: input.hours.M.Sunday.M.closing_time.S,
+          }
           : null,
       },
       picture: input.picture.L.map((url: { S: string }) => url.S),

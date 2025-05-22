@@ -9,17 +9,23 @@ module.exports = {
     },
     testRunner: "command",
     commandRunner: {
-      command: "npm run test:e2e" // Or whatever command runs your backend-e2e tests
+        command: "npm run test:e2e" // Or whatever command runs your backend-e2e tests
     },
     coverageAnalysis: "perTest",
     reporters: ["html", "clear-text", "progress"],
-    mutate: ['backend/src/event/*.ts', 
-        'backend/src/shelter/*.ts', 
-        'backend/src/user/*.ts', 
-        'backend/src/dynamodb.ts',], 
+    mutate: [
+        'backend/src/dynamodb.ts',
+        'backend/src/event/event.model.ts',
+        'backend/src/event/event.service.ts',
+        'backend/src/shelter/shelter.model.ts',
+        'backend/src/shelter/shelter.service.ts',
+        'backend/src/user/user.model.ts',
+        'backend/src/user/user.service.ts',
+    ],
     files: [
         'backend-e2e/jest.config.ts',
         'backend-e2e/src/backend/*.spec.ts', // <- include all test files
+        'backend-e2e/src/backend/*.*.spec.ts', // <- include all test files
         'backend/src/*/*.ts',              // <- include source files
         'backend/src/*.ts',
         'backend/*.json',

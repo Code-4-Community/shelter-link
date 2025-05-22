@@ -5,68 +5,63 @@ import { EventController } from '../../../backend/src/event/event.controller';
 import { EventService } from '../../../backend/src/event/event.service';
 import { NewEventInput } from '../../../backend/src/dtos/newEventDTO';
 
-const mockEventService = {
-  postEvent: jest.fn(),
-  getEvents: jest.fn(),
-  getEvent: jest.fn(),
-};
 
 // PostReqSuccess with all optional fields
 const postReqSuccess: NewEventInput = {
-  event_name: 'Youth Pride Celebration',
-  description: 'Pride celebration for youth ages 14-18',
-  date: '???',
-  host_name: 'Sam',
-  location: {
-    street: '360 Winter street',
-    city: 'Waltham',
-    state: 'Massachusetts',
-    zipCode: '02451',
-    country: 'United States',
-  },
-  website: 'https://google.com',
-  registration_link: 'https://google.com',
-  phone_number: '000-000-0000',
-  picture: ['', '', ''],
+    event_name: 'Youth Pride Celebration',
+    description: 'Pride celebration for youth ages 14-18',
+    date: '???',
+    host_name: 'Sam',
+    location: {
+        street: '360 Winter street',
+        city: 'Waltham',
+        state: 'Massachusetts',
+        zipCode: '02451',
+        country: 'United States',
+    },
+    website: 'https://google.com',
+    registration_link: 'https://google.com',
+    phone_number: '000-000-0000',
+    picture: ['', '', ''],
 };
 
 const getReqSuccess = [
-  {
-    eventId: "1",
-    event_name: 'Youth Pride Celebration',
-    description: 'Pride celebration for youth ages 14-18',
-    date: '???',
-    host_name: 'Sam',
-    location: {
-      street: '360 Winter street',
-      city: 'Waltham',
-      state: 'Massachusetts',
-      zipCode: '02451',
-      country: 'United States',
+    {
+        eventId: "1",
+        event_name: 'Youth Pride Celebration',
+        description: 'Pride celebration for youth ages 14-18',
+        date: '???',
+        host_name: 'Sam',
+        location: {
+            street: '360 Winter street',
+            city: 'Waltham',
+            state: 'Massachusetts',
+            zipCode: '02451',
+            country: 'United States',
+        },
+        website: 'https://google.com',
+        registration_link: 'https://google.com',
+        phone_number: '000-000-0000',
+        picture: ['', '', ''],
     },
-    website: 'https://google.com',
-    registration_link: 'https://google.com',
-    phone_number: '000-000-0000',
-    picture: ['', '', ''],
-  },
-  {
-    eventId: "2",
-    event_name: 'Youth Pride Celebration',
-    description: 'Pride celebration for youth ages 14-18',
-    date: '???',
-    host_name: 'Sam',
-    location: {
-      street: '360 Winter street',
-      city: 'Waltham',
-      state: 'Massachusetts',
-      zipCode: '02451',
-      country: 'United States',
+    {
+        eventId: "2",
+        event_name: 'Youth Pride Celebration',
+        description: 'Pride celebration for youth ages 14-18',
+        date: '???',
+        host_name: 'Sam',
+        location: {
+            street: '360 Winter street',
+            city: 'Waltham',
+            state: 'Massachusetts',
+            zipCode: '02451',
+            country: 'United States',
+        },
+        website: 'https://google.com',
+        registration_link: 'https://google.com',
+        phone_number: '000-000-0000',
+        picture: ['', '', ''],
     },
-    website: 'https://google.com',
-    registration_link: 'https://google.com',
-    phone_number: '000-000-0000',
-    picture: ['', '', ''],
-  },
 ];
 
 const oneEvent = {
@@ -76,11 +71,11 @@ const oneEvent = {
     date: '???',
     host_name: 'Sam',
     location: {
-      street: '360 Winter street',
-      city: 'Waltham',
-      state: 'Massachusetts',
-      zipCode: '02451',
-      country: 'United States',
+        street: '360 Winter street',
+        city: 'Waltham',
+        state: 'Massachusetts',
+        zipCode: '02451',
+        country: 'United States',
     },
     website: 'https://google.com',
     registration_link: 'https://google.com',
@@ -101,8 +96,18 @@ const postReturnSuccess = {
 
 describe('EventController with mock EventService', () => {
     let app: INestApplication;
+    let mockEventService: {
+        postEvent: jest.Mock<any, any>;
+        getEvents: jest.Mock<any, any>;
+        getEvent: jest.Mock<any, any>;
+    };
 
     beforeAll(async () => {
+        mockEventService = {
+            postEvent: jest.fn(),
+            getEvents: jest.fn(),
+            getEvent: jest.fn(),
+        };
         const moduleFixture: TestingModule = await Test.createTestingModule({
             controllers: [EventController],
             providers: [{ provide: EventService, useValue: mockEventService }],
@@ -116,78 +121,78 @@ describe('EventController with mock EventService', () => {
         await app.close();
     });
 
-        describe('POST /', () => {
-            it('should post an event successfully', async () => {
-    
-                mockEventService.postEvent.mockResolvedValue(postReturnSuccess);
-    
-                const response = await request(app.getHttpServer())
-                    .post('/events')
-                    .send(postReqSuccess);
-    
-                expect(response.status).toBe(201);
-                expect(mockEventService.postEvent).toHaveBeenCalledWith(postReqSuccess);
-            });
-    
-            it('should correctly fail if the service returns an Error', async () => {
-                mockEventService.postEvent.mockRejectedValue(new Error('Service Error'));
-    
-                const response = await request(app.getHttpServer())
-                    .post('/events')
-                    .send();
-    
-                expect(response.status).toBe(500);
-                expect(response.body.message).toBe('Internal server error');
-            });
+    describe('POST /', () => {
+        it('should post an event successfully', async () => {
+
+            mockEventService.postEvent.mockResolvedValue(postReturnSuccess);
+
+            const response = await request(app.getHttpServer())
+                .post('/events')
+                .send(postReqSuccess);
+
+            expect(response.status).toBe(201);
+            expect(mockEventService.postEvent).toHaveBeenCalledWith(postReqSuccess);
         });
 
-        
-            describe('GET /', () => {
-                it('should get all events successfully', async () => {
-                    mockEventService.getEvents.mockResolvedValue(getReqSuccess)
-        
-                    const response = await request(app.getHttpServer())
-                        .get('/events')
-                        .send();
-        
-                    expect(response.status).toBe(200);
-                    expect(mockEventService.getEvents).toHaveBeenCalledWith();
-                })
-        
-                it('should correctly fail if the service returns an Error', async () => {
-                    mockEventService.getEvents.mockRejectedValue(new Error('Service Error'));
-        
-                    const response = await request(app.getHttpServer())
-                        .get('/events')
-                        .send();
-        
-                    expect(response.status).toBe(500);
-                    expect(response.body.message).toBe('Internal server error');
-                });
-            })
+        it('should correctly fail if the service returns an Error', async () => {
+            mockEventService.postEvent.mockRejectedValue(new Error('Service Error'));
 
-            
-                describe('GET /:eventId', () => {
-                    it('should get a specific event successfully', async () => {
-                        mockEventService.getEvent.mockResolvedValue(oneEvent)
-            
-                        const response = await request(app.getHttpServer())
-                            .get('/events/3')
-                            .send();
-            
-                        expect(response.status).toBe(200);
-                        expect(mockEventService.getEvent).toHaveBeenCalledWith('3');
-                    })
-            
-                    it('should correctly fail if the service returns an Error', async () => {
-                        mockEventService.getEvent.mockRejectedValue(new Error('Service Error'));
-            
-                        const response = await request(app.getHttpServer())
-                            .get('/events/3')
-                            .send();
-            
-                        expect(response.status).toBe(500);
-                        expect(response.body.message).toBe('Internal server error');
-                    });
-                })
+            const response = await request(app.getHttpServer())
+                .post('/events')
+                .send();
+
+            expect(response.status).toBe(500);
+            expect(response.body.message).toBe('Internal server error');
+        });
+    });
+
+
+    describe('GET /', () => {
+        it('should get all events successfully', async () => {
+            mockEventService.getEvents.mockResolvedValue(getReqSuccess)
+
+            const response = await request(app.getHttpServer())
+                .get('/events')
+                .send();
+
+            expect(response.status).toBe(200);
+            expect(mockEventService.getEvents).toHaveBeenCalledWith();
+        })
+
+        it('should correctly fail if the service returns an Error', async () => {
+            mockEventService.getEvents.mockRejectedValue(new Error('Service Error'));
+
+            const response = await request(app.getHttpServer())
+                .get('/events')
+                .send();
+
+            expect(response.status).toBe(500);
+            expect(response.body.message).toBe('Internal server error');
+        });
+    })
+
+
+    describe('GET /:eventId', () => {
+        it('should get a specific event successfully', async () => {
+            mockEventService.getEvent.mockResolvedValue(oneEvent)
+
+            const response = await request(app.getHttpServer())
+                .get('/events/3')
+                .send();
+
+            expect(response.status).toBe(200);
+            expect(mockEventService.getEvent).toHaveBeenCalledWith('3');
+        })
+
+        it('should correctly fail if the service returns an Error', async () => {
+            mockEventService.getEvent.mockRejectedValue(new Error('Service Error'));
+
+            const response = await request(app.getHttpServer())
+                .get('/events/3')
+                .send();
+
+            expect(response.status).toBe(500);
+            expect(response.body.message).toBe('Internal server error');
+        });
+    })
 });

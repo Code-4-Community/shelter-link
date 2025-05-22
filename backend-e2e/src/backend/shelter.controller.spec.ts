@@ -5,14 +5,6 @@ import { ShelterController } from '../../../backend/src/shelter/shelter.controll
 import { ShelterService } from '../../../backend/src/shelter/shelter.service';
 import { NewShelterInput } from '../../../backend/src/dtos/newShelterDTO';
 
-const mockShelterService = {
-    postShelter: jest.fn(),
-    getShelters: jest.fn(),
-    getShelter: jest.fn(),
-    deleteShelter: jest.fn(),
-    updateShelter: jest.fn(),
-};
-
 const postReqSuccess: NewShelterInput = {
     name: 'Curry Student Center',
     address: {
@@ -405,38 +397,53 @@ const updateShelterRequestSuccess = {
     "email_address": "cie@northeastern.edu",
     "website": "https://calendar.northeastern.edu/curry_student_center",
     "hours": {
-      "Monday": {
-          "opening_time": "07:00",
-          "closing_time": "24:00"
-      },
-      "Wednesday": {
-          "opening_time": "07:00",
-          "closing_time": "24:00"
-      },
-      "Thursday": {
-          "opening_time": "07:00",
-          "closing_time": "24:00"
-      },
-      "Friday": {
-          "opening_time": "07:00",
-          "closing_time": "23:00"
-      },
-      "Saturday": {
-          "opening_time": "08:00",
-          "closing_time": "23:00"
-      },
-      "Sunday": {
-          "opening_time": "10:00",
-          "closing_time": "24:00"
-      }
+        "Monday": {
+            "opening_time": "07:00",
+            "closing_time": "24:00"
+        },
+        "Wednesday": {
+            "opening_time": "07:00",
+            "closing_time": "24:00"
+        },
+        "Thursday": {
+            "opening_time": "07:00",
+            "closing_time": "24:00"
+        },
+        "Friday": {
+            "opening_time": "07:00",
+            "closing_time": "23:00"
+        },
+        "Saturday": {
+            "opening_time": "08:00",
+            "closing_time": "23:00"
+        },
+        "Sunday": {
+            "opening_time": "10:00",
+            "closing_time": "24:00"
+        }
     },
     "picture": ["https://th.bing.com/th/id/OIP.OqpRP8dl-udJN9VAHIiCUQHaE8?rs=1&pid=ImgDetMain", "https://mir-s3-cdn-cf.behance.net/project_modules/fs/bd609234077806.56c3572f1b380.jpg", "https://www.pcadesign.com/wp-content/uploads/NU-Curry-Dining_5-1536x1114.jpg"]
-  }
+}
 
 describe('ShelterController with mock ShelterService', () => {
     let app: INestApplication;
 
+    let mockShelterService: {
+        postShelter: jest.Mock<any, any>;
+        getShelters: jest.Mock<any, any>;
+        getShelter: jest.Mock<any, any>;
+        deleteShelter: jest.Mock<any, any>;
+        updateShelter: jest.Mock<any, any>;
+    };
+
     beforeAll(async () => {
+        mockShelterService = {
+            postShelter: jest.fn(),
+            getShelters: jest.fn(),
+            getShelter: jest.fn(),
+            deleteShelter: jest.fn(),
+            updateShelter: jest.fn(),
+        };
         const moduleFixture: TestingModule = await Test.createTestingModule({
             controllers: [ShelterController],
             providers: [{ provide: ShelterService, useValue: mockShelterService }],
@@ -463,16 +470,16 @@ describe('ShelterController with mock ShelterService', () => {
             expect(mockShelterService.postShelter).toHaveBeenCalledWith(postReqSuccess);
         });
 
-        /*it('should correctly fail if the service returns an Error', async () => {
+        it('should correctly fail if the service returns an Error', async () => {
             mockShelterService.postShelter.mockRejectedValue(new Error('Service Error'));
 
             const response = await request(app.getHttpServer())
                 .post('/shelters')
                 .send(postReqSuccess);
 
-            expect(response.status).toBe(500);
-            expect(response.body.message).toBe('Internal server error');
-        });*/
+            expect(response.status).toBe(400);
+            expect(response.body.message).toBe('Unable to create shelter: Service Error');
+        });
     });
 
     describe('GET /', () => {
@@ -534,6 +541,7 @@ describe('ShelterController with mock ShelterService', () => {
 
             expect(response.status).toBe(200);
             expect(mockShelterService.deleteShelter).toHaveBeenCalledWith('3');
+            expect(response.body.message).toBe('Shelter with ID 3 deleted successfully.');
         })
 
         it('should correctly fail if the service returns an Error', async () => {
@@ -548,22 +556,22 @@ describe('ShelterController with mock ShelterService', () => {
         });
     });
 
-    describe('PATCH /update', () => {
+    describe('PATCH /', () => {
         it('should update a specific shelter successfully', async () => {
             mockShelterService.updateShelter.mockResolvedValue(updateShelterReturnSuccess);
             const response = await request(app.getHttpServer())
-                .patch('/shelters/update')
+                .patch('/shelters/10')
                 .send(updateShelterRequestSuccess);
-            
+
             expect(response.status).toBe(200);
-            expect(mockShelterService.updateShelter).toHaveBeenCalledWith("update", updateShelterRequestSuccess);
+            expect(mockShelterService.updateShelter).toHaveBeenCalledWith("10", updateShelterRequestSuccess);
         });
 
         it('should correctly fail if the service returns an Error', async () => {
             mockShelterService.updateShelter.mockRejectedValue(new Error('Service Error'));
 
             const response = await request(app.getHttpServer())
-                .patch('/shelters/update')
+                .patch('/shelters/10')
                 .send(updateShelterRequestSuccess);
 
             expect(response.status).toBe(500);

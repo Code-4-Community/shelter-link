@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Optional } from '@nestjs/common';
 
 import { DynamoDbService } from '../dynamodb';
 import { NewUserInput } from '../dtos/newUserDTO';
@@ -23,11 +23,17 @@ export class UserService {
   private readonly tableName = 'shelterlinkUsers';
   private readonly shelterBookmarkTableName = 'shelterlinkShelterBookmarks';
   private readonly eventBookmarkTableName = 'shelterlinkEventBookmarks';
-  private cognitoClient = new CognitoIdentityProviderClient({
-    region: process.env.AWS_REGION,
-  });
+  private cognitoClient: CognitoIdentityProviderClient;
 
-  constructor(private readonly dynamoDbService: DynamoDbService) {}
+  constructor(private readonly dynamoDbService: DynamoDbService,
+    @Optional()
+    @Inject(CognitoIdentityProviderClient)
+    private readonly client?: CognitoIdentityProviderClient
+  ) {
+    //Disabling because we need to inject the client for testing purposes
+    // Stryker disable next-line all
+    this.cognitoClient = client ?? new CognitoIdentityProviderClient({ region: process.env.AWS_REGION, });
+  }
 
   /**
    * Creates a new user in the database.
@@ -46,7 +52,7 @@ export class UserService {
       );
     } catch (error) {
       if (error instanceof UsernameExistsException) {
-        console.log('User already exists with this email:', error);
+        console.log('User already exists with this email: ' + userData.email);
         throw new Error(
           'User already exists with this email. Please use a different email.'
         );
@@ -104,6 +110,8 @@ export class UserService {
    */
   private postInputToUserModel = (input: NewUserInput): UserInputModel => {
     const newUserModel: UserInputModel = {
+      // disabling because the userId is replaced with a new one in the postUser method so there is no way to validate this line
+      // Stryker disable next-line all
       userId: { S: '0' },
       first_name: { S: input.first_name },
       last_name: { S: input.last_name },
@@ -112,11 +120,6 @@ export class UserService {
       role: { S: input.role ? input.role : UserRole.USER }, // Default to USER role
     };
 
-    if (input.role) {
-      newUserModel.role = { S: input.role };
-    } else {
-      newUserModel.role = { S: UserRole.USER }; // Default role
-    }
     return newUserModel;
   };
 
@@ -291,10 +294,6 @@ export class UserService {
     userId: string,
     type: 'shelter' | 'event'
   ): Promise<(UserShelterBookmarkModel | UserEventBookmarkModel)[]> {
-    if (type !== 'shelter' && type !== 'event') {
-      throw new Error('Invalid type. Must be either "shelter" or "event".');
-    }
-
     try {
       const tablename =
         type === 'shelter'

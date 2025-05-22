@@ -14,8 +14,13 @@ export default {
     ],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  testMatch: ['<rootDir>/src/backend/event.controller.spec.ts', '<rootDir>/src/backend/event.service.spec.ts',
-    '<rootDir>/src/backend/shelter.controller.spec.ts', '<rootDir>/src/backend/shelter.service.spec.ts'
-    , '<rootDir>/src/backend/dynamodb.spec.ts'
+  testMatch: [
+    '<rootDir>/src/backend/dynamodb.spec.ts',
+    '<rootDir>/src/backend/event.controller.spec.ts',
+    '<rootDir>/src/backend/event.service.spec.ts',
+    '<rootDir>/src/backend/shelter.controller.spec.ts',
+    '<rootDir>/src/backend/shelter.service.spec.ts',
+    '<rootDir>/src/backend/user.controller.spec.ts',
+    '<rootDir>/src/backend/user.service.spec.ts'
   ],
 };

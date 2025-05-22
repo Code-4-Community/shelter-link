@@ -18,7 +18,7 @@ export type UpdateShelterInput = {
   email_address?: string;
   website?: string;
   hours?: {
-    [day in DayOfWeek]: {
+    [day in DayOfWeek]?: {
       opening_time?: string;
       closing_time?: string;
     };

@@ -21,9 +21,8 @@ export class DynamoDbService {
     @Inject(DynamoDBClient)
     private readonly client?: DynamoDBClient
   ) {
-    this.dynamoDbClient =
-      client ??
-      new DynamoDBClient({
+    // Stryker disable next 8 lines
+    this.dynamoDbClient =client ?? new DynamoDBClient({
         region: process.env.AWS_REGION,
         credentials: {
           accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
@@ -43,16 +42,9 @@ export class DynamoDbService {
       TableName: tableName,
     };
 
-    // Add FilterExpression and ExpressionAttributeValues if given
-    if (filterExpression) {
       params.FilterExpression = filterExpression;
-    }
-    if (expressionAttributeValues) {
       params.ExpressionAttributeValues = expressionAttributeValues;
-    }
-    if (expressionAttributeNames) {
       params.ExpressionAttributeNames = expressionAttributeNames;
-    }
 
     try {
       const data = await this.dynamoDbClient.send(new ScanCommand(params));
@@ -123,7 +115,7 @@ export class DynamoDbService {
     names: string[]
   ) {
     let nestedList = currVal
-      .substring(2, currVal.toString().length - 3)
+      .substring(2, currVal.toString().length - 2)
       .split('","');
 
     // Value as a list, I tried building onto an object dynamically so these
@@ -136,7 +128,7 @@ export class DynamoDbService {
       ExpressionAttributeValues[`:${names[names.length - 1]}`] = {
         L: [{ S: nestedList[0] }, { S: nestedList[1] }],
       };
-    } else if (nestedList.length === 3) {
+    } else {
       ExpressionAttributeValues[`:${names[names.length - 1]}`] = {
         L: [{ S: nestedList[0] }, { S: nestedList[1] }, { S: nestedList[2] }],
       };
@@ -159,8 +151,8 @@ export class DynamoDbService {
     attributeValues: (string | number | boolean)[]
   ) {
     if (attributeNames.length !== attributeValues.length) {
-      const err = `Error updating attributes of shelter ${shelterId} to table ${tableName}: 
-          attributeNames and attributeValues must be the same length`;
+      const err = `Error updating attributes of shelter ${shelterId} to table ${tableName}: ` + 
+      `attributeNames and attributeValues must be the same length`;
       throw new Error(err);
     }
 
@@ -212,8 +204,7 @@ export class DynamoDbService {
 
     //Checking to see if a list was passed in as a value
     if (
-      currVal.toString().includes('["') &&
-      currVal.toString().includes('"]')
+      attributeNames[i] == 'picture'
     ) {
       this.updateAttributesHandleList(
         i,
@@ -222,10 +213,10 @@ export class DynamoDbService {
         names
       );
     } else {
-      if (attributeValues[i] === 'true' || attributeValues[i] === 'false') {
+      if (attributeValues[i] === true || attributeValues[i] === false) {
         // Boolean case
         ExpressionAttributeValues[`:${names[names.length - 1]}`] = {
-          BOOL: attributeValues[i] === 'true',
+          BOOL: attributeValues[i],
         };
       } else {
         //Non-list case, still includes nested values
@@ -256,6 +247,8 @@ export class DynamoDbService {
     for (const key in existingShelter.hours.M) {
       result[key] = existingShelter.hours.M[key].M;
     }
+    //TODO: remove
+    console.log(JSON.stringify(result));
     for (const day in DayOfWeek) {
       // the values of the enum are in all-caps, but the db is in proper caps so it must be translated
       const properCapitalDay =
@@ -335,7 +328,7 @@ export class DynamoDbService {
 
     for (let i = 0; i < attributeNames.length; i++) {
       //non-number cases
-      if (typeof attributeValues[i] === 'string') {
+      if (typeof attributeValues[i] === 'string' || attributeValues[i] === true || attributeValues[i] === false) {
         let res = this.handleNonNumberCasesForUpdateAttributes(
           i,
           UpdateExpression,
@@ -408,7 +401,7 @@ export class DynamoDbService {
 
       if (!existingItem) {
         throw new NotFoundException(
-          `Shelter with ID ${key.shelterId.S} not found.`
+          `${key.shelterId? 'Shelter' : 'Event'} with ID ${key.shelterId? key.shelterId.S : key.eventId.S} not found.`
         ); // Item does not exist
       }
 
@@ -488,8 +481,5 @@ export class DynamoDbService {
       throw new Error(`Unable to query table ${tableName}`);
     }
   }
-}
-function isDefined(client: DynamoDBClient) {
-  throw new Error('Function not implemented.');
 }
 

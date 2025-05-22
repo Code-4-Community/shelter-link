@@ -3,18 +3,13 @@ import { ShelterService } from '../../../backend/src/shelter/shelter.service';
 import { DynamoDbService } from '../../../backend/src/dynamodb'; // Import your DynamoDB service
 import { NewShelterInput } from 'backend/src/dtos/newShelterDTO';
 import { ShelterUpdateModel } from 'backend/src/shelter/shelter.model';
+import { NotFoundException } from '@nestjs/common/exceptions';
 
-const mockDynamoDB = {
-  scanTable: jest.fn(),
-  getHighestId: jest.fn(),
-  postItem: jest.fn(),
-  getItem: jest.fn(),
-  deleteItem: jest.fn(),
-  updateAttributes: jest.fn(),
-};
+const deepClone = (obj) => JSON.parse(JSON.stringify(obj));
 
 const postReqSuccess: NewShelterInput = {
   name: 'Curry Student Center',
+  expanded_name: 'Curry Student Center Northeastern University',
   address: {
     street: '360 Huntington Ave',
     city: 'Boston',
@@ -47,553 +42,27 @@ const postReqSuccess: NewShelterInput = {
   availability: '',
 };
 
-const postReqZeroFailure = {
+const postReqSuccessNoRating: NewShelterInput = {
   name: postReqSuccess.name,
+  expanded_name: postReqSuccess.expanded_name,
   address: postReqSuccess.address,
   latitude: postReqSuccess.latitude,
   longitude: postReqSuccess.longitude,
   description: postReqSuccess.description,
-  rating: 0,
   phone_number: postReqSuccess.phone_number,
   email_address: postReqSuccess.email_address,
   website: postReqSuccess.website,
   hours: postReqSuccess.hours,
   picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
+  availability: '',
 };
 
-const postSubReqZeroFailure = {
-  name: postReqSuccess.name,
-  address: postReqSuccess.address,
-  latitude: postReqSuccess.latitude,
-  longitude: postReqSuccess.longitude,
-  description: postReqSuccess.description,
-  rating: -1,
-  phone_number: postReqSuccess.phone_number,
-  email_address: postReqSuccess.email_address,
-  website: postReqSuccess.website,
-  hours: postReqSuccess.hours,
-  picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
-};
 
-const postGreaterRatingFailure = {
-  name: postReqSuccess.name,
-  address: postReqSuccess.address,
-  latitude: postReqSuccess.latitude,
-  longitude: postReqSuccess.longitude,
-  description: postReqSuccess.description,
-  rating: 6,
-  phone_number: postReqSuccess.phone_number,
-  email_address: postReqSuccess.email_address,
-  website: postReqSuccess.website,
-  hours: postReqSuccess.hours,
-  picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
-};
-
-const postFiveRatingSuccess = {
-  name: postReqSuccess.name,
-  address: postReqSuccess.address,
-  latitude: postReqSuccess.latitude,
-  longitude: postReqSuccess.longitude,
-  description: postReqSuccess.description,
-  rating: 5,
-  phone_number: postReqSuccess.phone_number,
-  email_address: postReqSuccess.email_address,
-  website: postReqSuccess.website,
-  hours: postReqSuccess.hours,
-  picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
-};
-
-const postReqNegOpeningHour = {
-  name: postReqSuccess.name,
-  address: postReqSuccess.address,
-  latitude: postReqSuccess.latitude,
-  longitude: postReqSuccess.longitude,
-  description: postReqSuccess.description,
-  rating: postReqSuccess.rating,
-  phone_number: postReqSuccess.phone_number,
-  email_address: postReqSuccess.email_address,
-  website: postReqSuccess.website,
-  hours: {
-    Monday: { opening_time: '-7:00', closing_time: '23:00' },
-    Tuesday: postReqSuccess.hours.Tuesday,
-    Wednesday: postReqSuccess.hours.Wednesday,
-    Thursday: postReqSuccess.hours.Thursday,
-    Friday: postReqSuccess.hours.Friday,
-    Saturday: postReqSuccess.hours.Saturday,
-    Sunday: postReqSuccess.hours.Sunday,
-  },
-  picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
-};
-
-const postReqGreaterOpeningHour = {
-  name: postReqSuccess.name,
-  address: postReqSuccess.address,
-  latitude: postReqSuccess.latitude,
-  longitude: postReqSuccess.longitude,
-  description: postReqSuccess.description,
-  rating: postReqSuccess.rating,
-  phone_number: postReqSuccess.phone_number,
-  email_address: postReqSuccess.email_address,
-  website: postReqSuccess.website,
-  hours: {
-    Monday: { opening_time: '30:00', closing_time: '50:00' },
-    Tuesday: postReqSuccess.hours.Tuesday,
-    Wednesday: postReqSuccess.hours.Wednesday,
-    Thursday: postReqSuccess.hours.Thursday,
-    Friday: postReqSuccess.hours.Friday,
-    Saturday: postReqSuccess.hours.Saturday,
-    Sunday: postReqSuccess.hours.Sunday,
-  },
-  picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
-};
-
-const postReqNegClosingHour = {
-  name: postReqSuccess.name,
-  address: postReqSuccess.address,
-  latitude: postReqSuccess.latitude,
-  longitude: postReqSuccess.longitude,
-  description: postReqSuccess.description,
-  rating: postReqSuccess.rating,
-  phone_number: postReqSuccess.phone_number,
-  email_address: postReqSuccess.email_address,
-  website: postReqSuccess.website,
-  hours: {
-    Monday: { opening_time: '07:00', closing_time: '-7:00' },
-    Tuesday: postReqSuccess.hours.Tuesday,
-    Wednesday: postReqSuccess.hours.Wednesday,
-    Thursday: postReqSuccess.hours.Thursday,
-    Friday: postReqSuccess.hours.Friday,
-    Saturday: postReqSuccess.hours.Saturday,
-    Sunday: postReqSuccess.hours.Sunday,
-  },
-  picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
-};
-
-const postReqGreaterClosingHour = {
-  name: postReqSuccess.name,
-  address: postReqSuccess.address,
-  latitude: postReqSuccess.latitude,
-  longitude: postReqSuccess.longitude,
-  description: postReqSuccess.description,
-  rating: postReqSuccess.rating,
-  phone_number: postReqSuccess.phone_number,
-  email_address: postReqSuccess.email_address,
-  website: postReqSuccess.website,
-  hours: {
-    Monday: { opening_time: '07:00', closing_time: '30:00' },
-    Tuesday: postReqSuccess.hours.Tuesday,
-    Wednesday: postReqSuccess.hours.Wednesday,
-    Thursday: postReqSuccess.hours.Thursday,
-    Friday: postReqSuccess.hours.Friday,
-    Saturday: postReqSuccess.hours.Saturday,
-    Sunday: postReqSuccess.hours.Sunday,
-  },
-  picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
-};
-
-const postReqNegOpeningMinute = {
-  name: postReqSuccess.name,
-  address: postReqSuccess.address,
-  latitude: postReqSuccess.latitude,
-  longitude: postReqSuccess.longitude,
-  description: postReqSuccess.description,
-  rating: postReqSuccess.rating,
-  phone_number: postReqSuccess.phone_number,
-  email_address: postReqSuccess.email_address,
-  website: postReqSuccess.website,
-  hours: {
-    Monday: { opening_time: '07:-1', closing_time: '23:00' },
-    Tuesday: postReqSuccess.hours.Tuesday,
-    Wednesday: postReqSuccess.hours.Wednesday,
-    Thursday: postReqSuccess.hours.Thursday,
-    Friday: postReqSuccess.hours.Friday,
-    Saturday: postReqSuccess.hours.Saturday,
-    Sunday: postReqSuccess.hours.Sunday,
-  },
-  picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
-};
-
-const postReqGreaterOpeningMinute = {
-  name: postReqSuccess.name,
-  address: postReqSuccess.address,
-  latitude: postReqSuccess.latitude,
-  longitude: postReqSuccess.longitude,
-  description: postReqSuccess.description,
-  rating: postReqSuccess.rating,
-  phone_number: postReqSuccess.phone_number,
-  email_address: postReqSuccess.email_address,
-  website: postReqSuccess.website,
-  hours: {
-    Monday: { opening_time: '07:60', closing_time: '23:00' },
-    Tuesday: postReqSuccess.hours.Tuesday,
-    Wednesday: postReqSuccess.hours.Wednesday,
-    Thursday: postReqSuccess.hours.Thursday,
-    Friday: postReqSuccess.hours.Friday,
-    Saturday: postReqSuccess.hours.Saturday,
-    Sunday: postReqSuccess.hours.Sunday,
-  },
-  picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
-};
-
-const postReqNegClosingMinute = {
-  name: postReqSuccess.name,
-  address: postReqSuccess.address,
-  latitude: postReqSuccess.latitude,
-  longitude: postReqSuccess.longitude,
-  description: postReqSuccess.description,
-  rating: postReqSuccess.rating,
-  phone_number: postReqSuccess.phone_number,
-  email_address: postReqSuccess.email_address,
-  website: postReqSuccess.website,
-  hours: {
-    Monday: { opening_time: '07:00', closing_time: '23:-1' },
-    Tuesday: postReqSuccess.hours.Tuesday,
-    Wednesday: postReqSuccess.hours.Wednesday,
-    Thursday: postReqSuccess.hours.Thursday,
-    Friday: postReqSuccess.hours.Friday,
-    Saturday: postReqSuccess.hours.Saturday,
-    Sunday: postReqSuccess.hours.Sunday,
-  },
-  picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
-};
-
-const postReqGreaterClosingMinute = {
-  name: postReqSuccess.name,
-  address: postReqSuccess.address,
-  latitude: postReqSuccess.latitude,
-  longitude: postReqSuccess.longitude,
-  description: postReqSuccess.description,
-  rating: postReqSuccess.rating,
-  phone_number: postReqSuccess.phone_number,
-  email_address: postReqSuccess.email_address,
-  website: postReqSuccess.website,
-  hours: {
-    Monday: { opening_time: '07:00', closing_time: '23:60' },
-    Tuesday: postReqSuccess.hours.Tuesday,
-    Wednesday: postReqSuccess.hours.Wednesday,
-    Thursday: postReqSuccess.hours.Thursday,
-    Friday: postReqSuccess.hours.Friday,
-    Saturday: postReqSuccess.hours.Saturday,
-    Sunday: postReqSuccess.hours.Sunday,
-  },
-  picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
-};
-
-const postReqOpeningGreaterThanClosing = {
-  name: postReqSuccess.name,
-  address: postReqSuccess.address,
-  latitude: postReqSuccess.latitude,
-  longitude: postReqSuccess.longitude,
-  description: postReqSuccess.description,
-  rating: postReqSuccess.rating,
-  phone_number: postReqSuccess.phone_number,
-  email_address: postReqSuccess.email_address,
-  website: postReqSuccess.website,
-  hours: {
-    Monday: { opening_time: '23:00', closing_time: '07:00' },
-    Tuesday: postReqSuccess.hours.Tuesday,
-    Wednesday: postReqSuccess.hours.Wednesday,
-    Thursday: postReqSuccess.hours.Thursday,
-    Friday: postReqSuccess.hours.Friday,
-    Saturday: postReqSuccess.hours.Saturday,
-    Sunday: postReqSuccess.hours.Sunday,
-  },
-  picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
-};
-
-const postReqOpeningMisplacedColon = {
-  name: postReqSuccess.name,
-  address: postReqSuccess.address,
-  latitude: postReqSuccess.latitude,
-  longitude: postReqSuccess.longitude,
-  description: postReqSuccess.description,
-  rating: postReqSuccess.rating,
-  phone_number: postReqSuccess.phone_number,
-  email_address: postReqSuccess.email_address,
-  website: postReqSuccess.website,
-  hours: {
-    Monday: { opening_time: '7:001', closing_time: '23:00' },
-    Tuesday: postReqSuccess.hours.Tuesday,
-    Wednesday: postReqSuccess.hours.Wednesday,
-    Thursday: postReqSuccess.hours.Thursday,
-    Friday: postReqSuccess.hours.Friday,
-    Saturday: postReqSuccess.hours.Saturday,
-    Sunday: postReqSuccess.hours.Sunday,
-  },
-  picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
-};
-
-const postReqClosingMisplacedColon = {
-  name: postReqSuccess.name,
-  address: postReqSuccess.address,
-  latitude: postReqSuccess.latitude,
-  longitude: postReqSuccess.longitude,
-  description: postReqSuccess.description,
-  rating: postReqSuccess.rating,
-  phone_number: postReqSuccess.phone_number,
-  email_address: postReqSuccess.email_address,
-  website: postReqSuccess.website,
-  hours: {
-    Monday: { opening_time: '05:00', closing_time: '7:001' },
-    Tuesday: postReqSuccess.hours.Tuesday,
-    Wednesday: postReqSuccess.hours.Wednesday,
-    Thursday: postReqSuccess.hours.Thursday,
-    Friday: postReqSuccess.hours.Friday,
-    Saturday: postReqSuccess.hours.Saturday,
-    Sunday: postReqSuccess.hours.Sunday,
-  },
-  picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
-};
-
-const postReqOpeningNoColon = {
-  name: postReqSuccess.name,
-  address: postReqSuccess.address,
-  latitude: postReqSuccess.latitude,
-  longitude: postReqSuccess.longitude,
-  description: postReqSuccess.description,
-  rating: postReqSuccess.rating,
-  phone_number: postReqSuccess.phone_number,
-  email_address: postReqSuccess.email_address,
-  website: postReqSuccess.website,
-  hours: {
-    Monday: { opening_time: '0007', closing_time: '23:00' },
-    Tuesday: postReqSuccess.hours.Tuesday,
-    Wednesday: postReqSuccess.hours.Wednesday,
-    Thursday: postReqSuccess.hours.Thursday,
-    Friday: postReqSuccess.hours.Friday,
-    Saturday: postReqSuccess.hours.Saturday,
-    Sunday: postReqSuccess.hours.Sunday,
-  },
-  picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
-};
-
-const postReqClosingNoColon = {
-  name: postReqSuccess.name,
-  address: postReqSuccess.address,
-  latitude: postReqSuccess.latitude,
-  longitude: postReqSuccess.longitude,
-  description: postReqSuccess.description,
-  rating: postReqSuccess.rating,
-  phone_number: postReqSuccess.phone_number,
-  email_address: postReqSuccess.email_address,
-  website: postReqSuccess.website,
-  hours: {
-    Monday: { opening_time: '07:00', closing_time: '0023' },
-    Tuesday: postReqSuccess.hours.Tuesday,
-    Wednesday: postReqSuccess.hours.Wednesday,
-    Thursday: postReqSuccess.hours.Thursday,
-    Friday: postReqSuccess.hours.Friday,
-    Saturday: postReqSuccess.hours.Saturday,
-    Sunday: postReqSuccess.hours.Sunday,
-  },
-  picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
-};
-
-const postReqOpeningExtraChars = {
-  name: postReqSuccess.name,
-  address: postReqSuccess.address,
-  latitude: postReqSuccess.latitude,
-  longitude: postReqSuccess.longitude,
-  description: postReqSuccess.description,
-  rating: postReqSuccess.rating,
-  phone_number: postReqSuccess.phone_number,
-  email_address: postReqSuccess.email_address,
-  website: postReqSuccess.website,
-  hours: {
-    Monday: { opening_time: '07:001', closing_time: '23:00' },
-    Tuesday: postReqSuccess.hours.Tuesday,
-    Wednesday: postReqSuccess.hours.Wednesday,
-    Thursday: postReqSuccess.hours.Thursday,
-    Friday: postReqSuccess.hours.Friday,
-    Saturday: postReqSuccess.hours.Saturday,
-    Sunday: postReqSuccess.hours.Sunday,
-  },
-  picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
-};
-
-const postReqClosingExtraChars = {
-  name: postReqSuccess.name,
-  address: postReqSuccess.address,
-  latitude: postReqSuccess.latitude,
-  longitude: postReqSuccess.longitude,
-  description: postReqSuccess.description,
-  rating: postReqSuccess.rating,
-  phone_number: postReqSuccess.phone_number,
-  email_address: postReqSuccess.email_address,
-  website: postReqSuccess.website,
-  hours: {
-    Monday: { opening_time: '07:00', closing_time: '23:001' },
-    Tuesday: postReqSuccess.hours.Tuesday,
-    Wednesday: postReqSuccess.hours.Wednesday,
-    Thursday: postReqSuccess.hours.Thursday,
-    Friday: postReqSuccess.hours.Friday,
-    Saturday: postReqSuccess.hours.Saturday,
-    Sunday: postReqSuccess.hours.Sunday,
-  },
-  picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
-};
-
-const postReqOpeningTooShort = {
-  name: postReqSuccess.name,
-  address: postReqSuccess.address,
-  latitude: postReqSuccess.latitude,
-  longitude: postReqSuccess.longitude,
-  description: postReqSuccess.description,
-  rating: postReqSuccess.rating,
-  phone_number: postReqSuccess.phone_number,
-  email_address: postReqSuccess.email_address,
-  website: postReqSuccess.website,
-  hours: {
-    Monday: { opening_time: '07:0', closing_time: '23:00' },
-    Tuesday: postReqSuccess.hours.Tuesday,
-    Wednesday: postReqSuccess.hours.Wednesday,
-    Thursday: postReqSuccess.hours.Thursday,
-    Friday: postReqSuccess.hours.Friday,
-    Saturday: postReqSuccess.hours.Saturday,
-    Sunday: postReqSuccess.hours.Sunday,
-  },
-  picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
-};
-
-const postReqClosingTooShort = {
-  name: postReqSuccess.name,
-  address: postReqSuccess.address,
-  latitude: postReqSuccess.latitude,
-  longitude: postReqSuccess.longitude,
-  description: postReqSuccess.description,
-  rating: postReqSuccess.rating,
-  phone_number: postReqSuccess.phone_number,
-  email_address: postReqSuccess.email_address,
-  website: postReqSuccess.website,
-  hours: {
-    Monday: { opening_time: '07:00', closing_time: '23:0' },
-    Tuesday: postReqSuccess.hours.Tuesday,
-    Wednesday: postReqSuccess.hours.Wednesday,
-    Thursday: postReqSuccess.hours.Thursday,
-    Friday: postReqSuccess.hours.Friday,
-    Saturday: postReqSuccess.hours.Saturday,
-    Sunday: postReqSuccess.hours.Sunday,
-  },
-  picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
-};
-
-const postReqOpeningMinute59 = {
-  name: postReqSuccess.name,
-  address: postReqSuccess.address,
-  latitude: postReqSuccess.latitude,
-  longitude: postReqSuccess.longitude,
-  description: postReqSuccess.description,
-  rating: postReqSuccess.rating,
-  phone_number: postReqSuccess.phone_number,
-  email_address: postReqSuccess.email_address,
-  website: postReqSuccess.website,
-  hours: {
-    Monday: { opening_time: '07:59', closing_time: '23:00' },
-    Tuesday: postReqSuccess.hours.Tuesday,
-    Wednesday: postReqSuccess.hours.Wednesday,
-    Thursday: postReqSuccess.hours.Thursday,
-    Friday: postReqSuccess.hours.Friday,
-    Saturday: postReqSuccess.hours.Saturday,
-    Sunday: postReqSuccess.hours.Sunday,
-  },
-  picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
-  tags: postReqSuccess.tags,
-};
-
-const postReqClosingMinute59 = {
-  name: postReqSuccess.name,
-  address: postReqSuccess.address,
-  latitude: postReqSuccess.latitude,
-  longitude: postReqSuccess.longitude,
-  description: postReqSuccess.description,
-  rating: postReqSuccess.rating,
-  phone_number: postReqSuccess.phone_number,
-  email_address: postReqSuccess.email_address,
-  website: postReqSuccess.website,
-  hours: {
-    Monday: { opening_time: '07:00', closing_time: '23:59' },
-    Tuesday: postReqSuccess.hours.Tuesday,
-    Wednesday: postReqSuccess.hours.Wednesday,
-    Thursday: postReqSuccess.hours.Thursday,
-    Friday: postReqSuccess.hours.Friday,
-    Saturday: postReqSuccess.hours.Saturday,
-    Sunday: postReqSuccess.hours.Sunday,
-  },
-  picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
-};
-
-const postReqOpeningHour23 = {
-  name: postReqSuccess.name,
-  address: postReqSuccess.address,
-  latitude: postReqSuccess.latitude,
-  longitude: postReqSuccess.longitude,
-  description: postReqSuccess.description,
-  rating: postReqSuccess.rating,
-  phone_number: postReqSuccess.phone_number,
-  email_address: postReqSuccess.email_address,
-  website: postReqSuccess.website,
-  hours: {
-    Monday: { opening_time: '23:00', closing_time: '23:50' },
-    Tuesday: postReqSuccess.hours.Tuesday,
-    Wednesday: postReqSuccess.hours.Wednesday,
-    Thursday: postReqSuccess.hours.Thursday,
-    Friday: postReqSuccess.hours.Friday,
-    Saturday: postReqSuccess.hours.Saturday,
-    Sunday: postReqSuccess.hours.Sunday,
-  },
-  picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
-};
-
-const postReqClosingHour23 = {
-  name: postReqSuccess.name,
-  address: postReqSuccess.address,
-  latitude: postReqSuccess.latitude,
-  longitude: postReqSuccess.longitude,
-  description: postReqSuccess.description,
-  rating: postReqSuccess.rating,
-  phone_number: postReqSuccess.phone_number,
-  email_address: postReqSuccess.email_address,
-  website: postReqSuccess.website,
-  hours: {
-    Monday: { opening_time: '12:00', closing_time: '23:50' },
-    Tuesday: postReqSuccess.hours.Tuesday,
-    Wednesday: postReqSuccess.hours.Wednesday,
-    Thursday: postReqSuccess.hours.Thursday,
-    Friday: postReqSuccess.hours.Friday,
-    Saturday: postReqSuccess.hours.Saturday,
-    Sunday: postReqSuccess.hours.Sunday,
-  },
-  picture: postReqSuccess.picture,
-  availability: postReqSuccess.availability,
-};
 
 const postDynamoDBReqBodySuccess = {
   shelterId: { S: '2' },
   name: { S: 'Curry Student Center' },
+  expanded_name: { S: 'Curry Student Center Northeastern University' },
   address: {
     M: {
       street: {
@@ -721,134 +190,6 @@ const postDynamoDBReqBodySuccess = {
   },
 };
 
-const postReqOpeningMinute59DynamoDB = {
-  shelterId: postDynamoDBReqBodySuccess.shelterId,
-  name: postDynamoDBReqBodySuccess.name,
-  address: postDynamoDBReqBodySuccess.address,
-  latitude: postDynamoDBReqBodySuccess.latitude,
-  longitude: postDynamoDBReqBodySuccess.longitude,
-  description: postDynamoDBReqBodySuccess.description,
-  rating: postDynamoDBReqBodySuccess.rating,
-  phone_number: postDynamoDBReqBodySuccess.phone_number,
-  email_address: postDynamoDBReqBodySuccess.email_address,
-  website: postDynamoDBReqBodySuccess.website,
-  hours: {
-    M: {
-      Monday: {
-        M: { opening_time: { S: '07:59' }, closing_time: { S: '23:00' } },
-      },
-      Tuesday: postDynamoDBReqBodySuccess.hours.M.Tuesday,
-      Wednesday: postDynamoDBReqBodySuccess.hours.M.Wednesday,
-      Thursday: postDynamoDBReqBodySuccess.hours.M.Thursday,
-      Friday: postDynamoDBReqBodySuccess.hours.M.Friday,
-      Saturday: postDynamoDBReqBodySuccess.hours.M.Saturday,
-      Sunday: postDynamoDBReqBodySuccess.hours.M.Sunday,
-    },
-  },
-  picture: postDynamoDBReqBodySuccess.picture,
-  tags: postDynamoDBReqBodySuccess.tags,
-};
-
-const postReqClosingMinute59DynamoDB = {
-    shelterId: postDynamoDBReqBodySuccess.shelterId,
-    name: postDynamoDBReqBodySuccess.name,
-    address: postDynamoDBReqBodySuccess.address,
-    latitude: postDynamoDBReqBodySuccess.latitude,
-    longitude: postDynamoDBReqBodySuccess.longitude,
-    description: postDynamoDBReqBodySuccess.description,
-    rating: postDynamoDBReqBodySuccess.rating,
-    phone_number: postDynamoDBReqBodySuccess.phone_number,
-    email_address: postDynamoDBReqBodySuccess.email_address,
-    website: postDynamoDBReqBodySuccess.website,
-    hours: {
-      M: {
-        Monday: {
-          M: { opening_time: { S: '07:00' }, closing_time: { S: '23:59' } },
-        },
-        Tuesday: postDynamoDBReqBodySuccess.hours.M.Tuesday,
-        Wednesday: postDynamoDBReqBodySuccess.hours.M.Wednesday,
-        Thursday: postDynamoDBReqBodySuccess.hours.M.Thursday,
-        Friday: postDynamoDBReqBodySuccess.hours.M.Friday,
-        Saturday: postDynamoDBReqBodySuccess.hours.M.Saturday,
-        Sunday: postDynamoDBReqBodySuccess.hours.M.Sunday,
-      },
-    },
-    picture: postDynamoDBReqBodySuccess.picture,
-    tags: postDynamoDBReqBodySuccess.tags,
-};
-
-const postReqOpeningHour23DynamoDB = {
-    shelterId: postDynamoDBReqBodySuccess.shelterId,
-    name: postDynamoDBReqBodySuccess.name,
-    address: postDynamoDBReqBodySuccess.address,
-    latitude: postDynamoDBReqBodySuccess.latitude,
-    longitude: postDynamoDBReqBodySuccess.longitude,
-    description: postDynamoDBReqBodySuccess.description,
-    rating: postDynamoDBReqBodySuccess.rating,
-    phone_number: postDynamoDBReqBodySuccess.phone_number,
-    email_address: postDynamoDBReqBodySuccess.email_address,
-    website: postDynamoDBReqBodySuccess.website,
-    hours: {
-      M: {
-        Monday: {
-          M: { opening_time: { S: '23:00' }, closing_time: { S: '23:50' } },
-        },
-        Tuesday: postDynamoDBReqBodySuccess.hours.M.Tuesday,
-        Wednesday: postDynamoDBReqBodySuccess.hours.M.Wednesday,
-        Thursday: postDynamoDBReqBodySuccess.hours.M.Thursday,
-        Friday: postDynamoDBReqBodySuccess.hours.M.Friday,
-        Saturday: postDynamoDBReqBodySuccess.hours.M.Saturday,
-        Sunday: postDynamoDBReqBodySuccess.hours.M.Sunday,
-      },
-    },
-    picture: postDynamoDBReqBodySuccess.picture,
-    tags: postDynamoDBReqBodySuccess.tags,
-};
-
-const postReqClosingHour23DynamoDB = {
-    shelterId: postDynamoDBReqBodySuccess.shelterId,
-    name: postDynamoDBReqBodySuccess.name,
-    address: postDynamoDBReqBodySuccess.address,
-    latitude: postDynamoDBReqBodySuccess.latitude,
-    longitude: postDynamoDBReqBodySuccess.longitude,
-    description: postDynamoDBReqBodySuccess.description,
-    rating: postDynamoDBReqBodySuccess.rating,
-    phone_number: postDynamoDBReqBodySuccess.phone_number,
-    email_address: postDynamoDBReqBodySuccess.email_address,
-    website: postDynamoDBReqBodySuccess.website,
-    hours: {
-      M: {
-        Monday: {
-          M: { opening_time: { S: '12:00' }, closing_time: { S: '23:50' } },
-        },
-        Tuesday: postDynamoDBReqBodySuccess.hours.M.Tuesday,
-        Wednesday: postDynamoDBReqBodySuccess.hours.M.Wednesday,
-        Thursday: postDynamoDBReqBodySuccess.hours.M.Thursday,
-        Friday: postDynamoDBReqBodySuccess.hours.M.Friday,
-        Saturday: postDynamoDBReqBodySuccess.hours.M.Saturday,
-        Sunday: postDynamoDBReqBodySuccess.hours.M.Sunday,
-      },
-    },
-    picture: postDynamoDBReqBodySuccess.picture,
-    tags: postDynamoDBReqBodySuccess.tags,
-}
-
-const postDynamoDBReqBodyFiveRatingSuccess = {
-  shelterId: postDynamoDBReqBodySuccess.shelterId,
-  name: postDynamoDBReqBodySuccess.name,
-  address: postDynamoDBReqBodySuccess.address,
-  latitude: postDynamoDBReqBodySuccess.latitude,
-  longitude: postDynamoDBReqBodySuccess.longitude,
-  description: postDynamoDBReqBodySuccess.description,
-  phone_number: postDynamoDBReqBodySuccess.phone_number,
-  email_address: postDynamoDBReqBodySuccess.email_address,
-  hours: postDynamoDBReqBodySuccess.hours,
-  picture: postDynamoDBReqBodySuccess.picture,
-  rating: { N: '5' },
-  website: postDynamoDBReqBodySuccess.website,
-  tags: postDynamoDBReqBodySuccess.tags,
-};
-
 const postReturnSuccess = {
   $metadata: {
     httpStatusCode: 200,
@@ -865,6 +206,7 @@ const getSheltersReqSuccessDynamoDB = [
   {
     shelterId: { S: '6' },
     name: { S: 'BAGLY' },
+    expanded_name: { S: 'Boston Alliance of Gay, Lesbian, Bisexual, and Transgender Youth' },
     address: {
       M: {
         street: { S: '123 Main St' },
@@ -913,8 +255,18 @@ const getSheltersReqSuccessDynamoDB = [
             closing_time: { S: '20:00' },
           },
         },
-        Saturday: null,
-        Sunday: null,
+        Saturday: {
+          M: {
+            opening_time: { S: '08:00' },
+            closing_time: { S: '20:00' },
+          },
+        },
+        Sunday: {
+          M: {
+            opening_time: { S: '08:00' },
+            closing_time: { S: '20:00' },
+          },
+        },
       },
     },
     picture: {
@@ -1030,12 +382,275 @@ const getSheltersReqSuccessDynamoDB = [
       },
     },
   },
+  {
+    shelterId: { S: '7' },
+    name: { S: 'BAGLY' },
+    address: {
+      M: {
+        street: { S: '123 Main St' },
+        city: { S: 'Boston' },
+        state: { S: 'MA' },
+        zipCode: { S: '02108' },
+        country: { S: '' },
+      },
+    },
+    latitude: { N: 42.3586 },
+    longitude: { N: -71.180367 },
+    description: {
+      S: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+    },
+    phone_number: { S: '555-0123' },
+    email_address: { S: 'contact@shelter.org' },
+    hours: {
+      M: {
+        Monday: {
+          M: {
+            opening_time: { S: '06:00' },
+            closing_time: { S: '20:00' },
+          },
+        },
+        Tuesday: {
+          M: {
+            opening_time: { S: '08:00' },
+            closing_time: { S: '20:00' },
+          },
+        },
+        Wednesday: {
+          M: {
+            opening_time: { S: '08:00' },
+            closing_time: { S: '20:00' },
+          },
+        },
+        Thursday: {
+          M: {
+            opening_time: { S: '06:00' },
+            closing_time: { S: '20:00' },
+          },
+        },
+        Friday: {
+          M: {
+            opening_time: { S: '08:00' },
+            closing_time: { S: '20:00' },
+          },
+        },
+        Saturday: {
+          M: {
+            opening_time: { S: '08:00' },
+            closing_time: { S: '20:00' },
+          },
+        },
+        Sunday: {
+          M: {
+            opening_time: { S: '08:00' },
+            closing_time: { S: '20:00' },
+          },
+        },
+      },
+    },
+    picture: {
+      L: [
+        {
+          S: 'https://shelter-link-shelters.s3.us-east-2.amazonaws.com/test_photo.webp',
+        },
+      ],
+    },
+    website: { S: 'https://www.bagly.org/' },
+    tags: {
+      M: {
+        clothing_resources: { BOOL: false },
+        educational_programs: { BOOL: false },
+        family_friendly: { BOOL: false },
+        food_resources: { BOOL: false },
+        hygiene_facilities: { BOOL: false },
+        job_assistance: { BOOL: false },
+        legal_aid: { BOOL: false },
+        lgbtq_focused: { BOOL: false },
+        medical_resources: { BOOL: false },
+        mental_health_resources: { BOOL: false },
+        overnight_stay: { BOOL: false },
+        pet_friendly: { BOOL: false },
+        substance_abuse_support: { BOOL: false },
+        transportation_resources: { BOOL: false },
+        wheelchair_accessible: { BOOL: false },
+      },
+    },
+  },
+  {
+    shelterId: { S: '8' },
+    name: { S: 'BAGLY' },
+    address: {
+      M: {
+        street: { S: '123 Main St' },
+        city: { S: 'Boston' },
+        state: { S: 'MA' },
+        zipCode: { S: '02108' },
+        country: { S: '' },
+      },
+    },
+    latitude: { N: 42.3586 },
+    longitude: { N: -71.180367 },
+    description: {
+      S: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+    },
+    phone_number: { S: '555-0123' },
+    email_address: { S: 'contact@shelter.org' },
+    hours: {
+      M: {
+        Monday: {
+          M: {
+            opening_time: { S: '06:00' },
+            closing_time: { S: '20:00' },
+          },
+        },
+        Tuesday: {
+          M: {
+            opening_time: { S: '08:00' },
+            closing_time: { S: '20:00' },
+          },
+        },
+        Wednesday: {
+          M: {
+            opening_time: { S: '08:00' },
+            closing_time: { S: '20:00' },
+          },
+        },
+        Thursday: {
+          M: {
+            opening_time: { S: '06:00' },
+            closing_time: { S: '20:00' },
+          },
+        },
+        Friday: {
+          M: {
+            opening_time: { S: '08:00' },
+            closing_time: { S: '20:00' },
+          },
+        },
+        Saturday: {
+          M: {
+            opening_time: { S: '08:00' },
+            closing_time: { S: '20:00' },
+          },
+        },
+        Sunday: {
+          M: {
+            opening_time: { S: '08:00' },
+            closing_time: { S: '20:00' },
+          },
+        },
+      },
+    },
+    picture: {
+      L: [
+        {
+          S: 'https://shelter-link-shelters.s3.us-east-2.amazonaws.com/test_photo.webp',
+        },
+      ],
+    },
+    rating: { N: 4.5 },
+    tags: {
+      M: {
+        clothing_resources: { BOOL: false },
+        educational_programs: { BOOL: false },
+        family_friendly: { BOOL: false },
+        food_resources: { BOOL: false },
+        hygiene_facilities: { BOOL: false },
+        job_assistance: { BOOL: false },
+        legal_aid: { BOOL: false },
+        lgbtq_focused: { BOOL: false },
+        medical_resources: { BOOL: false },
+        mental_health_resources: { BOOL: false },
+        overnight_stay: { BOOL: false },
+        pet_friendly: { BOOL: false },
+        substance_abuse_support: { BOOL: false },
+        transportation_resources: { BOOL: false },
+        wheelchair_accessible: { BOOL: false },
+      },
+    },
+  },
+  {
+    shelterId: { S: '6' },
+    name: { S: 'BAGLY' },
+    address: {
+      M: {
+        street: { S: '123 Main St' },
+        city: { S: 'Boston' },
+        state: { S: 'MA' },
+        zipCode: { S: '02108' },
+        country: { S: '' },
+      },
+    },
+    latitude: { N: 42.3586 },
+    longitude: { N: -71.180367 },
+    description: {
+      S: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+    },
+    phone_number: { S: '555-0123' },
+    email_address: { S: 'contact@shelter.org' },
+    hours: {
+      M: {
+        Monday: {
+          M: {
+            opening_time: { S: '06:00' },
+            closing_time: { S: '20:00' },
+          },
+        },
+        Tuesday: {
+          M: {
+            opening_time: { S: '08:00' },
+            closing_time: { S: '20:00' },
+          },
+        },
+        Wednesday: {
+          M: {
+            opening_time: { S: '08:00' },
+            closing_time: { S: '20:00' },
+          },
+        },
+        Thursday: {
+          M: {
+            opening_time: { S: '06:00' },
+            closing_time: { S: '20:00' },
+          },
+        },
+        Friday: {
+          M: {
+            opening_time: { S: '08:00' },
+            closing_time: { S: '20:00' },
+          },
+        },
+        Saturday: {
+          M: {
+            opening_time: { S: '08:00' },
+            closing_time: { S: '20:00' },
+          },
+        },
+        Sunday: {
+          M: {
+            opening_time: { S: '08:00' },
+            closing_time: { S: '20:00' },
+          },
+        },
+      },
+    },
+    picture: {
+      L: [
+        {
+          S: 'https://shelter-link-shelters.s3.us-east-2.amazonaws.com/test_photo.webp',
+        },
+      ],
+    },
+    rating: { N: 4.5 },
+    website: { S: 'https://www.bagly.org/' },
+  },
+
 ];
 
 const getSheltersReqSuccess = [
   {
     shelterId: '6',
     name: 'BAGLY',
+    expanded_name: 'Boston Alliance of Gay, Lesbian, Bisexual, and Transgender Youth',
     address: {
       street: '123 Main St',
       city: 'Boston',
@@ -1070,8 +685,14 @@ const getSheltersReqSuccess = [
         opening_time: '08:00',
         closing_time: '20:00',
       },
-      Saturday: null,
-      Sunday: null,
+      Saturday: {
+        opening_time: '08:00',
+        closing_time: '20:00',
+      },
+      Sunday: {
+        opening_time: '08:00',
+        closing_time: '20:00',
+      },
     },
     picture: [
       'https://shelter-link-shelters.s3.us-east-2.amazonaws.com/test_photo.webp',
@@ -1159,11 +780,199 @@ const getSheltersReqSuccess = [
       wheelchair_accessible: false,
     },
   },
+  {
+    shelterId: '7',
+    name: 'BAGLY',
+    address: {
+      street: '123 Main St',
+      city: 'Boston',
+      state: 'MA',
+      zipCode: '02108',
+      country: '',
+    },
+    latitude: 42.3586,
+    longitude: -71.180367,
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+    phone_number: '555-0123',
+    email_address: 'contact@shelter.org',
+    hours: {
+      Monday: {
+        opening_time: '06:00',
+        closing_time: '20:00',
+      },
+      Tuesday: {
+        opening_time: '08:00',
+        closing_time: '20:00',
+      },
+      Wednesday: {
+        opening_time: '08:00',
+        closing_time: '20:00',
+      },
+      Thursday: {
+        opening_time: '06:00',
+        closing_time: '20:00',
+      },
+      Friday: {
+        opening_time: '08:00',
+        closing_time: '20:00',
+      },
+      Saturday: {
+        opening_time: '08:00',
+        closing_time: '20:00',
+      },
+      Sunday: {
+        opening_time: '08:00',
+        closing_time: '20:00',
+      },
+    },
+    picture: [
+      'https://shelter-link-shelters.s3.us-east-2.amazonaws.com/test_photo.webp',
+    ],
+    website: 'https://www.bagly.org/',
+    tags: {
+      clothing_resources: false,
+      educational_programs: false,
+      family_friendly: false,
+      food_resources: false,
+      hygiene_facilities: false,
+      job_assistance: false,
+      legal_aid: false,
+      lgbtq_focused: false,
+      medical_resources: false,
+      mental_health_resources: false,
+      overnight_stay: false,
+      pet_friendly: false,
+      substance_abuse_support: false,
+      transportation_resources: false,
+      wheelchair_accessible: false,
+    },
+  },
+  {
+    shelterId: '8',
+    name: 'BAGLY',
+    address: {
+      street: '123 Main St',
+      city: 'Boston',
+      state: 'MA',
+      zipCode: '02108',
+      country: '',
+    },
+    latitude: 42.3586,
+    longitude: -71.180367,
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+    phone_number: '555-0123',
+    email_address: 'contact@shelter.org',
+    hours: {
+      Monday: {
+        opening_time: '06:00',
+        closing_time: '20:00',
+      },
+      Tuesday: {
+        opening_time: '08:00',
+        closing_time: '20:00',
+      },
+      Wednesday: {
+        opening_time: '08:00',
+        closing_time: '20:00',
+      },
+      Thursday: {
+        opening_time: '06:00',
+        closing_time: '20:00',
+      },
+      Friday: {
+        opening_time: '08:00',
+        closing_time: '20:00',
+      },
+      Saturday: {
+        opening_time: '08:00',
+        closing_time: '20:00',
+      },
+      Sunday: {
+        opening_time: '08:00',
+        closing_time: '20:00',
+      },
+    },
+    picture: [
+      'https://shelter-link-shelters.s3.us-east-2.amazonaws.com/test_photo.webp',
+    ],
+    rating: 4.5,
+    tags: {
+      clothing_resources: false,
+      educational_programs: false,
+      family_friendly: false,
+      food_resources: false,
+      hygiene_facilities: false,
+      job_assistance: false,
+      legal_aid: false,
+      lgbtq_focused: false,
+      medical_resources: false,
+      mental_health_resources: false,
+      overnight_stay: false,
+      pet_friendly: false,
+      substance_abuse_support: false,
+      transportation_resources: false,
+      wheelchair_accessible: false,
+    },
+  },
+  {
+    shelterId: '6',
+    name: 'BAGLY',
+    address: {
+      street: '123 Main St',
+      city: 'Boston',
+      state: 'MA',
+      zipCode: '02108',
+      country: '',
+    },
+    latitude: 42.3586,
+    longitude: -71.180367,
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+    phone_number: '555-0123',
+    email_address: 'contact@shelter.org',
+    hours: {
+      Monday: {
+        opening_time: '06:00',
+        closing_time: '20:00',
+      },
+      Tuesday: {
+        opening_time: '08:00',
+        closing_time: '20:00',
+      },
+      Wednesday: {
+        opening_time: '08:00',
+        closing_time: '20:00',
+      },
+      Thursday: {
+        opening_time: '06:00',
+        closing_time: '20:00',
+      },
+      Friday: {
+        opening_time: '08:00',
+        closing_time: '20:00',
+      },
+      Saturday: {
+        opening_time: '08:00',
+        closing_time: '20:00',
+      },
+      Sunday: {
+        opening_time: '08:00',
+        closing_time: '20:00',
+      },
+    },
+    picture: [
+      'https://shelter-link-shelters.s3.us-east-2.amazonaws.com/test_photo.webp',
+    ],
+    rating: 4.5,
+    website: 'https://www.bagly.org/',
+  },
 ];
 
 const getShelterReqSuccessDynamoDB = [
   {
-    shelterId: { S: '6' },
+    shelterId: { S: '9' },
     name: { S: 'BAGLY' },
     address: {
       M: {
@@ -1249,7 +1058,7 @@ const getShelterReqSuccessDynamoDB = [
 ];
 
 const getShelterReqSuccess = {
-  shelterId: '6',
+  shelterId: '9',
   name: 'BAGLY',
   address: {
     street: '123 Main St',
@@ -1365,13 +1174,29 @@ const updateShelterRequestSuccess: ShelterUpdateModel = {
       opening_time: '10:00',
       closing_time: '23:00',
     },
-    Tuesday: null,
   },
   picture: [
     'https://th.bing.com/th/id/OIP.OqpRP8dl-udJN9VAHIiCUQHaE8?rs=1&pid=ImgDetMain',
     'https://mir-s3-cdn-cf.behance.net/project_modules/fs/bd609234077806.56c3572f1b380.jpg',
     'https://www.pcadesign.com/wp-content/uploads/NU-Curry-Dining_5-1536x1114.jpg',
   ],
+  tags: {
+    'wheelchair_accessible': true,
+    'pet_friendly': true,
+    'family_friendly': true,
+    'legal_aid': true,
+    'lgbtq_focused': true,
+    'mental_health_resources': true,
+    'overnight_stay': true,
+    'food_resources': true,
+    'clothing_resources': true,
+    'transportation_resources': true,
+    'hygiene_facilities': true,
+    'job_assistance': true,
+    'medical_resources': true,
+    'educational_programs': true,
+    'substance_abuse_support': true,
+  }
 };
 
 const updateShelterRequestSuccessDynamoDb = {
@@ -1516,21 +1341,21 @@ const updateShelterRequestSuccessDynamoDb = {
     },
     tags: {
       M: {
-        clothing_resources: { BOOL: false },
-        educational_programs: { BOOL: false },
-        family_friendly: { BOOL: false },
-        food_resources: { BOOL: false },
-        hygiene_facilities: { BOOL: false },
-        job_assistance: { BOOL: false },
-        legal_aid: { BOOL: false },
-        lgbtq_focused: { BOOL: false },
-        medical_resources: { BOOL: false },
-        mental_health_resources: { BOOL: false },
-        overnight_stay: { BOOL: false },
-        pet_friendly: { BOOL: false },
-        substance_abuse_support: { BOOL: false },
-        transportation_resources: { BOOL: false },
-        wheelchair_accessible: { BOOL: false },
+        clothing_resources: { BOOL: true },
+        educational_programs: { BOOL: true },
+        family_friendly: { BOOL: true },
+        food_resources: { BOOL: true },
+        hygiene_facilities: { BOOL: true },
+        job_assistance: { BOOL: true },
+        legal_aid: { BOOL: true },
+        lgbtq_focused: { BOOL: true },
+        medical_resources: { BOOL: true },
+        mental_health_resources: { BOOL: true },
+        overnight_stay: { BOOL: true },
+        pet_friendly: { BOOL: true },
+        substance_abuse_support: { BOOL: true },
+        transportation_resources: { BOOL: true },
+        wheelchair_accessible: { BOOL: true },
       },
     },
   },
@@ -1551,6 +1376,21 @@ const updateShelterDynamoDbInput_buildAttributeNamesList = [
   'email_address',
   'website',
   'picture',
+  "tags.wheelchair_accessible",
+  "tags.pet_friendly",
+  "tags.family_friendly",
+  "tags.legal_aid",
+  "tags.lgbtq_focused",
+  "tags.mental_health_resources",
+  "tags.overnight_stay",
+  "tags.food_resources",
+  "tags.clothing_resources",
+  "tags.transportation_resources",
+  "tags.hygiene_facilities",
+  "tags.job_assistance",
+  "tags.medical_resources",
+  "tags.educational_programs",
+  "tags.substance_abuse_support",
 ];
 
 const updateShelterDynamoDbInput_buildAttributeValuesList = [
@@ -1568,6 +1408,21 @@ const updateShelterDynamoDbInput_buildAttributeValuesList = [
   'cie@northeastern.edu',
   'https://calendar.northeastern.edu/curry_student_center',
   '["https://th.bing.com/th/id/OIP.OqpRP8dl-udJN9VAHIiCUQHaE8?rs=1&pid=ImgDetMain","https://mir-s3-cdn-cf.behance.net/project_modules/fs/bd609234077806.56c3572f1b380.jpg","https://www.pcadesign.com/wp-content/uploads/NU-Curry-Dining_5-1536x1114.jpg"]',
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
 ];
 
 const updateShelterDynamoDbInput_HoursUpdateModel = {
@@ -1595,13 +1450,29 @@ const updateShelterDynamoDbInput_HoursUpdateModel = {
     opening_time: '10:00',
     closing_time: '23:00',
   },
-  Tuesday: null,
 };
 
 describe('ShelterService', () => {
   let service: ShelterService;
 
+  let mockDynamoDB: {
+    scanTable: jest.Mock<any, any>;
+    getHighestId: jest.Mock<any, any>;
+    postItem: jest.Mock<any, any>;
+    getItem: jest.Mock<any, any>;
+    deleteItem: jest.Mock<any, any>;
+    updateAttributes: jest.Mock<any, any>;
+  };
+
   beforeEach(async () => {
+    mockDynamoDB = {
+      scanTable: jest.fn(),
+      getHighestId: jest.fn(),
+      postItem: jest.fn(),
+      getItem: jest.fn(),
+      deleteItem: jest.fn(),
+      updateAttributes: jest.fn(),
+    };
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ShelterService,
@@ -1617,6 +1488,10 @@ describe('ShelterService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks(); // clears mock call history, return values, etc.
   });
 
   describe('postShelter', () => {
@@ -1637,13 +1512,149 @@ describe('ShelterService', () => {
       expect(response).toStrictEqual(postReturnSuccess);
     });
 
+    it('should successfully post a shelter with all hours', async () => {
+      mockDynamoDB.getHighestId.mockResolvedValue(1);
+      mockDynamoDB.postItem.mockResolvedValue(postReturnSuccess);
+
+      let allHoursSuccess = deepClone(postReqSuccess);
+      allHoursSuccess.hours.Tuesday = {
+        opening_time: '13:00', closing_time: '23:00',
+      }
+      const response = await service.postShelter(allHoursSuccess);
+
+      expect(mockDynamoDB.getHighestId).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        'shelterId'
+      );
+      let postDynamoDBReqBodySuccessAllHours = deepClone(postDynamoDBReqBodySuccess);
+      postDynamoDBReqBodySuccessAllHours.hours.M.Tuesday = {
+        M: {
+          opening_time: { S: '13:00' },
+          closing_time: { S: '23:00' }
+        }
+      };
+      expect(mockDynamoDB.postItem).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        postDynamoDBReqBodySuccessAllHours
+      );
+      expect(response).toStrictEqual(postReturnSuccess);
+    });
+
+    it('should successfully post a shelter with no hours', async () => {
+      mockDynamoDB.getHighestId.mockResolvedValue(1);
+      mockDynamoDB.postItem.mockResolvedValue(postReturnSuccess);
+
+      let noHoursSuccess = deepClone(postReqSuccess);
+      noHoursSuccess.hours = {}
+      const response = await service.postShelter(noHoursSuccess);
+
+      expect(mockDynamoDB.getHighestId).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        'shelterId'
+      );
+      let noHoursSuccessDynamoDB = deepClone(postDynamoDBReqBodySuccess);
+      noHoursSuccessDynamoDB.hours.M.Monday = null;
+      noHoursSuccessDynamoDB.hours.M.Tuesday = null;
+      noHoursSuccessDynamoDB.hours.M.Wednesday = null;
+      noHoursSuccessDynamoDB.hours.M.Thursday = null;
+      noHoursSuccessDynamoDB.hours.M.Friday = null;
+      noHoursSuccessDynamoDB.hours.M.Saturday = null;
+      noHoursSuccessDynamoDB.hours.M.Sunday = null;
+      expect(mockDynamoDB.postItem).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        noHoursSuccessDynamoDB
+      );
+      expect(response).toStrictEqual(postReturnSuccess);
+    });
+
+    it('should successfully post a shelter with no rating', async () => {
+      mockDynamoDB.getHighestId.mockResolvedValue(1);
+      mockDynamoDB.postItem.mockResolvedValue(postReturnSuccess);
+      let postReqNoRatingSuccess = deepClone(postReqSuccess);
+      postReqNoRatingSuccess.rating = undefined;
+      const response = await service.postShelter(postReqNoRatingSuccess);
+
+      expect(mockDynamoDB.getHighestId).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        'shelterId'
+      );
+      let postDynamoDBReqBodyNoRatingSuccess = deepClone(postDynamoDBReqBodySuccess);
+      postDynamoDBReqBodyNoRatingSuccess.rating = undefined;
+      expect(mockDynamoDB.postItem).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        postDynamoDBReqBodyNoRatingSuccess
+      );
+      expect(response).toStrictEqual(postReturnSuccess);
+    });
+
+    it('should successfully post a shelter with no website', async () => {
+      mockDynamoDB.getHighestId.mockResolvedValue(1);
+      mockDynamoDB.postItem.mockResolvedValue(postReturnSuccess);
+      let postReqNoWebsiteSuccess = deepClone(postReqSuccess);
+      postReqNoWebsiteSuccess.website = undefined;
+      const response = await service.postShelter(postReqNoWebsiteSuccess);
+
+      expect(mockDynamoDB.getHighestId).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        'shelterId'
+      );
+      let postDynamoDBReqBodyNoWebsiteSuccess = deepClone(postDynamoDBReqBodySuccess);
+      postDynamoDBReqBodyNoWebsiteSuccess.website = undefined;
+      expect(mockDynamoDB.postItem).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        postDynamoDBReqBodyNoWebsiteSuccess
+      );
+      expect(response).toStrictEqual(postReturnSuccess);
+    });
+
+    it('should successfully post a shelter with no expanded name', async () => {
+      mockDynamoDB.getHighestId.mockResolvedValue(1);
+      mockDynamoDB.postItem.mockResolvedValue(postReturnSuccess);
+      let postReqNoExpandedNameSuccess = deepClone(postReqSuccess);
+      postReqNoExpandedNameSuccess.expanded_name = undefined;
+      const response = await service.postShelter(postReqNoExpandedNameSuccess);
+
+      expect(mockDynamoDB.getHighestId).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        'shelterId'
+      );
+      let postDynamoDBReqBodyNoExpandedNameSuccess = deepClone(postDynamoDBReqBodySuccess);
+      postDynamoDBReqBodyNoExpandedNameSuccess.expanded_name = undefined;
+      expect(mockDynamoDB.postItem).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        postDynamoDBReqBodyNoExpandedNameSuccess
+      );
+      expect(response).toStrictEqual(postReturnSuccess);
+    });
+
+    it('should post a shelter with no country to dynamodb if the country is empty', async () => {
+      mockDynamoDB.getHighestId.mockResolvedValue(1);
+      mockDynamoDB.postItem.mockResolvedValue(postReturnSuccess);
+
+      let postReqNoCountrySuccess = deepClone(postReqSuccess);
+      postReqNoCountrySuccess.address.country = undefined;
+      const response = await service.postShelter(postReqNoCountrySuccess);
+
+      expect(mockDynamoDB.getHighestId).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        'shelterId'
+      );
+      let postDynamoDBReqBodyNoCountrySuccess = deepClone(postDynamoDBReqBodySuccess);
+      postDynamoDBReqBodyNoCountrySuccess.address.M.country.S = '';
+      expect(mockDynamoDB.postItem).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        postDynamoDBReqBodyNoCountrySuccess
+      );
+      expect(response).toStrictEqual(postReturnSuccess);
+    });
+
     it('should correctly fail if dynamoDB returns an error for getHighestId', async () => {
       mockDynamoDB.getHighestId.mockRejectedValue(
         new Error('highest shelter id error')
       );
-      await expect(service.postShelter(postReqSuccess)).rejects.toThrow(
+      await expect(service.postShelter(postReqSuccess)).rejects.toThrow(new Error(
         'highest shelter id error'
-      );
+      ));
       expect(mockDynamoDB.getHighestId).toHaveBeenCalledWith(
         'shelterlinkShelters',
         'shelterId'
@@ -1655,9 +1666,9 @@ describe('ShelterService', () => {
       mockDynamoDB.postItem.mockRejectedValue(
         new Error('dynamodb post item error')
       );
-      await expect(service.postShelter(postReqSuccess)).rejects.toThrow(
+      await expect(service.postShelter(postReqSuccess)).rejects.toThrow(new Error(
         'dynamodb post item error'
-      );
+      ));
       expect(mockDynamoDB.postItem).toHaveBeenCalledWith(
         'shelterlinkShelters',
         postDynamoDBReqBodySuccess
@@ -1666,23 +1677,29 @@ describe('ShelterService', () => {
 
     it('should reject an input with rating less than 0', async () => {
       mockDynamoDB.getHighestId.mockResolvedValue(1);
+      let postSubReqZeroFailure = deepClone(postReqSuccess);
+      postSubReqZeroFailure.rating = -1;
 
-      await expect(service.postShelter(postSubReqZeroFailure)).rejects.toThrow(
+      await expect(service.postShelter(postSubReqZeroFailure)).rejects.toThrow(new Error(
         'Rating must be a number in the range (0, 5]'
-      );
+      ));
     });
 
     it('should reject an input with rating of 0', async () => {
       mockDynamoDB.getHighestId.mockResolvedValue(1);
+      let postReqZeroFailure = deepClone(postReqSuccess);
+      postReqZeroFailure.rating = 0;
 
-      await expect(service.postShelter(postReqZeroFailure)).rejects.toThrow(
+      await expect(service.postShelter(postReqZeroFailure)).rejects.toThrow(new Error(
         'Rating must be a number in the range (0, 5]'
-      );
+      ));
     });
 
     it('should successfully post a shelter with rating of 5', async () => {
       mockDynamoDB.getHighestId.mockResolvedValue(1);
       mockDynamoDB.postItem.mockResolvedValue(postReturnSuccess);
+      let postFiveRatingSuccess = deepClone(postReqSuccess);
+      postFiveRatingSuccess.rating = 5;
 
       const response = await service.postShelter(postFiveRatingSuccess);
 
@@ -1690,6 +1707,8 @@ describe('ShelterService', () => {
         'shelterlinkShelters',
         'shelterId'
       );
+      let postDynamoDBReqBodyFiveRatingSuccess = deepClone(postDynamoDBReqBodySuccess);
+      postDynamoDBReqBodyFiveRatingSuccess.rating.N = '5';
       expect(mockDynamoDB.postItem).toHaveBeenCalledWith(
         'shelterlinkShelters',
         postDynamoDBReqBodyFiveRatingSuccess
@@ -1699,151 +1718,236 @@ describe('ShelterService', () => {
 
     it('should reject an input with a rating of more than 5', async () => {
       mockDynamoDB.getHighestId.mockResolvedValue(2);
+      let postGreaterRatingFailure = deepClone(postReqSuccess);
+      postGreaterRatingFailure.rating = 6;
 
       await expect(
         service.postShelter(postGreaterRatingFailure)
-      ).rejects.toThrow('Rating must be a number in the range (0, 5]');
+      ).rejects.toThrow(new Error('Rating must be a number in the range (0, 5]'));
     });
 
     it('should reject an input with a negative opening hour', async () => {
       mockDynamoDB.getHighestId.mockResolvedValue(5);
-
-      await expect(service.postShelter(postReqNegOpeningHour)).rejects.toThrow(
+      let postReqNegOpeningHour = deepClone(postReqSuccess);
+      postReqNegOpeningHour.hours.Monday.opening_time = '-7:00';
+      await expect(service.postShelter(postReqNegOpeningHour)).rejects.toThrow(new Error(
         'Hours must be between 00:00 and 24:00 on Monday'
+      ));
+    });
+
+    it('should accept an input with an opening hour of 0', async () => {
+      let postReqZeroOpeningHour = deepClone(postReqSuccess);
+      postReqZeroOpeningHour.hours.Monday.opening_time = '00:00';
+      mockDynamoDB.getHighestId.mockResolvedValue(1);
+      mockDynamoDB.postItem.mockResolvedValue(postReturnSuccess);
+
+      const response = await service.postShelter(postReqZeroOpeningHour);
+
+      expect(mockDynamoDB.getHighestId).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        'shelterId'
       );
+      let postDynamoDBReqBodyZeroOpeningHour = deepClone(postDynamoDBReqBodySuccess);
+      postDynamoDBReqBodyZeroOpeningHour.hours.M.Monday.M.opening_time.S = '00:00';
+      expect(mockDynamoDB.postItem).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        postDynamoDBReqBodyZeroOpeningHour
+      );
+      expect(response).toStrictEqual(postReturnSuccess);
     });
 
     it('should reject an input with opening hour greater than 23', async () => {
       mockDynamoDB.getHighestId.mockResolvedValue(5);
+      let postReqGreaterOpeningHour = deepClone(postReqSuccess);
+      postReqGreaterOpeningHour.hours.Monday.opening_time = '30:00';
+      postReqGreaterOpeningHour.hours.Monday.closing_time = '50:00';
 
       await expect(
         service.postShelter(postReqGreaterOpeningHour)
-      ).rejects.toThrow('Hours must be between 00:00 and 24:00 on Monday');
+      ).rejects.toThrow(new Error('Hours must be between 00:00 and 24:00 on Monday'));
     });
 
     it('should reject an input with a negative closing hour', async () => {
       mockDynamoDB.getHighestId.mockResolvedValue(5);
+      let postReqNegClosingHour = deepClone(postReqSuccess);
+      postReqNegClosingHour.hours.Monday.closing_time = '-7:00';
 
-      await expect(service.postShelter(postReqNegClosingHour)).rejects.toThrow(
+      await expect(service.postShelter(postReqNegClosingHour)).rejects.toThrow(new Error(
         'Opening time must be before closing time on Monday'
+      ));
+    });
+
+    it('should accept an input with a closing hour of 0', async () => {
+      let postReqZeroOpeningHour = deepClone(postReqSuccess);
+      postReqZeroOpeningHour.hours.Monday.opening_time = '00:00';
+      postReqZeroOpeningHour.hours.Monday.closing_time = '00:50';
+
+      mockDynamoDB.getHighestId.mockResolvedValue(1);
+      mockDynamoDB.postItem.mockResolvedValue(postReturnSuccess);
+
+      const response = await service.postShelter(postReqZeroOpeningHour);
+
+      expect(mockDynamoDB.getHighestId).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        'shelterId'
       );
+      let postDynamoDBReqBodyZeroOpeningHour = deepClone(postDynamoDBReqBodySuccess);
+      postDynamoDBReqBodyZeroOpeningHour.hours.M.Monday.M.opening_time.S = '00:00';
+      postDynamoDBReqBodyZeroOpeningHour.hours.M.Monday.M.closing_time.S = '00:50';
+      expect(mockDynamoDB.postItem).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        postDynamoDBReqBodyZeroOpeningHour
+      );
+      expect(response).toStrictEqual(postReturnSuccess);
     });
 
     it('should reject an input with a closing hour greater than 23', async () => {
       mockDynamoDB.getHighestId.mockResolvedValue(5);
+      let postReqGreaterClosingHour = deepClone(postReqSuccess);
+      postReqGreaterClosingHour.hours.Monday.closing_time = '30:00';
 
       await expect(
         service.postShelter(postReqGreaterClosingHour)
-      ).rejects.toThrow('Hours must be between 00:00 and 24:00 on Monday');
+      ).rejects.toThrow(new Error('Hours must be between 00:00 and 24:00 on Monday'));
     });
 
     it('should reject an input with a negative opening minute', async () => {
       mockDynamoDB.getHighestId.mockResolvedValue(5);
+      let postReqNegOpeningMinute = deepClone(postReqSuccess);
+      postReqNegOpeningMinute.hours.Monday.opening_time = '07:-1';
 
       await expect(
         service.postShelter(postReqNegOpeningMinute)
-      ).rejects.toThrow('Hours must be between 00:00 and 24:00 on Monday');
+      ).rejects.toThrow(new Error('Hours must be between 00:00 and 24:00 on Monday'));
     });
 
     it('should reject an input with an opening minute greater than 59', async () => {
       mockDynamoDB.getHighestId.mockResolvedValue(5);
+      let postReqGreaterOpeningMinute = deepClone(postReqSuccess);
+      postReqGreaterOpeningMinute.hours.Monday.opening_time = '07:60';
 
       await expect(
         service.postShelter(postReqGreaterOpeningMinute)
-      ).rejects.toThrow('Hours must be between 00:00 and 24:00 on Monday');
+      ).rejects.toThrow(new Error('Hours must be between 00:00 and 24:00 on Monday'));
     });
 
     it('should reject an input with a negative closing minute', async () => {
       mockDynamoDB.getHighestId.mockResolvedValue(5);
+      let postReqNegClosingMinute = deepClone(postReqSuccess);
+      postReqNegClosingMinute.hours.Monday.closing_time = '23:-1';
 
       await expect(
         service.postShelter(postReqNegClosingMinute)
-      ).rejects.toThrow('Hours must be between 00:00 and 24:00 on Monday');
+      ).rejects.toThrow(new Error('Hours must be between 00:00 and 24:00 on Monday'));
     });
 
     it('should reject an input with a closing minute greater than 59', async () => {
       mockDynamoDB.getHighestId.mockResolvedValue(5);
+      let postReqGreaterClosingMinute = deepClone(postReqSuccess);
+      postReqGreaterClosingMinute.hours.Monday.closing_time = '23:60';
 
       await expect(
         service.postShelter(postReqGreaterClosingMinute)
-      ).rejects.toThrow('Hours must be between 00:00 and 24:00 on Monday');
+      ).rejects.toThrow(new Error('Hours must be between 00:00 and 24:00 on Monday'));
     });
 
     it('should reject an input with valid individual times if the closing time is greater than opening time', async () => {
       mockDynamoDB.getHighestId.mockResolvedValue(5);
+      let postReqOpeningGreaterThanClosing = deepClone(postReqSuccess);
+      postReqOpeningGreaterThanClosing.hours.Monday.opening_time = '20:00';
+      postReqOpeningGreaterThanClosing.hours.Monday.closing_time = '06:00';
 
       await expect(
         service.postShelter(postReqOpeningGreaterThanClosing)
-      ).rejects.toThrow('Opening time must be before closing time on Monday');
+      ).rejects.toThrow(new Error('Opening time must be before closing time on Monday'));
     });
 
     it('should reject a time with misplaced colon on opening time', async () => {
       mockDynamoDB.getHighestId.mockResolvedValue(5);
+      let postReqOpeningMisplacedColon = deepClone(postReqSuccess);
+      postReqOpeningMisplacedColon.hours.Monday.opening_time = '7:001';
 
       await expect(
         service.postShelter(postReqOpeningMisplacedColon)
-      ).rejects.toThrow('Hours must follow HH:MM format on Monday');
+      ).rejects.toThrow(new Error('Hours must follow HH:MM format on Monday'));
     });
 
     it('should reject a time with misplaced colon on closing time', async () => {
       mockDynamoDB.getHighestId.mockResolvedValue(5);
+      let postReqClosingMisplacedColon = deepClone(postReqSuccess);
+      postReqClosingMisplacedColon.hours.Monday.opening_time = '05:00';
+      postReqClosingMisplacedColon.hours.Monday.closing_time = '7:001';
 
       await expect(
         service.postShelter(postReqClosingMisplacedColon)
-      ).rejects.toThrow('Hours must follow HH:MM format on Monday');
+      ).rejects.toThrow(new Error('Hours must follow HH:MM format on Monday'));
     });
 
     it('should reject a time with no colon on opening time', async () => {
       mockDynamoDB.getHighestId.mockResolvedValue(5);
+      let postReqOpeningNoColon = deepClone(postReqSuccess);
+      postReqOpeningNoColon.hours.Monday.opening_time = '0007';
 
-      await expect(service.postShelter(postReqOpeningNoColon)).rejects.toThrow(
+      await expect(service.postShelter(postReqOpeningNoColon)).rejects.toThrow(new Error(
         'Hours must follow HH:MM format on Monday'
-      );
+      ));
     });
 
     it('should reject at time with no colon on closing time', async () => {
       mockDynamoDB.getHighestId.mockResolvedValue(5);
+      let postReqClosingNoColon = deepClone(postReqSuccess);
+      postReqClosingNoColon.hours.Monday.closing_time = '0023';
 
-      await expect(service.postShelter(postReqClosingNoColon)).rejects.toThrow(
+      await expect(service.postShelter(postReqClosingNoColon)).rejects.toThrow(new Error(
         'Hours must follow HH:MM format on Monday'
-      );
+      ));
     });
 
     it('should reject an opening time that has extra characters (more than 5)', async () => {
       mockDynamoDB.getHighestId.mockResolvedValue(5);
+      let postReqOpeningExtraChars = deepClone(postReqSuccess);
+      postReqOpeningExtraChars.hours.Monday.opening_time = '07:001';
 
       await expect(
         service.postShelter(postReqOpeningExtraChars)
-      ).rejects.toThrow('Hours must follow HH:MM format on Monday');
+      ).rejects.toThrow(new Error('Hours must follow HH:MM format on Monday'));
     });
 
     it('should reject a closing time that has extra characters (more than 5)', async () => {
       mockDynamoDB.getHighestId.mockResolvedValue(5);
+      let postReqClosingExtraChars = deepClone(postReqSuccess);
+      postReqClosingExtraChars.hours.Monday.closing_time = '23:001';
 
       await expect(
         service.postShelter(postReqClosingExtraChars)
-      ).rejects.toThrow('Hours must follow HH:MM format on Monday');
+      ).rejects.toThrow(new Error('Hours must follow HH:MM format on Monday'));
     });
 
     it('should reject an opening time that is too short (less than 5)', async () => {
       mockDynamoDB.getHighestId.mockResolvedValue(5);
+      let postReqOpeningTooShort = deepClone(postReqSuccess);
+      postReqOpeningTooShort.hours.Monday.opening_time = '07:0';
 
-      await expect(service.postShelter(postReqOpeningTooShort)).rejects.toThrow(
+      await expect(service.postShelter(postReqOpeningTooShort)).rejects.toThrow(new Error(
         'Hours must follow HH:MM format on Monday'
-      );
+      ));
     });
 
     it('should reject a closing time that is too short (less than 5)', async () => {
       mockDynamoDB.getHighestId.mockResolvedValue(5);
+      let postReqClosingTooShort = deepClone(postReqSuccess);
+      postReqClosingTooShort.hours.Monday.closing_time = '23:0';
 
-      await expect(service.postShelter(postReqClosingTooShort)).rejects.toThrow(
+      await expect(service.postShelter(postReqClosingTooShort)).rejects.toThrow(new Error(
         'Hours must follow HH:MM format on Monday'
-      );
+      ));
     });
 
     it('should accept an opening minute of 59', async () => {
       mockDynamoDB.getHighestId.mockResolvedValue(1);
       mockDynamoDB.postItem.mockResolvedValue(postReturnSuccess);
+      let postReqOpeningMinute59 = deepClone(postReqSuccess);
+      postReqOpeningMinute59.hours.Monday.opening_time = '07:59';
 
       const response = await service.postShelter(postReqOpeningMinute59);
 
@@ -1851,6 +1955,8 @@ describe('ShelterService', () => {
         'shelterlinkShelters',
         'shelterId'
       );
+      let postReqOpeningMinute59DynamoDB = deepClone(postDynamoDBReqBodySuccess);
+      postReqOpeningMinute59DynamoDB.hours.M.Monday.M.opening_time.S = '07:59';
       expect(mockDynamoDB.postItem).toHaveBeenCalledWith(
         'shelterlinkShelters',
         postReqOpeningMinute59DynamoDB
@@ -1859,8 +1965,10 @@ describe('ShelterService', () => {
     });
 
     it('should accept a closing minute of 59', async () => {
-        mockDynamoDB.getHighestId.mockResolvedValue(1);
+      mockDynamoDB.getHighestId.mockResolvedValue(1);
       mockDynamoDB.postItem.mockResolvedValue(postReturnSuccess);
+      let postReqClosingMinute59 = deepClone(postReqSuccess);
+      postReqClosingMinute59.hours.Monday.closing_time = '23:59';
 
       const response = await service.postShelter(postReqClosingMinute59);
 
@@ -1868,6 +1976,8 @@ describe('ShelterService', () => {
         'shelterlinkShelters',
         'shelterId'
       );
+      let postReqClosingMinute59DynamoDB = deepClone(postDynamoDBReqBodySuccess);
+      postReqClosingMinute59DynamoDB.hours.M.Monday.M.closing_time.S = '23:59';
       expect(mockDynamoDB.postItem).toHaveBeenCalledWith(
         'shelterlinkShelters',
         postReqClosingMinute59DynamoDB
@@ -1878,6 +1988,9 @@ describe('ShelterService', () => {
     it('should accept an opening hour of 23', async () => {
       mockDynamoDB.getHighestId.mockResolvedValue(1);
       mockDynamoDB.postItem.mockResolvedValue(postReturnSuccess);
+      let postReqOpeningHour23 = deepClone(postReqSuccess);
+      postReqOpeningHour23.hours.Monday.opening_time = '23:00';
+      postReqOpeningHour23.hours.Monday.closing_time = '23:01';
 
       const response = await service.postShelter(postReqOpeningHour23);
 
@@ -1885,6 +1998,9 @@ describe('ShelterService', () => {
         'shelterlinkShelters',
         'shelterId'
       );
+      let postReqOpeningHour23DynamoDB = deepClone(postDynamoDBReqBodySuccess);
+      postReqOpeningHour23DynamoDB.hours.M.Monday.M.opening_time.S = '23:00';
+      postReqOpeningHour23DynamoDB.hours.M.Monday.M.closing_time.S = '23:01';
       expect(mockDynamoDB.postItem).toHaveBeenCalledWith(
         'shelterlinkShelters',
         postReqOpeningHour23DynamoDB
@@ -1893,8 +2009,11 @@ describe('ShelterService', () => {
     });
 
     it('should accept a closing hour of 23', async () => {
-        mockDynamoDB.getHighestId.mockResolvedValue(1);
+      mockDynamoDB.getHighestId.mockResolvedValue(1);
       mockDynamoDB.postItem.mockResolvedValue(postReturnSuccess);
+      let postReqClosingHour23 = deepClone(postReqSuccess);
+      postReqClosingHour23.hours.Monday.opening_time = '22:00';
+      postReqClosingHour23.hours.Monday.closing_time = '23:00';
 
       const response = await service.postShelter(postReqClosingHour23);
 
@@ -1902,13 +2021,85 @@ describe('ShelterService', () => {
         'shelterlinkShelters',
         'shelterId'
       );
+      let postReqClosingHour23DynamoDB = deepClone(postDynamoDBReqBodySuccess);
+      postReqClosingHour23DynamoDB.hours.M.Monday.M.opening_time.S = '22:00';
+      postReqClosingHour23DynamoDB.hours.M.Monday.M.closing_time.S = '23:00';
       expect(mockDynamoDB.postItem).toHaveBeenCalledWith(
         'shelterlinkShelters',
         postReqClosingHour23DynamoDB
       );
       expect(response).toStrictEqual(postReturnSuccess);
     });
+
+    it('should accept a closing and opening when the hour is the same but the opening minute is less than the closing minute', async () => {
+      mockDynamoDB.getHighestId.mockResolvedValue(1);
+      mockDynamoDB.postItem.mockResolvedValue(postReturnSuccess);
+      let postReqClosingHour23 = deepClone(postReqSuccess);
+      postReqClosingHour23.hours.Monday.opening_time = '23:01';
+      postReqClosingHour23.hours.Monday.closing_time = '23:02';
+
+      const response = await service.postShelter(postReqClosingHour23);
+
+      expect(mockDynamoDB.getHighestId).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        'shelterId'
+      );
+      let postReqClosingHour23DynamoDB = deepClone(postDynamoDBReqBodySuccess);
+      postReqClosingHour23DynamoDB.hours.M.Monday.M.opening_time.S = '23:01';
+      postReqClosingHour23DynamoDB.hours.M.Monday.M.closing_time.S = '23:02';
+      expect(mockDynamoDB.postItem).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        postReqClosingHour23DynamoDB
+      );
+      expect(response).toStrictEqual(postReturnSuccess);
+    });
+
+    it('should reject a closing and opening time when the hour is the same and the opening minute is equal to the closing minute', async () => {
+      mockDynamoDB.getHighestId.mockResolvedValue(5);
+      let postReqOpeningTooShort = deepClone(postReqSuccess);
+      postReqOpeningTooShort.hours.Monday.opening_time = '07:01';
+      postReqOpeningTooShort.hours.Monday.closing_time = '07:01';
+
+
+      await expect(service.postShelter(postReqOpeningTooShort)).rejects.toThrow(new Error(
+        'Opening time must be before closing time on Monday'
+      ));
+    });
+
+
+    it('should reject a closing and opening when the hour is the same but the opening minute is greater than the closing minute', async () => {
+      mockDynamoDB.getHighestId.mockResolvedValue(5);
+      let postReqOpeningTooShort = deepClone(postReqSuccess);
+      postReqOpeningTooShort.hours.Monday.opening_time = '07:40';
+      postReqOpeningTooShort.hours.Monday.closing_time = '07:30';
+
+      await expect(service.postShelter(postReqOpeningTooShort)).rejects.toThrow(new Error(
+        'Opening time must be before closing time on Monday'
+      ));
+    });
+
+    it('should accept an input even if the a day is missing hours', async () => {
+      mockDynamoDB.getHighestId.mockResolvedValue(1);
+      mockDynamoDB.postItem.mockResolvedValue(postReturnSuccess);
+      let missingHour = deepClone(postReqSuccess);
+      missingHour.hours.Monday = null;
+
+      const response = await service.postShelter(missingHour);
+
+      expect(mockDynamoDB.getHighestId).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        'shelterId'
+      );
+      let missingHourDynamoDB = deepClone(postDynamoDBReqBodySuccess);
+      missingHourDynamoDB.hours.M.Monday = null;
+      expect(mockDynamoDB.postItem).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        missingHourDynamoDB
+      );
+      expect(response).toStrictEqual(postReturnSuccess);
+    });
   });
+
 
   describe('getShelters', () => {
     it('should successfully get shelters', async () => {
@@ -1925,9 +2116,9 @@ describe('ShelterService', () => {
       mockDynamoDB.scanTable.mockRejectedValue(
         new Error('dynamodb scanTable error')
       );
-      await expect(service.getShelters()).rejects.toThrow(
-        'dynamodb scanTable error'
-      );
+      await expect(service.getShelters()).rejects.toThrow(new Error(
+        'Unable to get shelters: Error: dynamodb scanTable error'
+      ));
       expect(mockDynamoDB.scanTable).toHaveBeenCalledWith(
         'shelterlinkShelters'
       );
@@ -1951,9 +2142,9 @@ describe('ShelterService', () => {
       mockDynamoDB.scanTable.mockRejectedValue(
         new Error('dynamodb scanTable error')
       );
-      await expect(service.getShelter('6')).rejects.toThrow(
+      await expect(service.getShelter('6')).rejects.toThrow(new Error(
         'Unable to get shelter: Error: dynamodb scanTable error'
-      );
+      ));
       expect(mockDynamoDB.scanTable).toHaveBeenCalledWith(
         'shelterlinkShelters',
         'shelterId = :shelterId',
@@ -1977,9 +2168,9 @@ describe('ShelterService', () => {
       mockDynamoDB.deleteItem.mockRejectedValue(
         new Error('dynamodb deleteItem error')
       );
-      await expect(service.deleteShelter('13')).rejects.toThrow(
+      await expect(service.deleteShelter('13')).rejects.toThrow(new Error(
         'Failed to delete shelter: dynamodb deleteItem error'
-      );
+      ));
       expect(mockDynamoDB.deleteItem).toHaveBeenCalledWith(
         'shelterlinkShelters',
         { shelterId: { S: '13' } }
@@ -2001,14 +2192,41 @@ describe('ShelterService', () => {
         '17',
         updateShelterDynamoDbInput_buildAttributeNamesList,
         updateShelterDynamoDbInput_buildAttributeValuesList,
-        updateShelterDynamoDbInput_HoursUpdateModel
+        updateShelterDynamoDbInput_HoursUpdateModel,
       );
+      expect(response).toEqual({ result: updateShelterRequestSuccessDynamoDb });
     });
 
-    /*it('should correctly fail if dynamoDB updateAttributes returns an error', async () => {
-            mockDynamoDB.updateAttributes.mockRejectedValue(new Error('dynamodb updateAttributes error'));
-            await expect(service.updateShelter('10', updateShelterRequestSuccess))
-                .rejects.toThrow('Error: Unable to update new shelter: Error: dynamodb updateAttributes error');
-        });*/
+    it('should not be able to change a shelter id', async () => {
+      mockDynamoDB.updateAttributes.mockResolvedValue(
+        updateShelterRequestSuccessDynamoDb
+      );
+      let updateShelterRequestSuccessWithId = deepClone(updateShelterRequestSuccess);
+      updateShelterRequestSuccessWithId.shelterId = '21';
+      const response = await service.updateShelter(
+        '17',
+        updateShelterRequestSuccessWithId
+      );
+      expect(mockDynamoDB.updateAttributes).toHaveBeenCalledWith(
+        'shelterlinkShelters',
+        '17',
+        updateShelterDynamoDbInput_buildAttributeNamesList,
+        updateShelterDynamoDbInput_buildAttributeValuesList,
+        updateShelterDynamoDbInput_HoursUpdateModel,
+      );
+      expect(response).toEqual({ result: updateShelterRequestSuccessDynamoDb });
+    });
+
+    it('should correctly fail if dynamoDB updateAttributes returns an error', async () => {
+      mockDynamoDB.updateAttributes.mockRejectedValue(new Error('dynamodb updateAttributes error'));
+      await expect(service.updateShelter('10', updateShelterRequestSuccess))
+        .rejects.toThrow(new Error('Unable to update new shelter: Error: dynamodb updateAttributes error'));
+    });
+
+    it('should throw not found exception if DynamoDB returns not found exception', async () => {
+      mockDynamoDB.updateAttributes.mockRejectedValue(new NotFoundException('not found'));
+      await expect(service.updateShelter('10', updateShelterRequestSuccess))
+        .rejects.toThrow(new NotFoundException('not found'));
+    });
   });
 });

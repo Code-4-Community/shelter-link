@@ -5,3 +5,4 @@
 /.expo/
 *.env
 .stryker-tmp
+reports
