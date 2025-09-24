@@ -31,5 +31,5 @@ jobs:
       working-directory: frontend
       env:
         NX_CLOUD: false
-    - run: npx wait-on --timeout 120000 http://localhost:8081
+    - run: npx wait-on --timeout 300000 http://localhost:8081
     - run: npx cypress run
