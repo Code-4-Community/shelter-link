@@ -42,4 +42,3 @@ jobs:
 
       - name: Run Cypress tests
         run: npx cypress run
-        working-directory: cypress
