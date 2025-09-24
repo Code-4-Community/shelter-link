@@ -22,5 +22,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - run: cd frontend & npm run start &
+    - run: npx wait-on http://localhost:8081
     - run: npm ci --legacy-peer-deps
     - run: npx cypress run
