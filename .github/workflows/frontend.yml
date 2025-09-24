@@ -14,15 +14,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
-      - run: ls -R
-
+      
       - name: Install frontend deps
         run: npm i --legacy-peer-deps
         working-directory: frontend
 
-      - name: Install global tools
-        run: npm install -g newman@6 wait-on nx
+      - name: Installing root deps
+        run: npm i --legacy-peer-deps
+
+      - name: Installing ci/cd tools
+        run: npm install -g wait-on nx
         working-directory: frontend
 
       - name: Use Node.js ${{ matrix.node-version }}
@@ -33,13 +34,11 @@ jobs:
 
       - name: Serve frontend
         run: npx nx serve frontend
-        working-directory: frontend
         env:
           NX_CLOUD: false
 
       - name: Wait for frontend
         run: npx wait-on --timeout 300000 http://localhost:8081
-        working-directory: frontend
 
       - name: Run Cypress tests
         run: npx cypress run
