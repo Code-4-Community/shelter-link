@@ -1,4 +1,4 @@
-name: ShelterLink CI
+name: Backend (JEST) CI
 on:
   push:
     branches: [ "main", "GithubActionsCICD" ]

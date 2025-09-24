@@ -1,4 +1,4 @@
-name: Postman CI
+name: Postman (API) CI
 on:
   push:
     branches: [ "main", "GithubActionsCICD" ]

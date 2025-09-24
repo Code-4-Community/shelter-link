@@ -1,4 +1,4 @@
-name: ShelterLink CI
+name: Frontend (Cypress) CI
 on:
   push:
     branches: [ "main", "GithubActionsCICD" ]
@@ -7,22 +7,12 @@ on:
 
 jobs:
   build:
-    
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: cd frontend & npm run start &
-    - run: npx wait-on http://localhost:8081
-    - run: npm ci --legacy-peer-deps
-    - run: npx cypress run
+      - run: rm -rf ~/.postman
+      - run: npm install -g newman@6
+      - run: curl -s -H "X-Api-Key: ${{ secrets.POSTMAN_API_KEY }}" \
+             https://api.getpostman.com/collections/41801404-dc6ad15b-1840-4570-8a9c-55693b6f4f02 \
+             -o collection.json
+      - run: newman run collection.json
+
