@@ -7,27 +7,40 @@ on:
 
 jobs:
   build:
-    
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v4
-    - run: ls -R
-    - run: cd frontend & ls -R &  npm i --legacy-peer-deps
-    - run: cd frontend & ls -R &  npm install -g newman@6 wait-on nx
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: cd frontend & ls -R & npx nx serve frontend
-      env:
-        NX_CLOUD: false
-    - run: cd frontend & ls -R &  npx wait-on --timeout 300000 http://localhost:8081
-      working-directory: frontend
-    - run: cd frontend & ls -R &  npx cypress run
+      - uses: actions/checkout@v4
+
+      - run: ls -R
+
+      - name: Install frontend deps
+        run: npm i --legacy-peer-deps
+        working-directory: frontend
+
+      - name: Install global tools
+        run: npm install -g newman@6 wait-on nx
+        working-directory: frontend
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Serve frontend
+        run: npx nx serve frontend
+        working-directory: frontend
+        env:
+          NX_CLOUD: false
+
+      - name: Wait for frontend
+        run: npx wait-on --timeout 300000 http://localhost:8081
+        working-directory: frontend
+
+      - name: Run Cypress tests
+        run: npx cypress run
+        working-directory: frontend
