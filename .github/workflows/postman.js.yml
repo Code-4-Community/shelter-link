@@ -10,17 +10,36 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - run: ls -R
+
       - run: rm -rf ~/.postman
-      - run: cd backend & ls -R & npm i --legacy-peer-deps
-      - run: cd backend & ls -R & install -g newman@6 wait-on nx
-      - run: |
+
+      - name: Install backend deps
+        run: npm i --legacy-peer-deps
+        working-directory: backend
+
+      - name: Install global tools
+        run: npm install -g newman@6 wait-on nx
+        working-directory: backend
+
+      - name: Download Postman collection
+        run: |
           curl -s -H "X-Api-Key: ${{ secrets.POSTMAN_API_KEY }}" \
             "https://api.getpostman.com/collections/41801404-dc6ad15b-1840-4570-8a9c-55693b6f4f02" \
             -o collection.json
-      - run: cd backend & ls -R &  npx nx serve backend
+        working-directory: backend
+
+      - name: Serve backend
+        run: npx nx serve backend
+        working-directory: backend
         env:
           NX_CLOUD: false
-      - run: cd backend & ls -R &  npx wait-on --timeout 300000 http://localhost:3000
-      - run: newman run collection.json
 
+      - name: Wait for backend
+        run: npx wait-on --timeout 300000 http://localhost:3000
+        working-directory: backend
+
+      - name: Run Postman tests
+        run: newman run collection.json
+        working-directory: backend
