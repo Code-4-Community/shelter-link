@@ -17,7 +17,7 @@ jobs:
             -o collection.json
       - run: npm install -g wait-on
       - run: cd frontend & npm run start &
-      - run: npx wait-on http://localhost:3000
+      - run: npx wait-on --timeout 120000 http://localhost:3000
       - run: npm run start & 
       - run: newman run collection.json
 

@@ -24,6 +24,6 @@ jobs:
         cache: 'npm'
     - run: npm install -g wait-on
     - run: cd frontend & npm run start &
-    - run: npx wait-on http://localhost:8081
+    - run: npx wait-on --timeout 120000 http://localhost:8081
     - run: npm ci --legacy-peer-deps
     - run: npx cypress run
