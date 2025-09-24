@@ -6,15 +6,14 @@ on:
     branches: [ "main" ]
 
 jobs:
-  run_postman_collection:
-    environment: QA env
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Clear GitHub Actions Cache
-        run: rm -rf ~/.postman
-        
-      - name: Install Newman
-        run: npm install -g newman
+      - run: rm -rf ~/.postman
+      - run: npm install -g newman@6
+      - run: |
+          curl -s -H "X-Api-Key: ${{ secrets.POSTMAN_API_KEY }}" \
+            "https://api.getpostman.com/collections/41801404-dc6ad15b-1840-4570-8a9c-55693b6f4f02" \
+            -o collection.json
+      - run: newman run collection.json
 
-      - name: Run Postman Collection
-        run: newman run "https://api.getpostman.com/collections/41801404-dc6ad15b-1840-4570-8a9c-55693b6f4f02?apikey=${{ secrets.POSTMAN_API_KEY }}"
