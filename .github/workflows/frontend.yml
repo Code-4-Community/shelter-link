@@ -18,19 +18,16 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - run: ls -R
-    - run: npm i --legacy-peer-deps
-      working-directory: frontend
-    - run: npm install -g newman@6 wait-on nx
-      working-directory: frontend
+    - run: cd frontend & ls -R &  npm i --legacy-peer-deps
+    - run: cd frontend & ls -R &  npm install -g newman@6 wait-on nx
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npx nx serve frontend
-      working-directory: frontend
+    - run: cd frontend & ls -R & npx nx serve frontend
       env:
         NX_CLOUD: false
-    - run: npx wait-on --timeout 300000 http://localhost:8081
+    - run: cd frontend & ls -R &  npx wait-on --timeout 300000 http://localhost:8081
       working-directory: frontend
-    - run: npx cypress run
+    - run: cd frontend & ls -R &  npx cypress run
