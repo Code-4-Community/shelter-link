@@ -22,6 +22,8 @@ jobs:
             -o collection.json
       - run: npx nx serve backend &
         working-directory: backend
+        env:
+          NX_CLOUD: false
       - run: npx wait-on --timeout 120000 http://localhost:3000
       - run: newman run collection.json
 
