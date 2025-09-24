@@ -16,17 +16,18 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - working-directory: frontend
     - uses: actions/checkout@v4
     - run: ls -R
     - run: npm install
+      working-directory: frontend
     - run: npm install -g newman@6 wait-on nx
+      working-directory: frontend
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npx nx serve frontend &
+      working-directory: frontend
     - run: npx wait-on --timeout 120000 http://localhost:8081
-    - run: npm ci --legacy-peer-deps
     - run: npx cypress run

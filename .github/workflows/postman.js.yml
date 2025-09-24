@@ -9,18 +9,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - working-directory: backend
       - uses: actions/checkout@v4
       - run: ls -R
       - run: rm -rf ~/.postman
       - run: npm install
+        working-directory: backend
       - run: npm install -g newman@6 wait-on nx
+        working-directory: backend
       - run: |
           curl -s -H "X-Api-Key: ${{ secrets.POSTMAN_API_KEY }}" \
             "https://api.getpostman.com/collections/41801404-dc6ad15b-1840-4570-8a9c-55693b6f4f02" \
             -o collection.json
       - run: npx nx serve backend &
+        working-directory: backend
       - run: npx wait-on --timeout 120000 http://localhost:3000
-      - run: npm run start & 
       - run: newman run collection.json
 
