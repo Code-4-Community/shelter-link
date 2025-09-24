@@ -18,7 +18,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - run: ls -R
-    - run: npm install
+    - run: npm ci --legacy-peer-deps
       working-directory: frontend
     - run: npm install -g newman@6 wait-on nx
       working-directory: frontend

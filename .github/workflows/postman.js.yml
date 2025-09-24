@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - run: ls -R
       - run: rm -rf ~/.postman
-      - run: npm install
+      - run: npm ci --legacy-peer-deps
         working-directory: backend
       - run: npm install -g newman@6 wait-on nx
         working-directory: backend
