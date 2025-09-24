@@ -18,6 +18,7 @@ jobs:
             "https://api.getpostman.com/collections/41801404-dc6ad15b-1840-4570-8a9c-55693b6f4f02" \
             -o collection.json
       - run: npm install -g wait-on
+      - run: npm install -g nx
       - run: cd frontend & npx nx serve backend &
       - run: npx wait-on --timeout 120000 http://localhost:3000
       - run: npm run start & 

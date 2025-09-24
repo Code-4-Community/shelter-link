@@ -24,6 +24,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm install -g wait-on
+    - run: npm install -g nx
     - run: cd frontend & npx nx serve frontend &
     - run: npx wait-on --timeout 120000 http://localhost:8081
     - run: npm ci --legacy-peer-deps
