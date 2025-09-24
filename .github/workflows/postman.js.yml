@@ -9,10 +9,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - working-directory: backend
       - uses: actions/checkout@v4
       - run: ls -R
       - run: rm -rf ~/.postman
-      - run: cd backend 
       - run: npm install
       - run: npm install -g newman@6 wait-on nx
       - run: |
