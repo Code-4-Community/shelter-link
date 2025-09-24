@@ -33,7 +33,7 @@ jobs:
           cache: 'npm'
 
       - name: Serve frontend
-        run: npx nx serve frontend
+        run: npx nx serve frontend &
         env:
           NX_CLOUD: false
 
