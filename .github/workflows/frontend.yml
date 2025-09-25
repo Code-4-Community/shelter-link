@@ -47,10 +47,10 @@ jobs:
           AWS_REGION: us-east-2
 
       - name: Wait for frontend
-        run: npx wait-on --timeout 300000 http://localhost:8081 &
+        run: npx wait-on http://localhost:8081 &
 
       - name: Wait for backend
-        run: npx wait-on --timeout 300000 http://localhost:3000
+        run: npx wait-on http://localhost:3000
 
       - name: Run Cypress tests
         run: npx cypress run
