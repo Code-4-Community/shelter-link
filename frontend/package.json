@@ -3,14 +3,17 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-native": "*",
-    "@testing-library/react-native": "*",
+    "@testing-library/react-native": "^12.5.1",
+    "@testing-library/jest-native": "^5.4.3",
+    "@testing-library/react": "^14.3.0",
     "expo": "*",
     "metro-config": "*",
     "react-native": "^0.76.7",
     "react-native-svg": "*",
-    "react-native-web": "*",
-    "react": "18.3.1"
+    "react-native-web": "^0.21.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-test-renderer": "18.3.1"
   },
   "scripts": {
     "eas-build-post-install": "cd ../ && node tools/scripts/eas-build-post-install.mjs . frontend",
@@ -18,4 +21,3 @@
     "ios": "expo run:ios"
   }
 }
-
