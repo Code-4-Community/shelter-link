@@ -4,6 +4,9 @@
 const { Not } = require("typeorm");
 require("cypress-real-events");
 
+//Wait until localhost:8081 is actually loaded
+Cypress.config('pageLoadTimeout', 120000); // wait up to 2 minutes
+cy.visit('http://localhost:8081'); // will retry until loaded
 
 
 const dragAndDrop = (dragLocator, dropLocator) => {
