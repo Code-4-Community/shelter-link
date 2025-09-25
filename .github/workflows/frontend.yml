@@ -16,15 +16,12 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Install frontend deps
-        run: npm i --legacy-peer-deps
+        run: npm i 
         working-directory: frontend
 
       - name: Install backend deps
-        run: npm i --legacy-peer-deps
+        run: npm i 
         working-directory: backend
-
-      - name: Installing root deps
-        run: npm i --legacy-peer-deps
 
       - name: Installing ci/cd tools
         run: npm install -g wait-on nx
