@@ -4,10 +4,6 @@
 const { Not } = require("typeorm");
 require("cypress-real-events");
 
-//Wait until localhost:8081 is actually loaded
-Cypress.config('pageLoadTimeout', 120000); // wait up to 2 minutes
-cy.visit('http://localhost:8081'); // will retry until loaded
-
 
 const dragAndDrop = (dragLocator, dropLocator) => {
     cy.get(dragLocator)
@@ -34,7 +30,8 @@ describe('User verifies the components of the landing page', () => {
     before(() => {
         //iPhone 16 Pixel heights divided by 2 since the Cypress presets are generally divided by 2
         cy.viewport(590, 1278)
-
+         //Wait until localhost:8081 is actually loaded
+        Cypress.config('pageLoadTimeout', 240000); // wait up to 4 minutes
     });
 
     beforeEach(() => {
