@@ -37,7 +37,7 @@ jobs:
         run: |
           npx nx serve frontend &
           npx nx serve backend &
-          npx wait-on http://localhost:8081 http://localhost:3000
+          npx wait-on  http-get://localhost:8081/index.bundle?platform=web http://localhost:3000
           npx cypress run
         env:
           NX_CLOUD: false
