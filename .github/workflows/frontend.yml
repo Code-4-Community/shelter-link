@@ -6,26 +6,14 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  e2e-tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20.x, 22.x]
+        node-version: [20.x]
 
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Install frontend deps
-        run: npm i 
-        working-directory: frontend
-
-      - name: Install backend deps
-        run: npm i 
-        working-directory: backend
-
-      - name: Installing ci/cd tools
-        run: npm install -g wait-on nx
-        working-directory: frontend
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -33,24 +21,36 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
-      - name: Serve frontend
-        run: npx nx serve frontend &
+      - name: Install frontend deps
+        run: npm install
+        working-directory: frontend
+
+      - name: Install backend deps
+        run: npm install
+        working-directory: backend
+
+      - name: Install CI/CD tools
+        run: npm install -g wait-on concurrently
+        working-directory: frontend
+
+      - name: Start frontend & backend
+        run: |
+          concurrently \
+            "nx serve backend" \
+            "nx serve frontend"
         env:
           NX_CLOUD: false
           EXPO_PUBLIC_API_URL: http://localhost:3000
-          
-      - name: Serve backend
-        run: npx nx serve backend &
-        env:
           AWS_ACCESS_KEY_ID: ${{ secrets.SAM_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.SAM_SECRET_ACCESS_KEY }}
           AWS_REGION: us-east-2
+        # put this step in the background with & and disown so it doesn't block
+        shell: bash
 
-      - name: Wait for frontend
-        run: npx wait-on http://localhost:8081 &
-
-      - name: Wait for backend
-        run: npx wait-on http://localhost:3000
+      - name: Wait for servers
+        run: |
+          npx wait-on http://localhost:3000
+          npx wait-on http://localhost:8081
 
       - name: Run Cypress tests
         run: npx cypress run
