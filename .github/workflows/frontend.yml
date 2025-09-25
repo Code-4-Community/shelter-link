@@ -33,24 +33,16 @@ jobs:
         run: npm install -g wait-on concurrently
         working-directory: frontend
 
-      - name: Start frontend & backend
+      - name: Start frontend & backend and run Cypress
         run: |
-          concurrently \
-            "nx serve backend" \
-            "nx serve frontend"
+          npx nx serve frontend &
+          npx nx serve backend &
+          npx wait-on http://localhost:8081 http://localhost:3000
+          npx cypress run
         env:
           NX_CLOUD: false
           EXPO_PUBLIC_API_URL: http://localhost:3000
           AWS_ACCESS_KEY_ID: ${{ secrets.SAM_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.SAM_SECRET_ACCESS_KEY }}
           AWS_REGION: us-east-2
-        # put this step in the background with & and disown so it doesn't block
         shell: bash
-
-      - name: Wait for servers
-        run: |
-          npx wait-on http://localhost:3000
-          npx wait-on http://localhost:8081
-
-      - name: Run Cypress tests
-        run: npx cypress run
